@@ -35,6 +35,10 @@
             <p class="text-[10px] text-slate-400">Portal Interno</p>
           </div>
         </div>
+        <!-- BOTÓN DE ACCESO AL PANEL DE CONTROL (SOLO PARA MANDO) -->
+        <button id="btnOpenControlPanel" onclick="toggleControlPanel(true)" class="hidden bg-purple-600/80 hover:bg-purple-500 text-white text-xs px-2.5 py-1 rounded-lg border border-purple-500 shadow transition flex items-center gap-1 font-bold">
+          <i class="fa-solid fa-sliders"></i> Panel de Control
+        </button>
       </div>
     </header>
 
@@ -135,8 +139,8 @@
           </button>
         </div>
 
-        <!-- MÓDULO CONTROL DE TURNOS (ESTÁNDAR PARA TODOS) -->
-        <div id="shiftModuleContainer" class="military-card p-3 rounded-xl">
+        <!-- MÓDULO CONTROL DE TURNOS -->
+        <div class="military-card p-3 rounded-xl">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-clock text-blue-400 text-sm"></i>
@@ -156,39 +160,45 @@
           </div>
         </div>
 
-        <!-- PANEL DE CONTROL EXCLUSIVO (SOLO GENERAL Y MIKE_COVID - APARTADO INDEPENDIENTE) -->
-        <div id="controlPanelModule" class="hidden military-card p-3 rounded-xl space-y-3 border border-purple-800/40">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-sliders text-purple-400 text-sm"></i>
-              <h3 class="font-bold text-white text-xs">Panel de Control</h3>
-            </div>
-            <span class="text-[9px] bg-purple-900/60 text-purple-300 px-2 py-0.5 rounded border border-purple-700 font-bold">Comandancia</span>
-          </div>
-
-          <!-- SOLICITUDES PENDIENTES -->
-          <div>
-            <h4 class="text-[11px] font-bold text-amber-400 mb-1.5 flex items-center gap-1">
-              <i class="fa-solid fa-clock-rotate-left"></i> Solicitudes Pendientes:
-            </h4>
-            <div id="pendingList" class="space-y-1.5">
-              <p class="text-[11px] text-slate-400 italic">Cargando...</p>
-            </div>
-          </div>
-
-          <!-- GESTIÓN DE PERSONAL ACTIVO -->
-          <div class="border-t border-slate-800 pt-2.5">
-            <h4 class="text-[11px] font-bold text-blue-400 mb-1.5 flex items-center gap-1">
-              <i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:
-            </h4>
-            <div id="activeList" class="space-y-2">
-              <p class="text-[11px] text-slate-400 italic">Cargando...</p>
-            </div>
-          </div>
-        </div>
-
       </div>
     </main>
+  </div>
+
+  <!-- VENTANA FLOTANTE: PANEL DE CONTROL (OCULTO POR DEFECTO) -->
+  <div id="controlPanelModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
+    <div class="military-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 rounded-xl border border-purple-500/40 shadow-2xl space-y-4">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-purple-400 text-base"></i>
+          <h3 class="font-bold text-white text-sm">Panel de Control (Comandancia)</h3>
+        </div>
+        <button onclick="toggleControlPanel(false)" class="text-slate-400 hover:text-white text-sm px-2 py-1 bg-slate-900 rounded border border-slate-700">
+          <i class="fa-solid fa-xmark"></i> Cerrar
+        </button>
+      </div>
+
+      <!-- SOLICITUDES PENDIENTES CON APROBAR / RECHAZAR -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1">
+          <i class="fa-solid fa-clock-rotate-left"></i> Solicitudes Pendientes:
+        </h4>
+        <div id="pendingList" class="space-y-2">
+          <p class="text-xs text-slate-400 italic">Cargando...</p>
+        </div>
+      </div>
+
+      <!-- GESTIÓN DE PERSONAL ACTIVO -->
+      <div class="border-t border-slate-800 pt-3 space-y-2">
+        <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1">
+          <i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:
+        </h4>
+        <div id="activeList" class="space-y-2">
+          <p class="text-xs text-slate-400 italic">Cargando...</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- PIE DE PÁGINA FIJO Y COMPACTO -->
@@ -218,6 +228,16 @@
         registerForm.classList.remove('hidden');
         tabRegisterBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
         tabLoginBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white";
+      }
+    }
+
+    function toggleControlPanel(show) {
+      const modal = document.getElementById('controlPanelModal');
+      if (show) {
+        modal.classList.remove('hidden');
+        loadUsersData();
+      } else {
+        modal.classList.add('hidden');
       }
     }
 
@@ -310,13 +330,12 @@
 
     function applyPermissions(user) {
       const isAuthorizedAdmin = (user.rank === 'General' || user.username.toLowerCase() === 'mike_covid');
-      const controlPanel = document.getElementById('controlPanelModule');
+      const btnControlPanel = document.getElementById('btnOpenControlPanel');
 
       if (isAuthorizedAdmin) {
-        controlPanel.classList.remove('hidden');
-        loadUsersData();
+        btnControlPanel.classList.remove('hidden');
       } else {
-        controlPanel.classList.add('hidden');
+        btnControlPanel.classList.add('hidden');
       }
     }
 
@@ -330,7 +349,7 @@
         const response = await fetch(WEB_APP_URL);
         const users = await response.json();
 
-        // 1. PENDIENTES
+        // 1. PENDIENTES (CON OPCIÓN DE APROBAR Y RECHAZAR/ELIMINAR)
         const pendingUsers = users.filter(u => u.status === 'pending');
         pendingList.innerHTML = '';
         if (pendingUsers.length === 0) {
@@ -338,16 +357,21 @@
         } else {
           pendingUsers.forEach(u => {
             const item = document.createElement('div');
-            item.className = 'bg-slate-900 p-2 rounded-lg border border-amber-900/40 flex items-center justify-between text-xs';
+            item.className = 'bg-slate-900 p-2.5 rounded-lg border border-amber-900/40 flex items-center justify-between text-xs';
             item.innerHTML = `
               <div>
                 <span class="font-bold text-white text-[11px]">${u.username}</span>
                 <span class="text-[9px] text-amber-400 ml-1">(${u.rank})</span>
                 <p class="text-[9px] text-slate-400">Edad: ${u.age || 'N/A'} • ${u.country || 'N/A'}</p>
               </div>
-              <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px]">
-                Aprobar
-              </button>
+              <div class="flex gap-1">
+                <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px]" title="Aprobar">
+                  <i class="fa-solid fa-check"></i>
+                </button>
+                <button onclick="deleteUser('${u.username}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px]" title="Rechazar">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
             `;
             pendingList.appendChild(item);
           });
@@ -361,7 +385,7 @@
         } else {
           activeUsers.forEach(u => {
             const item = document.createElement('div');
-            item.className = 'bg-slate-900 p-2 rounded-lg border border-slate-800 space-y-1.5';
+            item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5';
             item.innerHTML = `
               <div class="flex items-center justify-between">
                 <div>
@@ -435,7 +459,7 @@
     }
 
     async function deleteUser(username) {
-      if (!confirm(`⚠ ¿Estás seguro de ELIMINAR a ${username} del sistema?`)) return;
+      if (!confirm(`⚠ ¿Estás seguro de eliminar/rechazar a ${username}?`)) return;
 
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
@@ -447,7 +471,7 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         if (result.status === 'success') {
-          alert(`✔ Usuario ${username} eliminado.`);
+          alert(`✔ Usuario ${username} eliminado de la base de datos.`);
           loadUsersData();
         }
       } catch (err) {
