@@ -531,7 +531,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
 
       try {
         const response = await fetch(WEB_APP_URL);
@@ -1052,4 +1052,176 @@
 
         if (history) {
           history.forEach(h => {
-            if (normalizeDate(h.fecha)
+            if (normalizeDate(h.fecha) === todayStr && h.username) {
+              const uKey = h.username.toLowerCase();
+              if (dailyTotals[uKey]) {
+                dailyTotals[uKey].hours += parseFloat(h.horas || 0);
+              }
+            }
+          });
+        }
+
+        const dailyArray = Object.values(dailyTotals).sort((a, b) => b.hours - a.hours);
+
+        dailyReportList.innerHTML = '';
+        dailyArray.forEach((u, index) => {
+          const todayHM = decimalToHM(u.hours);
+          let medalIcon = `<span class="text-[10px] text-slate-500 font-bold w-5 text-center">#${index + 1}</span>`;
+          if (index === 0 && u.hours > 0) medalIcon = `<i class="fa-solid fa-trophy text-amber-400 text-xs w-5 text-center" title="1er Lugar"></i>`;
+          else if (index === 1 && u.hours > 0) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center" title="2do Lugar"></i>`;
+          else if (index === 2 && u.hours > 0) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center" title="3er Lugar"></i>`;
+
+          const item = document.createElement('div');
+          item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs';
+          item.innerHTML = `
+            <div class="flex items-center gap-2">
+              ${medalIcon}
+              <div>
+                <span class="font-bold text-white">${u.username}</span>
+                <span class="text-[9px] text-slate-400 ml-1">(${u.rank})</span>
+              </div>
+            </div>
+            <span class="text-cyan-400 font-mono font-bold">Hoy: ${todayHM}</span>
+          `;
+          dailyReportList.appendChild(item);
+        });
+
+        document.getElementById('filterDateInput').valueAsDate = new Date();
+        applyHistoryFilter();
+
+      } catch (err) {
+        pendingList.innerHTML = '<p class="text-xs text-red-400">Error al cargar.</p>';
+      }
+    }
+
+    function applyHistoryFilter() {
+      if (!cachedData || !cachedData.history) return;
+
+      const filterType = document.getElementById('filterType').value;
+      const dateInput = document.getElementById('filterDateInput').value;
+      const historyList = document.getElementById('filteredHistoryList');
+      
+      const dateContainer = document.getElementById('dateSelectorContainer');
+      if (filterType === 'day') {
+        dateContainer.classList.remove('hidden');
+      } else {
+        dateContainer.classList.add('hidden');
+      }
+
+      let filtered = cachedData.history;
+
+      if (filterType === 'day' && dateInput) {
+        const parts = dateInput.split('-');
+        const formattedDate = `${parseInt(parts[2])}/${parseInt(parts[1])}/${parts[0]}`;
+        filtered = cachedData.history.filter(h => normalizeDate(h.fecha) === formattedDate || normalizeDate(h.fecha) === dateInput);
+      } else if (filterType === 'month') {
+        const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+        filtered = cachedData.history.filter(h => {
+          if (!h.fecha) return false;
+          let norm = normalizeDate(h.fecha);
+          return norm.includes(`/${currentMonth}/${currentYear}`) || norm.startsWith(`${currentYear}-${String(currentMonth).padStart(2, '0')}`);
+        });
+      }
+
+      let userSummary = {};
+      filtered.forEach(h => {
+        if (!h.username) return;
+        const name = h.username;
+        userSummary[name] = (userSummary[name] || 0) + parseFloat(h.horas || 0);
+      });
+
+      const rankedArray = Object.keys(userSummary).map(name => ({
+        name: name,
+        totalHours: userSummary[name]
+      })).sort((a, b) => b.totalHours - a.totalHours);
+
+      historyList.innerHTML = '';
+      if (rankedArray.length === 0) {
+        historyList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay registros para este filtro.</p>';
+        return;
+      }
+
+      rankedArray.forEach((itemObj, index) => {
+        const totalHM = decimalToHM(itemObj.totalHours);
+        let medalIcon = `<span class="text-[10px] text-slate-500 font-bold w-5 text-center">#${index + 1}</span>`;
+        if (index === 0) medalIcon = `<i class="fa-solid fa-trophy text-amber-400 text-xs w-5 text-center"></i>`;
+        else if (index === 1) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center"></i>`;
+        else if (index === 2) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center"></i>`;
+
+        const item = document.createElement('div');
+        item.className = 'bg-slate-900 p-2 rounded border border-slate-800 flex items-center justify-between text-xs';
+        item.innerHTML = `
+          <div class="flex items-center gap-2">
+            ${medalIcon}
+            <span class="font-bold text-white">${itemObj.name}</span>
+          </div>
+          <span class="text-emerald-400 font-mono font-bold">${totalHM}</span>
+        `;
+        historyList.appendChild(item);
+      });
+    }
+
+    async function approveUser(username) {
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'approve', username: username })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          alert(`✔ La cuenta de ${username} ha sido aprobada.`);
+          loadControlPanelData();
+        }
+      } catch (err) { alert('Error de conexión.'); }
+    }
+
+    async function changeUserRank(username, newRank) {
+      if (!confirm(`¿Confirmas cambiar el rango de ${username} a "${newRank}"?`)) return;
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'updateRank', username: username, newRank: newRank })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        if (result.status === 'success') {
+          alert(`✔ Rango de ${username} actualizado a ${newRank}.`);
+          loadControlPanelData();
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al actualizar el rango.');
+      }
+    }
+
+    async function deleteUser(username) {
+      if (!confirm(`⚠ ¿Estás seguro de eliminar/rechazar a ${username}?`)) return;
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'deleteUser', username: username })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        if (result.status === 'success') {
+          alert(`✔ Usuario ${username} eliminado.`);
+          loadControlPanelData();
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al eliminar usuario.');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('rioRiseCurrentSession');
+      location.reload();
+    }
+
+    window.onload = () => loadSession();
+  </script>
+</body>
+</html>
