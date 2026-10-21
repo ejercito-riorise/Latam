@@ -147,6 +147,46 @@
           </button>
         </div>
 
+        <!-- PESTAÑAS DE NAVEGACIÓN PRINCIPAL (COMUNICADOS / DOCTRINA) -->
+        <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
+          <button id="navNewsBtn" onclick="switchMainTab('news')" class="py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-bullhorn"></i> Novedades
+          </button>
+          <button id="navDoctrinaBtn" onclick="switchMainTab('doctrina')" class="py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-book-open"></i> Doctrina y Normas
+          </button>
+        </div>
+
+        <!-- SECCIÓN 1: TABLÓN DE NOVEDADES -->
+        <div id="sectionNews" class="military-card p-3 rounded-xl space-y-2">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-bullhorn text-amber-400 text-sm"></i>
+              <h3 class="font-bold text-white text-xs">Órdenes del Día y Comunicados</h3>
+            </div>
+            <span class="text-[9px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px] animate-pulse"></i> En vivo</span>
+          </div>
+          <div id="newsFeedContainer" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+            <p class="text-[11px] text-slate-400 italic">Cargando boletines oficiales...</p>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 2: DOCTRINA Y NORMAS (INDEPENDIENTE) -->
+        <div id="sectionDoctrina" class="military-card p-3 rounded-xl space-y-2.5 hidden">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-book-open text-blue-400 text-sm"></i>
+              <h3 class="font-bold text-white text-xs">Temas de Estudio y Normas Oficiales</h3>
+            </div>
+            <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> Publicar / Proponer
+            </button>
+          </div>
+          <div id="doctrinaFeedContainer" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+            <p class="text-[11px] text-slate-400 italic">Cargando manuales y normas...</p>
+          </div>
+        </div>
+
         <!-- MÓDULO CONTROL DE TURNOS -->
         <div class="military-card p-3 rounded-xl">
           <div class="flex items-center justify-between mb-2">
@@ -165,21 +205,7 @@
             <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
               <i class="fa-solid fa-play mr-1"></i> Iniciar Turno
             </button>
-            <p class="text-[10px] text-slate-400 text-center italic"><i class="fa-solid fa-circle-info mr-1"></i> Horario de servicio habilitado: 18:00 a 03:00 (Hora Colombia)</p>
-          </div>
-        </div>
-
-        <!-- TABLÓN DE ÓRDENES DEL DÍA Y NOVEDADES -->
-        <div class="military-card p-3 rounded-xl space-y-2">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-bullhorn text-amber-400 text-sm"></i>
-              <h3 class="font-bold text-white text-xs">Órdenes del Día y Comunicados</h3>
-            </div>
-            <span class="text-[9px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px] animate-pulse"></i> En vivo</span>
-          </div>
-          <div id="newsFeedContainer" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
-            <p class="text-[11px] text-slate-400 italic">Cargando boletines oficiales...</p>
+            <p class="text-[10px] text-slate-400 text-center italic"><i class="fa-solid fa-circle-info mr-1"></i> Horario habilitado: 18:00 a 03:00 (Hora Colombia)</p>
           </div>
         </div>
 
@@ -203,49 +229,27 @@
       </div>
 
       <!-- SUB-PESTAÑAS TÁCTICAS DINÁMICAS -->
-      <div id="adminTabsContainer" class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center">
-        <!-- Generado dinámicamente según rol -->
-      </div>
+      <div id="adminTabsContainer" class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center"></div>
 
-      <!-- CONTENEDOR DE LAS SECCIONES (SCROLLABLE) -->
+      <!-- CONTENEDOR DE LAS SECCIONES -->
       <div class="flex-1 overflow-y-auto pr-1 space-y-2">
-        
-        <!-- VISTA 1: SOLICITUDES -->
         <div id="viewPending" class="space-y-2">
-          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2">
-            <i class="fa-solid fa-clock-rotate-left"></i> Solicitudes de Ingreso Pendientes:
-          </h4>
-          <div id="pendingList" class="space-y-2">
-            <p class="text-xs text-slate-400 italic">Cargando...</p>
-          </div>
+          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-clock-rotate-left"></i> Solicitudes de Ingreso Pendientes:</h4>
+          <div id="pendingList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
-        <!-- VISTA 2: TROPA ACTIVA -->
         <div id="viewActive" class="space-y-2 hidden">
-          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2">
-            <i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:
-          </h4>
-          <div id="activeList" class="space-y-2">
-            <p class="text-xs text-slate-400 italic">Cargando...</p>
-          </div>
+          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:</h4>
+          <div id="activeList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
-        <!-- VISTA 3: REPORTE DIARIO (RANKING) -->
         <div id="viewDaily" class="space-y-2 hidden">
-          <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1 mb-2">
-            <i class="fa-solid fa-trophy"></i> Ranking Diario de Servicio (Hoy):
-          </h4>
-          <div id="dailyReportList" class="space-y-2">
-            <p class="text-xs text-slate-400 italic">Calculando ranking de hoy...</p>
-          </div>
+          <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-trophy"></i> Ranking Diario de Servicio (Hoy):</h4>
+          <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando ranking...</p></div>
         </div>
 
-        <!-- VISTA 4: FILTROS (RANKING HISTÓRICO) -->
         <div id="viewFilters" class="space-y-3 hidden">
-          <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1">
-            <i class="fa-solid fa-ranking-star"></i> Ranking de Rendimiento:
-          </h4>
-          
+          <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Ranking de Rendimiento:</h4>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
             <div>
               <label class="block text-[10px] text-slate-400 mb-1">Rango de Filtro:</label>
@@ -260,32 +264,26 @@
               <input type="date" id="filterDateInput" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1 focus:outline-none">
             </div>
           </div>
-
-          <div id="filteredHistoryList" class="space-y-1.5">
-            <p class="text-xs text-slate-400 italic">Selecciona un filtro para ver el ranking...</p>
-          </div>
+          <div id="filteredHistoryList" class="space-y-1.5"></div>
         </div>
 
-        <!-- VISTA 5: PUBLICAR / MODIFICAR NOVEDADES -->
         <div id="viewNewsAdmin" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
-            <h4 id="newsFormTitle" class="text-xs font-bold text-amber-400 flex items-center gap-1">
-              <i class="fa-solid fa-bullhorn"></i> Redactar / Publicar Orden del Día:
-            </h4>
+            <h4 id="newsFormTitle" class="text-xs font-bold text-amber-400 flex items-center gap-1"><i class="fa-solid fa-bullhorn"></i> Redactar / Publicar Orden del Día:</h4>
             <button id="cancelEditBtn" onclick="cancelEditNews()" class="hidden text-[10px] bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded">Cancelar Edición</button>
           </div>
           <form onsubmit="handlePublishNews(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800">
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">Título del Comunicado</label>
-              <input type="text" id="newsTitle" required placeholder="Ej: Directiva de Servicio No. 04" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+              <input type="text" id="newsTitle" required placeholder="Ej: Directiva No. 04" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">Mensaje / Orden Oficial</label>
-              <textarea id="newsMessage" required rows="4" placeholder="Escribe aquí los detalles de la orden..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
+              <textarea id="newsMessage" required rows="4" placeholder="Escribe aquí los detalles..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
             </div>
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">URL de Imagen (Opcional)</label>
-              <input type="url" id="newsImage" placeholder="https://ejemplo.com/imagen.jpg" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+              <input type="url" id="newsImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
               <span id="newsBtnText">Publicar Comunicado</span>
@@ -293,18 +291,43 @@
           </form>
         </div>
 
-        <!-- VISTA 6: APROBAR COMUNICADOS -->
         <div id="viewApproveNews" class="space-y-2 hidden">
-          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2">
-            <i class="fa-solid fa-check-to-slot"></i> Comunicados Pendientes de Aprobación:
-          </h4>
-          <div id="pendingNewsList" class="space-y-2">
-            <p class="text-xs text-slate-400 italic">Cargando solicitudes...</p>
-          </div>
+          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-check-to-slot"></i> Comunicados Pendientes de Aprobación:</h4>
+          <div id="pendingNewsList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
-
       </div>
+    </div>
+  </div>
 
+  <!-- MODAL PARA PUBLICAR / EDITAR DOCTRINA Y NORMAS -->
+  <div id="doctrinaModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
+    <div class="military-card w-full max-w-md p-4 rounded-xl border border-blue-500/40 shadow-2xl space-y-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h4 id="doctrinaModalTitle" class="text-xs font-bold text-blue-400 flex items-center gap-1">
+          <i class="fa-solid fa-book-bookmark"></i> Publicar Tema de Estudio / Norma
+        </h4>
+        <button onclick="closeDoctrinaModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form onsubmit="handlePublishDoctrina(event)" class="space-y-2.5">
+        <input type="hidden" id="doctrinaOldTitle">
+        <div>
+          <label class="block text-[10px] text-slate-300 mb-1">Título del Tema / Norma</label>
+          <input type="text" id="doctrinaTitle" required placeholder="Ej: Manual de Tácticas" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-[10px] text-slate-300 mb-1">Contenido / Guía</label>
+          <textarea id="doctrinaMessage" required rows="5" placeholder="Escribe la doctrina o normas..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-[10px] text-slate-300 mb-1">URL de Imagen (Opcional)</label>
+          <input type="url" id="doctrinaImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
+          <span id="doctrinaBtnText">Publicar Norma</span>
+        </button>
+      </form>
     </div>
   </div>
 
@@ -322,7 +345,9 @@
     let deferredPrompt = null;
     let globalHistoryCache = [];
     let editingOldTitle = null;
+    let editingDoctrinaOldTitle = null;
     let newsStorageMap = {};
+    let doctrinaStorageMap = {};
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -410,6 +435,25 @@
         registerForm.classList.remove('hidden');
         tabRegisterBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
         tabLoginBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white";
+      }
+    }
+
+    function switchMainTab(tab) {
+      const navNewsBtn = document.getElementById('navNewsBtn');
+      const navDoctrinaBtn = document.getElementById('navDoctrinaBtn');
+      const sectionNews = document.getElementById('sectionNews');
+      const sectionDoctrina = document.getElementById('sectionDoctrina');
+
+      if (tab === 'news') {
+        sectionNews.classList.remove('hidden');
+        sectionDoctrina.classList.add('hidden');
+        navNewsBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5";
+        navDoctrinaBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white flex items-center justify-center gap-1.5";
+      } else {
+        sectionNews.classList.add('hidden');
+        sectionDoctrina.classList.remove('hidden');
+        navDoctrinaBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5";
+        navNewsBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white flex items-center justify-center gap-1.5";
       }
     }
 
@@ -552,28 +596,29 @@
         const resData = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
 
-        const found = resData.users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password.toString() === pass.toString());
+        // Búsqueda robusta insensible a mayúsculas y espacios
+        const found = resData.users.find(u => u.username.toString().trim().toLowerCase() === user.toLowerCase() && u.password.toString().trim() === pass.toString());
 
         if (!found) {
           alert('Usuario o contraseña incorrectos.');
           return;
         }
 
-        if (found.status !== 'approved') {
+        if (found.status.toString().trim().toLowerCase() !== 'approved') {
           alert('⛔ Tu cuenta aún no ha sido autorizada por los superiores.');
           return;
         }
 
-        currentUser = { username: found.username, rank: found.rank, hours: found.hours || 0 };
+        currentUser = { username: found.username, rank: found.rank, hours: parseFloat(found.hours || 0) };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-        loadSession(resData.history, resData.news);
+        loadSession(resData.history, resData.news, resData.doctrina);
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('Error al verificar las credenciales con la base de datos.');
       }
     }
 
-    async function loadSession(historyData = null, newsData = null) {
+    async function loadSession(historyData = null, newsData = null, doctrinaData = null) {
       const savedSession = localStorage.getItem('rioRiseCurrentSession');
       if (savedSession) {
         currentUser = JSON.parse(savedSession);
@@ -586,30 +631,32 @@
         rankEl.innerText = currentUser.rank;
         rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
 
-        if (!historyData || !newsData) {
+        if (!historyData || !newsData || !doctrinaData) {
           try {
             const response = await fetch(WEB_APP_URL);
             const resData = await response.json();
             historyData = resData.history;
             newsData = resData.news;
+            doctrinaData = resData.doctrina;
             const freshUser = resData.users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
-            if (freshUser) currentUser.hours = freshUser.hours || 0;
+            if (freshUser) currentUser.hours = parseFloat(freshUser.hours || 0);
           } catch (e) { 
             historyData = historyData || []; 
             newsData = newsData || []; 
+            doctrinaData = doctrinaData || [];
           }
         }
 
         globalHistoryCache = historyData || [];
         updateTodayHoursLive();
         renderNewsFeed(newsData);
+        renderDoctrinaFeed(doctrinaData);
         applyPermissions(currentUser);
         checkActiveShiftOnLoad();
         startRealtimeSync();
       }
     }
 
-    // SINCRONIZACIÓN EN TIEMPO REAL (SILENCIOSA CADA 10 SEGUNDOS)
     function startRealtimeSync() {
       if (syncInterval) clearInterval(syncInterval);
       syncInterval = setInterval(async () => {
@@ -618,27 +665,15 @@
           const resData = await response.json();
           globalHistoryCache = resData.history || [];
           renderNewsFeed(resData.news);
+          renderDoctrinaFeed(resData.doctrina);
           updateTodayHoursLive();
 
-          // Si el panel de control está abierto, actualizamos sus datos en tiempo real también
           const modal = document.getElementById('controlPanelModal');
           if (modal && !modal.classList.contains('hidden')) {
             cachedData = resData;
-            // Actualizamos silenciosamente las listas activas sin molestar al usuario
-            silentUpdateControlPanel(resData);
           }
-        } catch (e) {
-          // Fallos de red silenciosos para no interrumpir al usuario
-        }
+        } catch (e) {}
       }, 10000);
-    }
-
-    function silentUpdateControlPanel(resData) {
-      // Actualiza datos de la tropa o solicitudes si es necesario de forma fluida
-      const activeList = document.getElementById('activeList');
-      if (activeList && !activeList.innerHTML.includes('Cargando...')) {
-        // Solo refrescamos si el usuario no está interactuando fuertemente
-      }
     }
 
     function updateTodayHoursLive() {
@@ -720,6 +755,180 @@
       feed.innerHTML = htmlContent;
     }
 
+    function renderDoctrinaFeed(doctrina) {
+      const feed = document.getElementById('doctrinaFeedContainer');
+      const approvedDoctrina = doctrina ? doctrina.filter(item => !item.estado || item.estado.toString().trim() === 'approved') : [];
+
+      if (approvedDoctrina.length === 0) {
+        feed.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay temas de estudio ni normas publicadas.</p>';
+        return;
+      }
+
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
+      const isCoronel = rankLower === 'coronel';
+      const canManageDoctrina = isSuperAdmin || isCoronel;
+
+      let htmlContent = '';
+      doctrinaStorageMap = {};
+
+      const sortedDoctrina = [...approvedDoctrina].reverse();
+      sortedDoctrina.forEach((item, index) => {
+        doctrinaStorageMap[index] = item;
+        const cleanDate = normalizeDate(item.fecha);
+        
+        let imageHtml = '';
+        if (item.imagen && item.imagen.toString().trim() !== '') {
+          const directImgUrl = fixImageUrl(item.imagen);
+          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center"><img src="${directImgUrl}" alt="Documento Doctrina" class="w-full h-auto object-cover max-h-60" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"></div>`;
+        }
+
+        let adminActions = '';
+        if (canManageDoctrina) {
+          adminActions = `
+            <div class="flex gap-1.5">
+              <button onclick="triggerEditDoctrina(${index})" class="text-blue-400 hover:text-blue-300 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          `;
+        }
+
+        htmlContent += `
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
+              <span class="font-bold text-blue-400"><i class="fa-solid fa-graduation-cap mr-1"></i>${item.autor || 'Mando'}</span>
+              <div class="flex items-center gap-2">
+                <span>${cleanDate}</span>
+                ${adminActions}
+              </div>
+            </div>
+            <h4 class="font-bold text-white text-xs">${item.titulo || ''}</h4>
+            <p class="text-[11px] text-slate-300 whitespace-pre-wrap leading-relaxed">${item.mensaje || ''}</p>
+            ${imageHtml}
+          </div>
+        `;
+      });
+      feed.innerHTML = htmlContent;
+    }
+
+    function openDoctrinaModal() {
+      editingDoctrinaOldTitle = null;
+      document.getElementById('doctrinaOldTitle').value = '';
+      document.getElementById('doctrinaTitle').value = '';
+      document.getElementById('doctrinaMessage').value = '';
+      document.getElementById('doctrinaImage').value = '';
+      document.getElementById('doctrinaModalTitle').innerHTML = `<i class="fa-solid fa-book-bookmark"></i> Publicar Tema de Estudio / Norma`;
+      
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const isMayor = rankLower === 'mayor';
+      document.getElementById('doctrinaBtnText').innerText = isMayor ? "Enviar a Aprobación" : "Publicar Norma";
+
+      document.getElementById('doctrinaModal').classList.remove('hidden');
+    }
+
+    function closeDoctrinaModal() {
+      document.getElementById('doctrinaModal').classList.add('hidden');
+    }
+
+    async function handlePublishDoctrina(e) {
+      e.preventDefault();
+
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
+      const isCoronel = rankLower === 'coronel';
+      const isMayor = rankLower === 'mayor';
+
+      if (!isSuperAdmin && !isCoronel && !isMayor) {
+        alert('⛔ Acceso denegado. Solo coroneles y mayores con autorización pueden publicar.');
+        return;
+      }
+
+      const title = document.getElementById('doctrinaTitle').value.trim();
+      const message = document.getElementById('doctrinaMessage').value.trim();
+      const imageUrl = document.getElementById('doctrinaImage').value.trim();
+      
+      const now = new Date();
+      const dateStr = now.toLocaleDateString();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const author = `${currentUser.username} (${currentUser.rank})`;
+
+      const actionType = editingDoctrinaOldTitle ? "editDoctrina" : "publishDoctrina";
+      const status = (isMayor && !editingDoctrinaOldTitle) ? 'pending' : 'approved';
+
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: actionType,
+            oldTitle: editingDoctrinaOldTitle,
+            fecha: dateStr,
+            hora: timeStr,
+            autor: author,
+            titulo: title,
+            mensaje: message,
+            imagen: imageUrl,
+            estado: status
+          })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+
+        if (result.status === 'success') {
+          if (editingDoctrinaOldTitle) {
+            alert('✔ Doctrina modificada con éxito.');
+          } else if (isMayor) {
+            alert('✔ Tema enviado al Alto Mando para su revisión y aprobación.');
+          } else {
+            alert('✔ Norma o tema de estudio publicado con éxito.');
+          }
+          closeDoctrinaModal();
+          loadSession();
+        } else {
+          alert('⚠ Error al procesar la doctrina.');
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error de conexión con la base de datos.');
+      }
+    }
+
+    function triggerEditDoctrina(index) {
+      const item = doctrinaStorageMap[index];
+      if (!item) return;
+
+      editingDoctrinaOldTitle = item.titulo;
+      document.getElementById('doctrinaOldTitle').value = item.titulo;
+      document.getElementById('doctrinaTitle').value = item.titulo;
+      document.getElementById('doctrinaMessage').value = item.mensaje;
+      document.getElementById('doctrinaImage').value = item.imagen || '';
+      document.getElementById('doctrinaModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Modificar Doctrina o Norma`;
+      document.getElementById('doctrinaBtnText').innerText = "Guardar Cambios";
+
+      document.getElementById('doctrinaModal').classList.remove('hidden');
+    }
+
+    async function deleteDoctrina(title) {
+      if (!confirm(`⚠ ¿Estás seguro de eliminar este tema o norma?`)) return;
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'deleteDoctrina', titulo: title })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        if (result.status === 'success') {
+          alert('✔ Publicación eliminada.');
+          loadSession();
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al eliminar.');
+      }
+    }
+
     async function handlePublishNews(e) {
       e.preventDefault();
       
@@ -743,7 +952,7 @@
       const author = `${currentUser.username} (${currentUser.rank})`;
 
       const actionType = editingOldTitle ? "editNews" : "publishNews";
-      const status = (isMayor) ? 'pending' : 'approved';
+      const status = (isMayor && !editingOldTitle) ? 'pending' : 'approved';
 
       document.getElementById('loadingOverlay').classList.remove('hidden');
 
@@ -790,7 +999,6 @@
       if (!item) return;
 
       editingOldTitle = item.titulo;
-      
       toggleControlPanel(true);
       switchAdminTab('newsAdmin');
 
@@ -860,12 +1068,13 @@
 
       const canViewPanel = isMike || ['general', 'coronel', 'mayor', 'teniente', 'sargento'].includes(rankLower);
       const btnControlPanel = document.getElementById('btnOpenControlPanel');
+      if (canViewPanel) btnControlPanel.classList.remove('hidden');
+      else btnControlPanel.classList.add('hidden');
 
-      if (canViewPanel) {
-        btnControlPanel.classList.remove('hidden');
-      } else {
-        btnControlPanel.classList.add('hidden');
-      }
+      const canPublishDoctrina = isMike || ['general', 'coronel', 'mayor'].includes(rankLower);
+      const btnOpenAddDoctrina = document.getElementById('btnOpenAddDoctrina');
+      if (canPublishDoctrina) btnOpenAddDoctrina.classList.remove('hidden');
+      else btnOpenAddDoctrina.classList.add('hidden');
     }
 
     function checkActiveShiftOnLoad() {
@@ -1004,8 +1213,7 @@
         const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
         const isCoronel = rankLower === 'coronel';
 
-        // 1. PENDIENTES DE USUARIOS
-        const pendingUsers = users.filter(u => u.status === 'pending');
+        const pendingUsers = users.filter(u => u.status && u.status.toString().trim() === 'pending');
         pendingList.innerHTML = '';
         if (!isSuperAdmin) {
           pendingList.innerHTML = '<p class="text-[11px] text-amber-500/80 italic">⛔ Sección restringida para el General.</p>';
@@ -1030,12 +1238,11 @@
           });
         }
 
-        // 2. COMUNICADOS PENDIENTES DE APROBACIÓN
         if (pendingNewsList && (isSuperAdmin || isCoronel)) {
           const pendingNews = news ? news.filter(item => item.estado && item.estado.toString().trim() === 'pending') : [];
           pendingNewsList.innerHTML = '';
           if (pendingNews.length === 0) {
-            pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay comunicados pendientes de aprobación.</p>';
+            pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay publicaciones pendientes de aprobación.</p>';
           } else {
             pendingNews.forEach(item => {
               const newsItem = document.createElement('div');
@@ -1057,8 +1264,7 @@
           }
         }
 
-        // 3. ACTIVOS
-        const activeUsers = users.filter(u => u.status === 'approved');
+        const activeUsers = users.filter(u => u.status && u.status.toString().trim() === 'approved');
         activeList.innerHTML = '';
         if (activeUsers.length === 0) {
           activeList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay personal activo.</p>';
@@ -1068,30 +1274,21 @@
             const item = document.createElement('div');
             item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5';
             
-            let adminActionsHtml = '';
-            if (isSuperAdmin) {
-              adminActionsHtml = `
-                <button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario"><i class="fa-solid fa-trash-can"></i></button>
-              `;
-            }
-
-            let rankSelectorHtml = '';
-            if (isSuperAdmin) {
-              rankSelectorHtml = `
-                <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60">
-                  <span class="text-[10px] text-slate-400">Rango:</span>
-                  <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none w-full">
-                    <option value="" disabled selected>Cambiar rango...</option>
-                    <option value="Privado">Privado</option>
-                    <option value="Sargento">Sargento</option>
-                    <option value="Teniente">Teniente</option>
-                    <option value="Mayor">Mayor</option>
-                    <option value="Coronel">Coronel</option>
-                    <option value="General">General</option>
-                  </select>
-                </div>
-              `;
-            }
+            let adminActionsHtml = isSuperAdmin ? `<button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario"><i class="fa-solid fa-trash-can"></i></button>` : '';
+            let rankSelectorHtml = isSuperAdmin ? `
+              <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60">
+                <span class="text-[10px] text-slate-400">Rango:</span>
+                <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none w-full">
+                  <option value="" disabled selected>Cambiar rango...</option>
+                  <option value="Privado">Privado</option>
+                  <option value="Sargento">Sargento</option>
+                  <option value="Teniente">Teniente</option>
+                  <option value="Mayor">Mayor</option>
+                  <option value="Coronel">Coronel</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+            ` : '';
 
             item.innerHTML = `
               <div class="flex items-center justify-between">
@@ -1108,7 +1305,6 @@
           });
         }
 
-        // 4. REPORTE DIARIO DE HOY (RANKING)
         const todayStr = new Date().toLocaleDateString();
         let dailyTotals = {};
         activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; });
@@ -1125,14 +1321,13 @@
         }
 
         const dailyArray = Object.values(dailyTotals).sort((a, b) => b.hours - a.hours);
-
         dailyReportList.innerHTML = '';
         dailyArray.forEach((u, index) => {
           const todayHM = decimalToHM(u.hours);
           let medalIcon = `<span class="text-[10px] text-slate-500 font-bold w-5 text-center">#${index + 1}</span>`;
-          if (index === 0 && u.hours > 0) medalIcon = `<i class="fa-solid fa-trophy text-amber-400 text-xs w-5 text-center" title="1er Lugar"></i>`;
-          else if (index === 1 && u.hours > 0) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center" title="2do Lugar"></i>`;
-          else if (index === 2 && u.hours > 0) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center" title="3er Lugar"></i>`;
+          if (index === 0 && u.hours > 0) medalIcon = `<i class="fa-solid fa-trophy text-amber-400 text-xs w-5 text-center"></i>`;
+          else if (index === 1 && u.hours > 0) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center"></i>`;
+          else if (index === 2 && u.hours > 0) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center"></i>`;
 
           const item = document.createElement('div');
           item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs';
@@ -1165,11 +1360,8 @@
       const historyList = document.getElementById('filteredHistoryList');
       
       const dateContainer = document.getElementById('dateSelectorContainer');
-      if (filterType === 'day') {
-        dateContainer.classList.remove('hidden');
-      } else {
-        dateContainer.classList.add('hidden');
-      }
+      if (filterType === 'day') dateContainer.classList.remove('hidden');
+      else dateContainer.classList.add('hidden');
 
       let filtered = cachedData.history;
 
@@ -1267,7 +1459,6 @@
           method: 'POST',
           body: JSON.stringify({ action: 'deleteUser', username: username })
         });
-        const result = name => {};
         const resultJson = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (resultJson.status === 'success') {
