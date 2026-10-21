@@ -22,16 +22,16 @@
 </head>
 <body class="min-h-screen pb-12">
 
-  <!-- ENCABEZADO -->
+  <!-- ENCABEZADO TÁCTICO -->
   <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 shadow-lg">
     <div class="max-w-md mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-slate-800 border border-blue-500 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full bg-slate-800 border border-blue-500 flex items-center justify-center shadow-md shadow-blue-500/20">
           <i class="fa-solid fa-shield-halved text-blue-400 text-lg"></i>
         </div>
         <div>
           <h1 class="font-bold tracking-wider text-white text-base">EJÉRCITO RIORISE</h1>
-          <p class="text-xs text-slate-400">Portal interno de la facción</p>
+          <p class="text-xs text-slate-400">Portal Interno de la Facción</p>
         </div>
       </div>
     </div>
@@ -39,59 +39,76 @@
 
   <main class="max-w-md mx-auto p-4 space-y-4">
 
-    <!-- SPINNER DE CARGA -->
-    <div id="loadingOverlay" class="hidden text-center py-4">
+    <!-- OVERLAY CARGANDO -->
+    <div id="loadingOverlay" class="hidden text-center py-4 bg-slate-900/80 border border-blue-500/30 rounded-xl p-3">
       <i class="fa-solid fa-spinner fa-spin text-blue-400 text-2xl"></i>
-      <p class="text-xs text-slate-400 mt-1">Conectando con la base de datos...</p>
+      <p class="text-xs text-slate-300 font-semibold mt-2">Sincronizando con la Base de Datos Militar...</p>
     </div>
 
-    <!-- SECCIÓN AUTENTICACIÓN -->
-    <div id="authSection" class="military-card p-5 rounded-xl shadow-lg">
-      <div class="flex border-b border-slate-700 mb-4">
-        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="w-1/2 py-2 text-sm font-bold text-blue-400 border-b-2 border-blue-500">Ingresar</button>
-        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="w-1/2 py-2 text-sm font-bold text-slate-400 hover:text-white">Registrarse</button>
+    <!-- SECCIÓN DE AUTENTICACIÓN -->
+    <div id="authSection" class="military-card p-5 rounded-xl shadow-xl border border-slate-700">
+      
+      <!-- BOTONES DE PESTAÑAS (LOGIN / REGISTRO) -->
+      <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-5">
+        <button id="tabLoginBtn" type="button" onclick="showAuthTab('login')" class="py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow">
+          <i class="fa-solid fa-right-to-bracket mr-1"></i> Ingresar
+        </button>
+        <button id="tabRegisterBtn" type="button" onclick="showAuthTab('register')" class="py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white">
+          <i class="fa-solid fa-user-plus mr-1"></i> Registrarse
+        </button>
       </div>
 
-      <!-- FORMULARIO DE INGRESO -->
-      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
+      <!-- FORMULARIO 1: INGRESO -->
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre / Nick del Soldado</label>
-          <input type="text" id="loginUsername" required placeholder="Ej: Mike_Covid" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Nick / Nombre de Usuario</label>
+          <div class="relative">
+            <i class="fa-solid fa-user absolute left-3 top-3 text-slate-500 text-xs"></i>
+            <input type="text" id="loginUsername" required placeholder="Ej: Mike_Covid" class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
+          </div>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Contraseña</label>
-          <input type="password" id="loginPassword" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3 top-3 text-slate-500 text-xs"></i>
+            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
+          </div>
         </div>
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-sm transition">
-          Ingresar al Sistema
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg text-xs tracking-wider uppercase transition shadow-lg shadow-blue-600/30">
+          Ingresar al Portal
         </button>
       </form>
 
-      <!-- FORMULARIO DE REGISTRO -->
+      <!-- FORMULARIO 2: REGISTRO CON EDAD -->
       <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre / Nick deseado</label>
-          <input type="text" id="regUsername" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre / Nick Oficial (Juego)</label>
+          <input type="text" id="regUsername" required placeholder="Ej: Mike_Covid" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Contraseña</label>
-          <input type="password" id="regPassword" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Edad del Soldado (Años)</label>
+          <input type="number" id="regAge" required placeholder="Ej: 22" min="12" max="99" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Rango Solicitado</label>
-          <select id="regRank" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
-            <option value="Privado">Privado</option>
+          <select id="regRank" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
+            <option value="Privado">Privado (Tropa / Recluta)</option>
             <option value="Sargento">Sargento</option>
             <option value="Teniente">Teniente</option>
             <option value="Mayor">Mayor</option>
             <option value="Coronel">Coronel</option>
-            <option value="General">General</option>
+            <option value="General">General (Alta Comandancia)</option>
           </select>
         </div>
-        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-sm transition">
-          Solicitar Registro
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Contraseña de Acceso</label>
+          <input type="password" id="regPassword" required placeholder="Crea tu clave secreta" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-600/30">
+          Enviar Ficha de Registro
         </button>
       </form>
+
     </div>
 
     <!-- PANEL PRINCIPAL (POST-LOGIN) -->
@@ -106,7 +123,7 @@
             <span id="profileRank" class="text-[10px] px-2 py-0.5 rounded font-bold uppercase"></span>
           </div>
         </div>
-        <button onclick="logout()" class="text-xs text-red-400 hover:underline">
+        <button onclick="logout()" class="text-xs text-red-400 hover:underline flex items-center gap-1">
           <i class="fa-solid fa-right-from-bracket"></i> Salir
         </button>
       </div>
@@ -132,7 +149,7 @@
         </div>
       </div>
 
-      <!-- MÓDULO COMANDANCIA (SOLO PARA GENERAL Y MIKE_COVID) -->
+      <!-- MÓDULO COMANDANCIA -->
       <div id="commandPanelModule" class="military-card p-4 rounded-xl">
         <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-2">
@@ -164,28 +181,33 @@
     let shiftTimer = null;
     let shiftSeconds = 0;
 
-    function switchAuthTab(tab) {
+    function showAuthTab(tab) {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const tabLoginBtn = document.getElementById('tabLoginBtn');
+      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+
       if (tab === 'login') {
-        document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('registerForm').classList.add('hidden');
-        document.getElementById('tabLoginBtn').className = 'w-1/2 py-2 text-sm font-bold text-blue-400 border-b-2 border-blue-500';
-        document.getElementById('tabRegisterBtn').className = 'w-1/2 py-2 text-sm font-bold text-slate-400 hover:text-white';
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        tabLoginBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
+        tabRegisterBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white";
       } else {
-        document.getElementById('loginForm').classList.add('hidden');
-        document.getElementById('registerForm').classList.remove('hidden');
-        document.getElementById('tabRegisterBtn').className = 'w-1/2 py-2 text-sm font-bold text-blue-400 border-b-2 border-blue-500';
-        document.getElementById('tabLoginBtn').className = 'w-1/2 py-2 text-sm font-bold text-slate-400 hover:text-white';
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+        tabRegisterBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
+        tabLoginBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white";
       }
     }
 
-    // REGISTRO CONECTADO AL GOOGLE SHEET
+    // REGISTRO CON EDAD
     async function handleRegister(e) {
       e.preventDefault();
       const user = document.getElementById('regUsername').value.trim();
+      const age = document.getElementById('regAge').value.trim();
       const pass = document.getElementById('regPassword').value;
       const rank = document.getElementById('regRank').value;
 
-      // Si es Mike_Covid o General se aprueba de una vez
       const isCommander = (rank === 'General' || user.toLowerCase() === 'mike_covid');
       const status = isCommander ? 'approved' : 'pending';
 
@@ -194,7 +216,7 @@
       try {
         const response = await fetch(WEB_APP_URL, {
           method: 'POST',
-          body: JSON.stringify({ action: 'register', username: user, password: pass, rank: rank, status: status })
+          body: JSON.stringify({ action: 'register', username: user, password: pass, rank: rank, age: age, status: status })
         });
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -206,7 +228,7 @@
             alert('✔ Solicitud de registro enviada con éxito.\nMike_Covid o el General deben aprobar tu acceso.');
           }
           document.getElementById('registerForm').reset();
-          switchAuthTab('login');
+          showAuthTab('login');
         } else {
           alert('⚠ Error: ' + (result.message || 'El usuario ya existe en la base de datos.'));
         }
@@ -216,7 +238,7 @@
       }
     }
 
-    // INICIO DE SESIÓN CONSULTANDO EL GOOGLE SHEET
+    // INICIO DE SESIÓN
     async function handleLogin(e) {
       e.preventDefault();
       const user = document.getElementById('loginUsername').value.trim();
@@ -266,7 +288,7 @@
       }
     }
 
-    // REGLA DE ACCESO EXCLUSIVA: SOLO GENERAL O MIKE_COVID
+    // APLICAR PERMISOS
     function applyPermissions(user) {
       const isAuthorizedAdmin = (user.rank === 'General' || user.username.toLowerCase() === 'mike_covid');
       const commandBadge = document.getElementById('commandAccessBadge');
@@ -287,7 +309,7 @@
       }
     }
 
-    // OBTENER SOLICITUDES PENDIENTES DEL GOOGLE SHEET
+    // VER PENDIENTES (MUESTRA LA EDAD Y EL RANGO)
     async function fetchPendingUsers() {
       const pendingList = document.getElementById('pendingList');
       pendingList.innerHTML = '<p class="text-xs text-slate-400 italic">Cargando solicitudes...</p>';
@@ -305,13 +327,14 @@
 
         pendingUsers.forEach(u => {
           const item = document.createElement('div');
-          item.className = 'bg-slate-900 p-2 rounded border border-slate-700 flex items-center justify-between text-xs';
+          item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-700 flex items-center justify-between text-xs';
           item.innerHTML = `
             <div>
               <span class="font-bold text-white">${u.username}</span>
-              <span class="text-[10px] text-slate-400 ml-1">(${u.rank})</span>
+              <span class="text-[10px] text-blue-400 ml-1">(${u.rank})</span>
+              <p class="text-[10px] text-slate-400">Edad: ${u.age || 'N/A'} años</p>
             </div>
-            <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px]">
+            <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded text-[10px]">
               Aprobar
             </button>
           `;
@@ -322,7 +345,7 @@
       }
     }
 
-    // APROBAR USUARIO EN EL GOOGLE SHEET
+    // APROBAR USUARIO
     async function approveUser(username) {
       try {
         const response = await fetch(WEB_APP_URL, {
@@ -369,7 +392,7 @@
       } else {
         clearInterval(shiftTimer);
         shiftTimer = null;
-        alert(`Turno finalizado. Tiempo registrado: ${document.getElementById('stopwatch'].innerText}`);
+        alert(`Turno finalizado. Tiempo registrado: ${document.getElementById('stopwatch').innerText}`);
         shiftSeconds = 0;
         document.getElementById('stopwatch').innerText = '00:00:00';
         
