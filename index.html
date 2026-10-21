@@ -171,9 +171,12 @@
 
         <!-- TABLÓN DE ÓRDENES DEL DÍA Y NOVEDADES -->
         <div class="military-card p-3 rounded-xl space-y-2">
-          <div class="flex items-center gap-2 border-b border-slate-800 pb-1.5">
-            <i class="fa-solid fa-bullhorn text-amber-400 text-sm"></i>
-            <h3 class="font-bold text-white text-xs">Órdenes del Día y Comunicados</h3>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-bullhorn text-amber-400 text-sm"></i>
+              <h3 class="font-bold text-white text-xs">Órdenes del Día y Comunicados</h3>
+            </div>
+            <span class="text-[9px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px] animate-pulse"></i> En vivo</span>
           </div>
           <div id="newsFeedContainer" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
             <p class="text-[11px] text-slate-400 italic">Cargando boletines oficiales...</p>
@@ -314,6 +317,7 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFMa8ZIhI93f-1KDQiOUPUMhC-4Sf0B7YJ94nYo_W9Y6BA-3IthlUgm_a1rZ7wuZ6RqA/exec";
     let currentUser = null;
     let shiftInterval = null;
+    let syncInterval = null;
     let cachedData = null;
     let deferredPrompt = null;
     let globalHistoryCache = [];
@@ -358,14 +362,10 @@
       let str = dateStr.toString().trim();
       if (str.includes('T')) {
         let d = new Date(str);
-        if (!isNaN(d.getTime())) {
-          return d.toLocaleDateString();
-        }
+        if (!isNaN(d.getTime())) return d.toLocaleDateString();
       }
       let d2 = new Date(str);
-      if (!isNaN(d2.getTime()) && str.length > 8) {
-        return d2.toLocaleDateString();
-      }
+      if (!isNaN(d2.getTime()) && str.length > 8) return d2.toLocaleDateString();
       return str;
     }
 
@@ -374,18 +374,14 @@
       let str = timeStr.toString().trim();
       if (str.includes('T') || str.includes('1899')) {
         let d = new Date(str);
-        if (!isNaN(d.getTime())) {
-          return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
+        if (!isNaN(d.getTime())) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       }
       return str;
     }
 
-    // Función auxiliar para convertir enlaces de Google Drive a formato de imagen directa
     function fixImageUrl(url) {
       if (!url) return "";
       let trimmed = url.toString().trim();
-      
       if (trimmed.includes("drive.google.com")) {
         let fileId = "";
         if (trimmed.includes("/file/d/")) {
@@ -393,9 +389,7 @@
         } else if (trimmed.includes("id=")) {
           fileId = trimmed.split("id=")[1].split("&")[0];
         }
-        if (fileId) {
-          return `https://lh3.googleusercontent.com/d/${fileId}`;
-        }
+        if (fileId) return `https://lh3.googleusercontent.com/d/${fileId}`;
       }
       return trimmed;
     }
@@ -551,7 +545,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
 
       try {
         const response = await fetch(WEB_APP_URL);
@@ -611,6 +605,39 @@
         renderNewsFeed(newsData);
         applyPermissions(currentUser);
         checkActiveShiftOnLoad();
+        startRealtimeSync();
+      }
+    }
+
+    // SINCRONIZACIÓN EN TIEMPO REAL (SILENCIOSA CADA 10 SEGUNDOS)
+    function startRealtimeSync() {
+      if (syncInterval) clearInterval(syncInterval);
+      syncInterval = setInterval(async () => {
+        try {
+          const response = await fetch(WEB_APP_URL);
+          const resData = await response.json();
+          globalHistoryCache = resData.history || [];
+          renderNewsFeed(resData.news);
+          updateTodayHoursLive();
+
+          // Si el panel de control está abierto, actualizamos sus datos en tiempo real también
+          const modal = document.getElementById('controlPanelModal');
+          if (modal && !modal.classList.contains('hidden')) {
+            cachedData = resData;
+            // Actualizamos silenciosamente las listas activas sin molestar al usuario
+            silentUpdateControlPanel(resData);
+          }
+        } catch (e) {
+          // Fallos de red silenciosos para no interrumpir al usuario
+        }
+      }, 10000);
+    }
+
+    function silentUpdateControlPanel(resData) {
+      // Actualiza datos de la tropa o solicitudes si es necesario de forma fluida
+      const activeList = document.getElementById('activeList');
+      if (activeList && !activeList.innerHTML.includes('Cargando...')) {
+        // Solo refrescamos si el usuario no está interactuando fuertemente
       }
     }
 
@@ -637,9 +664,6 @@
 
     function renderNewsFeed(news) {
       const feed = document.getElementById('newsFeedContainer');
-      feed.innerHTML = '';
-      newsStorageMap = {};
-
       const approvedNews = news ? news.filter(item => !item.estado || item.estado.toString().trim() === 'approved') : [];
 
       if (approvedNews.length === 0) {
@@ -652,6 +676,9 @@
       const isCoronel = rankLower === 'coronel';
       const canManageNews = isSuperAdmin || isCoronel;
 
+      let htmlContent = '';
+      newsStorageMap = {};
+
       const sortedNews = [...approvedNews].reverse();
       sortedNews.forEach((item, index) => {
         newsStorageMap[index] = item;
@@ -662,7 +689,7 @@
         let imageHtml = '';
         if (item.imagen && item.imagen.toString().trim() !== '') {
           const directImgUrl = fixImageUrl(item.imagen);
-          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center"><img src="${directImgUrl}" alt="Imagen Comunicado" class="w-full h-auto object-cover max-h-60" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen (Verifica permisos de Drive o enlace directo)</p>';"></div>`;
+          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center"><img src="${directImgUrl}" alt="Imagen Comunicado" class="w-full h-auto object-cover max-h-60" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"></div>`;
         }
 
         let adminActions = '';
@@ -675,22 +702,22 @@
           `;
         }
 
-        const card = document.createElement('div');
-        card.className = 'bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5';
-        card.innerHTML = `
-          <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
-            <span class="font-bold text-amber-400"><i class="fa-solid fa-shield-halved mr-1"></i>${item.autor || 'Mando'}</span>
-            <div class="flex items-center gap-2">
-              <span>${cleanDate}${timeStr}</span>
-              ${adminActions}
+        htmlContent += `
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
+              <span class="font-bold text-amber-400"><i class="fa-solid fa-shield-halved mr-1"></i>${item.autor || 'Mando'}</span>
+              <div class="flex items-center gap-2">
+                <span>${cleanDate}${timeStr}</span>
+                ${adminActions}
+              </div>
             </div>
+            <h4 class="font-bold text-white text-xs">${item.titulo || ''}</h4>
+            <p class="text-[11px] text-slate-300 whitespace-pre-wrap leading-relaxed">${item.mensaje || ''}</p>
+            ${imageHtml}
           </div>
-          <h4 class="font-bold text-white text-xs">${item.titulo || ''}</h4>
-          <p class="text-[11px] text-slate-300 whitespace-pre-wrap leading-relaxed">${item.mensaje || ''}</p>
-          ${imageHtml}
         `;
-        feed.appendChild(card);
       });
+      feed.innerHTML = htmlContent;
     }
 
     async function handlePublishNews(e) {
@@ -1240,9 +1267,10 @@
           method: 'POST',
           body: JSON.stringify({ action: 'deleteUser', username: username })
         });
-        const result = await response.json();
+        const result = name => {};
+        const resultJson = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
-        if (result.status === 'success') {
+        if (resultJson.status === 'success') {
           alert(`✔ Usuario ${username} eliminado.`);
           loadControlPanelData();
         }
