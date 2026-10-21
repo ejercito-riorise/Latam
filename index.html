@@ -265,7 +265,7 @@
         <!-- VISTA 5: PUBLICAR NOVEDADES -->
         <div id="viewNewsAdmin" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2">
-            <i class="fa-solid fa-bullhorn"></i> Publicar Orden del Día / Comunicado:
+            <i class="fa-solid fa-bullhorn"></i> Redactar / Publicar Orden del Día:
           </h4>
           <form onsubmit="handlePublishNews(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800">
             <div>
@@ -281,9 +281,19 @@
               <input type="url" id="newsImage" placeholder="https://ejemplo.com/imagen.jpg" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
-              Publicar Comunicado Oficial
+              <span id="newsBtnText">Publicar Comunicado</span>
             </button>
           </form>
+        </div>
+
+        <!-- VISTA 6: APROBAR COMUNICADOS -->
+        <div id="viewApproveNews" class="space-y-2 hidden">
+          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2">
+            <i class="fa-solid fa-check-to-slot"></i> Comunicados Pendientes de Aprobación:
+          </h4>
+          <div id="pendingNewsList" class="space-y-2">
+            <p class="text-xs text-slate-400 italic">Cargando solicitudes...</p>
+          </div>
         </div>
 
       </div>
@@ -353,6 +363,18 @@
       return str;
     }
 
+    function normalizeTime(timeStr) {
+      if (!timeStr) return "";
+      let str = timeStr.toString().trim();
+      if (str.includes('T') || str.includes('1899')) {
+        let d = new Date(str);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+      }
+      return str;
+    }
+
     function showAuthTab(tab) {
       const loginForm = document.getElementById('loginForm');
       const registerForm = document.getElementById('registerForm');
@@ -387,45 +409,53 @@
       const rankLower = (currentUser.rank || '').toLowerCase();
       const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
       const isCoronel = rankLower === 'coronel';
+      const isMayor = rankLower === 'mayor';
       const tabsContainer = document.getElementById('adminTabsContainer');
 
+      const btnText = document.getElementById('newsBtnText');
+      if (isMayor) {
+        btnText.innerText = "Enviar a Aprobación";
+      } else {
+        btnText.innerText = "Publicar Comunicado";
+      }
+
       if (isSuperAdmin) {
-        tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('pending')" id="adminTabPending" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Solicitudes</button>
           <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Tropa</button>
           <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
           <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
           <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Publicar</button>
+          <button onclick="switchAdminTab('approveNews')" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Aprobar</button>
         `;
         switchAdminTab('active');
       } else if (isCoronel) {
-        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
           <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
           <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
           <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Publicar</button>
+          <button onclick="switchAdminTab('approveNews')" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Aprobar</button>
+        `;
+        switchAdminTab('active');
+      } else if (isMayor) {
+        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.innerHTML = `
+          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
+          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
+          <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
+          <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Proponer</button>
         `;
         switchAdminTab('active');
       } else {
-        const isMayor = rankLower === 'mayor';
-        if (isMayor) {
-          tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
-          tabsContainer.innerHTML = `
-            <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
-            <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
-            <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
-          `;
-          switchAdminTab('active');
-        } else {
-          tabsContainer.className = "grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
-          tabsContainer.innerHTML = `
-            <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Hoy</button>
-            <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
-          `;
-          switchAdminTab('daily');
-        }
+        tabsContainer.className = "grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.innerHTML = `
+          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Hoy</button>
+          <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
+        `;
+        switchAdminTab('daily');
       }
     }
 
@@ -436,9 +466,9 @@
       const isMayor = rankLower === 'mayor';
 
       let views = ['daily', 'filters'];
-      if (isSuperAdmin) views = ['pending', 'active', 'daily', 'filters', 'newsAdmin'];
-      else if (isCoronel) views = ['active', 'daily', 'filters', 'newsAdmin'];
-      else if (isMayor) views = ['active', 'daily', 'filters'];
+      if (isSuperAdmin) views = ['pending', 'active', 'daily', 'filters', 'newsAdmin', 'approveNews'];
+      else if (isCoronel) views = ['active', 'daily', 'filters', 'newsAdmin', 'approveNews'];
+      else if (isMayor) views = ['active', 'daily', 'filters', 'newsAdmin'];
 
       views.forEach(v => {
         const viewEl = document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`);
@@ -580,23 +610,40 @@
       document.getElementById('profileTodayHours').innerText = `Hoy: ${decimalToHM(todayTotalHours)}`;
     }
 
-    // RENDERIZAR TABLÓN DE NOVEDADES CON FECHA Y HORA
     function renderNewsFeed(news) {
       const feed = document.getElementById('newsFeedContainer');
       feed.innerHTML = '';
 
-      if (!news || news.length === 0) {
+      const approvedNews = news ? news.filter(item => !item.estado || item.estado.toString().trim() === 'approved') : [];
+
+      if (approvedNews.length === 0) {
         feed.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay órdenes del día publicadas.</p>';
         return;
       }
 
-      const sortedNews = [...news].reverse();
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
+      const isCoronel = rankLower === 'coronel';
+      const canManageNews = isSuperAdmin || isCoronel;
+
+      const sortedNews = [...approvedNews].reverse();
       sortedNews.forEach(item => {
         const cleanDate = normalizeDate(item.fecha);
-        const timeStr = item.hora ? ` • ${item.hora}` : '';
+        const cleanTime = normalizeTime(item.hora);
+        const timeStr = cleanTime ? ` • ${cleanTime}` : '';
         let imageHtml = '';
         if (item.imagen && item.imagen.toString().trim() !== '') {
           imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800"><img src="${item.imagen}" alt="Imagen Comunicado" class="w-full h-auto object-cover max-h-60"></div>`;
+        }
+
+        let adminActions = '';
+        if (canManageNews) {
+          adminActions = `
+            <div class="flex gap-1.5">
+              <button onclick="editNews('${item.titulo}', '${item.mensaje}', '${item.imagen || ''}')" class="text-blue-400 hover:text-blue-300 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteNews('${item.titulo}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          `;
         }
 
         const card = document.createElement('div');
@@ -604,7 +651,10 @@
         card.innerHTML = `
           <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
             <span class="font-bold text-amber-400"><i class="fa-solid fa-shield-halved mr-1"></i>${item.autor || 'Mando'}</span>
-            <span>${cleanDate}${timeStr}</span>
+            <div class="flex items-center gap-2">
+              <span>${cleanDate}${timeStr}</span>
+              ${adminActions}
+            </div>
           </div>
           <h4 class="font-bold text-white text-xs">${item.titulo || ''}</h4>
           <p class="text-[11px] text-slate-300 whitespace-pre-wrap leading-relaxed">${item.mensaje || ''}</p>
@@ -620,9 +670,10 @@
       const rankLower = (currentUser.rank || '').toLowerCase();
       const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
       const isCoronel = rankLower === 'coronel';
+      const isMayor = rankLower === 'mayor';
       
-      if (!isSuperAdmin && !isCoronel) {
-        alert('⛔ Acceso denegado. Solo el General y los Coroneles pueden publicar comunicados.');
+      if (!isSuperAdmin && !isCoronel && !isMayor) {
+        alert('⛔ Acceso denegado.');
         return;
       }
 
@@ -634,6 +685,8 @@
       const dateStr = now.toLocaleDateString();
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const author = `${currentUser.username} (${currentUser.rank})`;
+
+      const status = (isMayor) ? 'pending' : 'approved';
 
       document.getElementById('loadingOverlay').classList.remove('hidden');
 
@@ -647,14 +700,19 @@
             autor: author,
             titulo: title,
             mensaje: message,
-            imagen: imageUrl
+            imagen: imageUrl,
+            estado: status
           })
         });
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         if (result.status === 'success') {
-          alert('✔ Orden del día publicada con éxito.');
+          if (isMayor) {
+            alert('✔ Comunicado enviado al Alto Mando para su revisión y aprobación.');
+          } else {
+            alert('✔ Orden del día publicada con éxito.');
+          }
           document.getElementById('newsTitle').value = '';
           document.getElementById('newsMessage').value = '';
           document.getElementById('newsImage').value = '';
@@ -667,6 +725,56 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('Error de conexión con la base de datos.');
       }
+    }
+
+    async function approveNews(title) {
+      if (!confirm(`¿Aprobar y publicar el comunicado "${title}"?`)) return;
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'approveNews', titulo: title })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        if (result.status === 'success') {
+          alert('✔ Comunicado aprobado y publicado en el tablón.');
+          loadControlPanelData();
+          loadSession();
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al aprobar.');
+      }
+    }
+
+    async function deleteNews(title) {
+      if (!confirm(`⚠ ¿Estás seguro de eliminar este comunicado?`)) return;
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'deleteNews', titulo: title })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        if (result.status === 'success') {
+          alert('✔ Comunicado eliminado.');
+          loadControlPanelData();
+          loadSession();
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al eliminar.');
+      }
+    }
+
+    function editNews(title, message, image) {
+      switchAdminTab('newsAdmin');
+      document.getElementById('newsTitle').value = title;
+      document.getElementById('newsMessage').value = message;
+      document.getElementById('newsImage').value = image;
+      alert('Modifica los datos en el formulario y vuelve a publicar (puedes eliminar el anterior si lo deseas).');
     }
 
     function applyPermissions(user) {
@@ -790,21 +898,25 @@
       const pendingList = document.getElementById('pendingList');
       const activeList = document.getElementById('activeList');
       const dailyReportList = document.getElementById('dailyReportList');
+      const pendingNewsList = document.getElementById('pendingNewsList');
       
       pendingList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
       activeList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
       dailyReportList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
+      if (pendingNewsList) pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
 
       try {
         const response = await fetch(WEB_APP_URL);
         cachedData = await response.json();
         const users = cachedData.users;
         const history = cachedData.history;
+        const news = cachedData.news;
 
         const rankLower = (currentUser.rank || '').toLowerCase();
         const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
+        const isCoronel = rankLower === 'coronel';
 
-        // 1. PENDIENTES
+        // 1. PENDIENTES DE USUARIOS
         const pendingUsers = users.filter(u => u.status === 'pending');
         pendingList.innerHTML = '';
         if (!isSuperAdmin) {
@@ -830,7 +942,34 @@
           });
         }
 
-        // 2. ACTIVOS
+        // 2. COMUNICADOS PENDIENTES DE APROBACIÓN
+        if (pendingNewsList && (isSuperAdmin || isCoronel)) {
+          const pendingNews = news ? news.filter(item => item.estado && item.estado.toString().trim() === 'pending') : [];
+          pendingNewsList.innerHTML = '';
+          if (pendingNews.length === 0) {
+            pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay comunicados pendientes de aprobación.</p>';
+          } else {
+            pendingNews.forEach(item => {
+              const newsItem = document.createElement('div');
+              newsItem.className = 'bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1.5';
+              newsItem.innerHTML = `
+                <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-800 pb-1">
+                  <span class="font-bold text-amber-400">Autor: ${item.autor}</span>
+                  <span>${normalizeDate(item.fecha)}</span>
+                </div>
+                <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
+                <p class="text-[11px] text-slate-300">${item.mensaje}</p>
+                <div class="flex gap-2 pt-1">
+                  <button onclick="approveNews('${item.titulo}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-check"></i> Aprobar</button>
+                  <button onclick="deleteNews('${item.titulo}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Rechazar</button>
+                </div>
+              `;
+              pendingNewsList.appendChild(newsItem);
+            });
+          }
+        }
+
+        // 3. ACTIVOS
         const activeUsers = users.filter(u => u.status === 'approved');
         activeList.innerHTML = '';
         if (activeUsers.length === 0) {
@@ -881,7 +1020,7 @@
           });
         }
 
-        // 3. REPORTE DIARIO DE HOY (RANKING)
+        // 4. REPORTE DIARIO DE HOY (RANKING)
         const todayStr = new Date().toLocaleDateString();
         let dailyTotals = {};
         activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; });
