@@ -150,8 +150,8 @@
           </div>
         </div>
 
-        <!-- MÓDULO COMANDANCIA -->
-        <div id="commandPanelModule" class="military-card p-4 rounded-xl">
+        <!-- MÓDULO COMANDANCIA (GESTIÓN TOTAL) -->
+        <div id="commandPanelModule" class="military-card p-4 rounded-xl space-y-4">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-user-gear text-purple-400"></i>
@@ -160,11 +160,21 @@
             <span id="commandAccessBadge" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">Restringido</span>
           </div>
 
-          <!-- SOLICITUDES PENDIENTES DE APROBACIÓN -->
-          <div id="pendingRequestsContainer" class="mt-3 border-t border-slate-800 pt-3 hidden">
-            <h4 class="text-xs font-bold text-amber-400 mb-2">⚠ Solicitudes de Ingreso Pendientes:</h4>
-            <div id="pendingList" class="space-y-2">
-              <p class="text-xs text-slate-400 italic">Cargando solicitudes...</p>
+          <div id="commandAdminContent" class="hidden space-y-4">
+            <!-- PENDIENTES -->
+            <div class="border-t border-slate-800 pt-3">
+              <h4 class="text-xs font-bold text-amber-400 mb-2 flex items-center gap-1">
+                <i class="fa-solid fa-clock-rotate-left"></i> Solicitudes Pendientes:
+              </h4>
+              <div id="pendingList" class="space-y-2"></div>
+            </div>
+
+            <!-- DIRECTORIO Y GESTIÓN DE TROPA -->
+            <div class="border-t border-slate-800 pt-3">
+              <h4 class="text-xs font-bold text-blue-400 mb-2 flex items-center gap-1">
+                <i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:
+              </h4>
+              <div id="activeList" class="space-y-2"></div>
             </div>
           </div>
           
@@ -207,7 +217,7 @@
       }
     }
 
-    // REGISTRO Y MENSAJE NEUTRO DE APROBACIÓN
+    // REGISTRO
     async function handleRegister(e) {
       e.preventDefault();
       const user = document.getElementById('regUsername').value.trim();
@@ -299,64 +309,204 @@
     function applyPermissions(user) {
       const isAuthorizedAdmin = (user.rank === 'General' || user.username.toLowerCase() === 'mike_covid');
       const commandBadge = document.getElementById('commandAccessBadge');
-      const pendingContainer = document.getElementById('pendingRequestsContainer');
+      const adminContent = document.getElementById('commandAdminContent');
       const restrictedText = document.getElementById('commandRestrictedText');
 
       if (isAuthorizedAdmin) {
         commandBadge.innerText = 'Mando Autorizado';
         commandBadge.className = 'text-[10px] bg-purple-900/60 text-purple-300 px-2 py-0.5 rounded border border-purple-700 font-bold';
-        pendingContainer.classList.remove('hidden');
+        adminContent.classList.remove('hidden');
         restrictedText.classList.add('hidden');
-        fetchPendingUsers();
+        loadUsersData();
       } else {
         commandBadge.innerText = 'Restringido';
         commandBadge.className = 'text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700';
-        pendingContainer.classList.add('hidden');
+        adminContent.classList.add('hidden');
         restrictedText.classList.remove('hidden');
       }
     }
 
-    // VER PENDIENTES
-    async function fetchPendingUsers() {
+    // CARGAR Y RENDERIZAR TODO EL PERSONAL (PENDIENTE Y ACTIVO)
+    async function loadUsersData() {
       const pendingList = document.getElementById('pendingList');
-      pendingList.innerHTML = '<p class="text-xs text-slate-400 italic">Cargando solicitudes...</p>';
+      const activeList = document.getElementById('activeList');
+      pendingList.innerHTML = '<p class="text-xs text-slate-400 italic">Cargando pendientes...</p>';
+      activeList.innerHTML = '<p class="text-xs text-slate-400 italic">Cargando personal activo...</p>';
 
       try {
         const response = await fetch(WEB_APP_URL);
         const users = await response.json();
-        const pendingUsers = users.filter(u => u.status === 'pending');
 
+        // 1. RENDERIZAR PENDIENTES
+        const pendingUsers = users.filter(u => u.status === 'pending');
         pendingList.innerHTML = '';
         if (pendingUsers.length === 0) {
-          pendingList.innerHTML = '<p class="text-xs text-slate-400 italic">No hay solicitudes pendientes.</p>';
-          return;
+          pendingList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay solicitudes pendientes.</p>';
+        } else {
+          pendingUsers.forEach(u => {
+            const item = document.createElement('div');
+            item.className = 'bg-slate-900 p-2 rounded-lg border border-amber-900/40 flex items-center justify-between text-xs';
+            item.innerHTML = `
+              <div>
+                <span class="font-bold text-white">${u.username}</span>
+                <span class="text-[10px] text-amber-400 ml-1">(${u.rank})</span>
+                <p class="text-[10px] text-slate-400">Edad: ${u.age || 'N/A'}</p>
+              </div>
+              <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px]">
+                Aprobar
+              </button>
+            `;
+            pendingList.appendChild(item);
+          });
         }
 
-        pendingUsers.forEach(u => {
-          const item = document.createElement('div');
-          item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-700 flex items-center justify-between text-xs';
-          item.innerHTML = `
-            <div>
-              <span class="font-bold text-white">${u.username}</span>
-              <span class="text-[10px] text-blue-400 ml-1">(${u.rank})</span>
-              <p class="text-[10px] text-slate-400">Edad: ${u.age || 'N/A'} años</p>
-            </div>
-            <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded text-[10px]">
-              Aprobar
-            </button>
-          `;
-          pendingList.appendChild(item);
-        });
+        // 2. RENDERIZAR PERSONAL ACTIVO CON OPCIÓN DE CAMBIAR RANGO Y ELIMINAR
+        const activeUsers = users.filter(u => u.status === 'approved');
+        activeList.innerHTML = '';
+        if (activeUsers.length === 0) {
+          activeList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay personal activo registrado.</p>';
+        } else {
+          activeUsers.forEach(u => {
+            const item = document.createElement('div');
+            item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-2';
+            item.innerHTML = `
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-white text-xs">${u.username}</span>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ml-1 badge-${u.rank.toLowerCase()}">${u.rank}</span>
+                  <span class="text-[10px] text-slate-400 ml-1">(${u.age || 'N/A'} años)</span>
+                </div>
+                <button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+              <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60">
+                <span class="text-[10px] text-slate-400">Cambiar Rango:</span>
+                <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none">
+                  <option value="" disabled selected>Seleccionar Rango</option>
+                  <option value="Privado">Privado</option>
+                  <option value="Sargento">Sargento</option>
+                  <option value="Teniente">Teniente</option>
+                  <option value="Mayor">Mayor</option>
+                  <option value="Coronel">Coronel</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+            `;
+            activeList.appendChild(item);
+          });
+        }
+
       } catch (err) {
-        pendingList.innerHTML = '<p class="text-xs text-red-400">Error al cargar solicitudes.</p>';
+        pendingList.innerHTML = '<p class="text-xs text-red-400">Error al cargar datos.</p>';
+        activeList.innerHTML = '<p class="text-xs text-red-400">Error al cargar datos.</p>';
       }
     }
 
-    // APROBAR USUARIO
+    // ACCIÓN: APROBAR USUARIO
     async function approveUser(username) {
       try {
         const response = await fetch(WEB_APP_URL, {
           method: 'POST',
           body: JSON.stringify({ action: 'approve', username: username })
         });
-        const result = await response.json
+        const result = await response.json();
+        if (result.status === 'success') {
+          alert(`✔ La cuenta de ${username} ha sido aprobada.`);
+          loadUsersData();
+        }
+      } catch (err) {
+        alert('Error de conexión.');
+      }
+    }
+
+    // ACCIÓN: CAMBIAR RANGO (ASCENSO)
+    async function changeUserRank(username, newRank) {
+      if (!confirm(`¿Confirmas cambiar el rango de ${username} a "${newRank}"?`)) return;
+
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'updateRank', username: username, newRank: newRank })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+
+        if (result.status === 'success') {
+          alert(`✔ Rango de ${username} actualizado a ${newRank} con éxito.`);
+          loadUsersData();
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al actualizar el rango.');
+      }
+    }
+
+    // ACCIÓN: ELIMINAR USUARIO
+    async function deleteUser(username) {
+      if (!confirm(`⚠ ¿Estás seguro de ELIMINAR permanentemente a ${username} del sistema?`)) return;
+
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'deleteUser', username: username })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+
+        if (result.status === 'success') {
+          alert(`✔ Usuario ${username} eliminado de la base de datos.`);
+          loadUsersData();
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al eliminar usuario.');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('rioRiseCurrentSession');
+      location.reload();
+    }
+
+    // CONTROL DE TURNOS
+    function toggleShift() {
+      const btn = document.getElementById('btnToggleShift');
+      const badge = document.getElementById('shiftStatusBadge');
+      const timerDisplay = document.getElementById('timerDisplay');
+
+      if (!shiftTimer) {
+        shiftTimer = setInterval(() => {
+          shiftSeconds++;
+          const hrs = String(Math.floor(shiftSeconds / 3600)).padStart(2, '0');
+          const mins = String(Math.floor((shiftSeconds % 3600) / 60)).padStart(2, '0');
+          const secs = String(shiftSeconds % 60).padStart(2, '0');
+          document.getElementById('stopwatch').innerText = `${hrs}:${mins}:${secs}`;
+        }, 1000);
+
+        btn.innerHTML = '<i class="fa-solid fa-square mr-1"></i> Finalizar Turno';
+        btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded text-sm transition';
+        badge.innerText = 'EN SERVICIO';
+        badge.className = 'text-[10px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold';
+        timerDisplay.classList.remove('hidden');
+      } else {
+        clearInterval(shiftTimer);
+        shiftTimer = null;
+        alert(`Turno finalizado. Tiempo registrado: ${document.getElementById('stopwatch').innerText}`);
+        shiftSeconds = 0;
+        document.getElementById('stopwatch').innerText = '00:00:00';
+        
+        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> Iniciar Turno';
+        btn.className = 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-sm transition';
+        badge.innerText = 'FUERA DE SERVICIO';
+        badge.className = 'text-[10px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
+        timerDisplay.classList.add('hidden');
+      }
+    }
+
+    window.onload = loadSession;
+  </script>
+</body>
+</html>
