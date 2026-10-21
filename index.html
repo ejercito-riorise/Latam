@@ -342,11 +342,9 @@
       }
     }
 
-    // VERIFICAR SI HAY UN TURNO ACTIVO AL ABRIR LA PÁGINA
     function checkActiveShiftOnLoad() {
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
       if (activeShiftStart) {
-        // Ya estaba en turno, activar interfaz en curso
         activateShiftUI(parseInt(activeShiftStart));
       }
     }
@@ -363,7 +361,6 @@
       btn.innerHTML = '<i class="fa-solid fa-square mr-1"></i> Finalizar Turno';
       btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded text-xs transition';
 
-      // Actualizar el cronómetro en vivo basado en la hora de inicio real (incluso si cerró la web)
       if (shiftInterval) clearInterval(shiftInterval);
       shiftInterval = setInterval(() => {
         const now = Date.now();
@@ -376,18 +373,15 @@
       }, 1000);
     }
 
-    // CONTROL DE TURNOS PERSISTENTE
     function toggleShift() {
       const activeShiftKey = `shiftStart_${currentUser.username}`;
       const savedStart = localStorage.getItem(activeShiftKey);
 
       if (!savedStart) {
-        // INICIAR TURNO
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
         activateShiftUI(startTime);
       } else {
-        // FINALIZAR TURNO
         clearInterval(shiftInterval);
         shiftInterval = null;
 
@@ -396,10 +390,8 @@
         const totalSeconds = Math.floor((endTime - startTime) / 1000);
         const hoursWorked = totalSeconds / 3600;
 
-        // Limpiar almacenamiento local del turno
         localStorage.removeItem(activeShiftKey);
 
-        // Resetear UI local
         const btn = document.getElementById('btnToggleShift');
         const badge = document.getElementById('shiftStatusBadge');
         const timerDisplay = document.getElementById('timerDisplay');
@@ -410,18 +402,19 @@
         badge.className = 'text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
         timerDisplay.classList.add('hidden');
 
-        // Formatear el tiempo total que hizo para el mensaje de alerta
         const finalHrs = Math.floor(totalSeconds / 3600);
         const finalMins = Math.floor((totalSeconds % 3600) / 60);
         const finalSecs = totalSeconds % 60;
         const timeSpentMsg = `${finalHrs}h ${finalMins}m ${finalSecs}s`;
 
-        // Guardar en Google Sheets
-        saveShiftHours(hoursWorked, timeSpentMsg);
+        // Obtener la fecha actual en formato legible (Ej: 21/10/2026)
+        const currentDate = new Date().toLocaleDateString();
+
+        saveShiftLog(hoursWorked, timeSpentMsg, currentDate);
       }
     }
 
-    async function saveShiftHours(hoursWorked, timeSpentMsg) {
+    async function saveShiftLog(hoursWorked, timeSpentMsg, currentDate) {
       document.getElementById('loadingOverlay').classList.remove('hidden');
 
       try {
@@ -430,23 +423,24 @@
           body: JSON.stringify({ 
             action: 'updateHours', 
             username: currentUser.username, 
-            addedHours: hoursWorked 
+            addedHours: hoursWorked,
+            durationText: timeSpentMsg,
+            date: currentDate
           })
         });
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         if (result.status === 'success') {
-          currentUser.hours = result.total;
-          localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-          document.getElementById('profileHours').innerText = `${Number(currentUser.hours).toFixed(2)} hrs`;
-          alert(`✔ Turno finalizado con éxito.\n⏱ Tiempo total de este turno: ${timeSpentMsg}\nSe han sumado tus horas al historial de la facción.`);
+          // Recargar sesión local para refrescar horas
+          alert(`✔ Turno finalizado con éxito.\n📅 Fecha: ${new Date().toLocaleDateString()}\n⏱ Duración: ${timeSpentMsg}\n¡Guardado en el historial de la facción!`);
+          location.reload();
         } else {
-          alert('⚠ Turno terminado, pero hubo un error al sincronizar con la base de datos.');
+          alert('⚠ Turno terminado, pero hubo un error al sincronizar con el historial.');
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error de red al registrar las horas.');
+        alert('Error de red al registrar el turno.');
       }
     }
 
@@ -502,7 +496,7 @@
                 <div>
                   <span class="font-bold text-white text-[11px]">${u.username}</span>
                   <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ml-1 badge-${u.rank.toLowerCase()}">${u.rank}</span>
-                  <p class="text-[9px] text-emerald-400 font-mono font-bold mt-0.5">⏱ Horas: ${Number(u.hours || 0).toFixed(2)} hrs</p>
+                  <p class="text-[9px] text-emerald-400 font-mono font-bold mt-0.5">⏱ Horas Totales: ${Number(u.hours || 0).toFixed(2)} hrs</p>
                 </div>
                 <button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario">
                   <i class="fa-solid fa-trash-can"></i>
