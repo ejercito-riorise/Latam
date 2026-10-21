@@ -174,7 +174,7 @@
             <i class="fa-solid fa-bullhorn text-amber-400 text-sm"></i>
             <h3 class="font-bold text-white text-xs">Órdenes del Día y Comunicados</h3>
           </div>
-          <div id="newsFeedContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+          <div id="newsFeedContainer" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
             <p class="text-[11px] text-slate-400 italic">Cargando boletines oficiales...</p>
           </div>
         </div>
@@ -262,7 +262,7 @@
           </div>
         </div>
 
-        <!-- VISTA 5: PUBLICAR NOVEDADES (GENERAL / MIKE_COVID) -->
+        <!-- VISTA 5: PUBLICAR NOVEDADES -->
         <div id="viewNewsAdmin" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2">
             <i class="fa-solid fa-bullhorn"></i> Publicar Orden del Día / Comunicado:
@@ -275,6 +275,10 @@
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">Mensaje / Orden Oficial</label>
               <textarea id="newsMessage" required rows="4" placeholder="Escribe aquí los detalles de la orden..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-300 mb-1">URL de Imagen (Opcional)</label>
+              <input type="url" id="newsImage" placeholder="https://ejemplo.com/imagen.jpg" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
               Publicar Comunicado Oficial
@@ -335,11 +339,18 @@
 
     function normalizeDate(dateStr) {
       if (!dateStr) return "";
-      let d = new Date(dateStr);
-      if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString();
+      let str = dateStr.toString().trim();
+      if (str.includes('T')) {
+        let d = new Date(str);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleDateString();
+        }
       }
-      return dateStr.toString().trim();
+      let d2 = new Date(str);
+      if (!isNaN(d2.getTime()) && str.length > 8) {
+        return d2.toLocaleDateString();
+      }
+      return str;
     }
 
     function showAuthTab(tab) {
@@ -389,20 +400,32 @@
         `;
         switchAdminTab('active');
       } else if (isCoronel) {
-        tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
-          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
-          <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
+          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
+          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
+          <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
+          <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Publicar</button>
         `;
         switchAdminTab('active');
       } else {
-        tabsContainer.className = "grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
-        tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Hoy</button>
-          <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
-        `;
-        switchAdminTab('daily');
+        const isMayor = rankLower === 'mayor';
+        if (isMayor) {
+          tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+          tabsContainer.innerHTML = `
+            <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
+            <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
+            <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
+          `;
+          switchAdminTab('active');
+        } else {
+          tabsContainer.className = "grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+          tabsContainer.innerHTML = `
+            <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Hoy</button>
+            <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
+          `;
+          switchAdminTab('daily');
+        }
       }
     }
 
@@ -410,10 +433,12 @@
       const rankLower = (currentUser.rank || '').toLowerCase();
       const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
       const isCoronel = rankLower === 'coronel';
+      const isMayor = rankLower === 'mayor';
 
       let views = ['daily', 'filters'];
       if (isSuperAdmin) views = ['pending', 'active', 'daily', 'filters', 'newsAdmin'];
-      else if (isCoronel) views = ['active', 'daily', 'filters'];
+      else if (isCoronel) views = ['active', 'daily', 'filters', 'newsAdmin'];
+      else if (isMayor) views = ['active', 'daily', 'filters'];
 
       views.forEach(v => {
         const viewEl = document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`);
@@ -555,6 +580,7 @@
       document.getElementById('profileTodayHours').innerText = `Hoy: ${decimalToHM(todayTotalHours)}`;
     }
 
+    // RENDERIZAR TABLÓN DE NOVEDADES CON FECHA Y HORA
     function renderNewsFeed(news) {
       const feed = document.getElementById('newsFeedContainer');
       feed.innerHTML = '';
@@ -566,15 +592,23 @@
 
       const sortedNews = [...news].reverse();
       sortedNews.forEach(item => {
+        const cleanDate = normalizeDate(item.fecha);
+        const timeStr = item.hora ? ` • ${item.hora}` : '';
+        let imageHtml = '';
+        if (item.imagen && item.imagen.toString().trim() !== '') {
+          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800"><img src="${item.imagen}" alt="Imagen Comunicado" class="w-full h-auto object-cover max-h-60"></div>`;
+        }
+
         const card = document.createElement('div');
-        card.className = 'bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1';
+        card.className = 'bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5';
         card.innerHTML = `
           <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
             <span class="font-bold text-amber-400"><i class="fa-solid fa-shield-halved mr-1"></i>${item.autor || 'Mando'}</span>
-            <span>${item.fecha || ''}</span>
+            <span>${cleanDate}${timeStr}</span>
           </div>
           <h4 class="font-bold text-white text-xs">${item.titulo || ''}</h4>
           <p class="text-[11px] text-slate-300 whitespace-pre-wrap leading-relaxed">${item.mensaje || ''}</p>
+          ${imageHtml}
         `;
         feed.appendChild(card);
       });
@@ -582,9 +616,23 @@
 
     async function handlePublishNews(e) {
       e.preventDefault();
+      
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
+      const isCoronel = rankLower === 'coronel';
+      
+      if (!isSuperAdmin && !isCoronel) {
+        alert('⛔ Acceso denegado. Solo el General y los Coroneles pueden publicar comunicados.');
+        return;
+      }
+
       const title = document.getElementById('newsTitle').value.trim();
       const message = document.getElementById('newsMessage').value.trim();
-      const dateStr = new Date().toLocaleDateString();
+      const imageUrl = document.getElementById('newsImage').value.trim();
+      
+      const now = new Date();
+      const dateStr = now.toLocaleDateString();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const author = `${currentUser.username} (${currentUser.rank})`;
 
       document.getElementById('loadingOverlay').classList.remove('hidden');
@@ -595,9 +643,11 @@
           body: JSON.stringify({
             action: 'publishNews',
             fecha: dateStr,
+            hora: timeStr,
             autor: author,
             titulo: title,
-            mensaje: message
+            mensaje: message,
+            imagen: imageUrl
           })
         });
         const result = await response.json();
@@ -607,6 +657,7 @@
           alert('✔ Orden del día publicada con éxito.');
           document.getElementById('newsTitle').value = '';
           document.getElementById('newsMessage').value = '';
+          document.getElementById('newsImage').value = '';
           toggleControlPanel(false);
           loadSession();
         } else {
@@ -830,7 +881,7 @@
           });
         }
 
-        // 3. REPORTE DIARIO DE HOY (ORDENADO COMO RANKING)
+        // 3. REPORTE DIARIO DE HOY (RANKING)
         const todayStr = new Date().toLocaleDateString();
         let dailyTotals = {};
         activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; });
