@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejército RioRise - Intranet</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/shield.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #0b0f19; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
+    .military-card { background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid #334155; }
+    .military-card:hover { border-color: #3b82f6; }
+    .badge-general { background-color: #7c3aed; color: #fff; }
+    .badge-coronel { background-color: #dc2626; color: #fff; }
+    .badge-mayor { background-color: #ea580c; color: #fff; }
+    .badge-teniente { background-color: #d97706; color: #fff; }
+    .badge-sargento { background-color: #2563eb; color: #fff; }
+    .badge-privado { background-color: #475569; color: #fff; }
+  </style>
+</head>
+<body class="min-h-screen pb-12">
+
+  <!-- ENCABEZADO -->
+  <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-slate-800 border border-blue-500 flex items-center justify-center">
+          <i class="fa-solid fa-shield-halved text-blue-400 text-lg"></i>
+        </div>
+        <div>
+          <h1 class="font-bold tracking-wider text-white text-base">EJÉRCITO RIORISE</h1>
+          <p class="text-xs text-slate-400">Portal interno de la facción</p>
+        </div>
+      </div>
+      <div id="userBadgeHeader" class="hidden">
+        <span id="headerRankBadge" class="text-xs px-2 py-1 rounded font-bold uppercase"></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto p-4 space-y-4">
+
+    <!-- BOTÓN INSTALAR APP (PWA) -->
+    <div id="installAppBanner" class="hidden bg-blue-900/40 border border-blue-500/50 p-3 rounded-lg flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-mobile-screen-button text-blue-400 text-xl"></i>
+        <span class="text-xs text-slate-200">Instala la App en tu celular</span>
+      </div>
+      <button id="btnInstall" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded">
+        Instalar
+      </button>
+    </div>
+
+    <!-- SECCIÓN AUTENTICACIÓN -->
+    <div id="authSection" class="military-card p-5 rounded-xl shadow-lg">
+      <h2 class="text-lg font-bold text-white mb-4 text-center border-b border-slate-700 pb-2">
+        Acceso Militar
+      </h2>
+      <form id="loginForm" onsubmit="handleAuth(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre / Nick del Soldado</label>
+          <input type="text" id="username" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Rango Actual</label>
+          <select id="userRank" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+            <option value="Privado">Privado</option>
+            <option value="Sargento">Sargento</option>
+            <option value="Teniente">Teniente</option>
+            <option value="Mayor">Mayor</option>
+            <option value="Coronel">Coronel</option>
+            <option value="General">General</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-sm transition">
+          Ingresar al Sistema
+        </button>
+      </form>
+    </div>
+
+    <!-- PANEL PRINCIPAL (POST-LOGIN) -->
+    <div id="mainDashboard" class="hidden space-y-4">
+      
+      <!-- PERFIL DE USUARIO -->
+      <div class="military-card p-4 rounded-xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-user-shield text-2xl text-blue-400"></i>
+          <div>
+            <h3 id="profileName" class="font-bold text-white text-sm"></h3>
+            <span id="profileRank" class="text-[10px] px-2 py-0.5 rounded font-bold uppercase"></span>
+          </div>
+        </div>
+        <button onclick="logout()" class="text-xs text-red-400 hover:underline">
+          <i class="fa-solid fa-right-from-bracket"></i> Salir
+        </button>
+      </div>
+
+      <!-- MÓDULO 1: CONTROL DE TURNOS (ACCESIBLE PARA TODOS) -->
+      <div class="military-card p-4 rounded-xl">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-clock text-blue-400"></i>
+            <h3 class="font-bold text-white text-sm">Control de Turnos</h3>
+          </div>
+          <span id="shiftStatusBadge" class="text-[10px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold">FUERA DE SERVICIO</span>
+        </div>
+
+        <div id="shiftControls" class="space-y-3">
+          <div id="timerDisplay" class="hidden text-center py-2 bg-slate-950 rounded border border-slate-800">
+            <p class="text-xs text-slate-400">Tiempo en servicio:</p>
+            <p id="stopwatch" class="text-2xl font-mono font-bold text-green-400">00:00:00</p>
+          </div>
+          <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-sm transition">
+            <i class="fa-solid fa-play mr-1"></i> Iniciar Turno
+          </button>
+        </div>
+      </div>
+
+      <!-- MÓDULO 2: PANEL DE COMANDANCIA (SOLO RANGO GENERAL) -->
+      <div id="commandPanelModule" class="military-card p-4 rounded-xl opacity-60">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-user-gear text-purple-400"></i>
+            <h3 class="font-bold text-white text-sm">Panel de Comandancia</h3>
+          </div>
+          <span id="commandAccessBadge" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">Solo General</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">Gestión de mandos, administración de usuarios y reportes globales.</p>
+        <div id="commandContent" class="text-xs text-slate-500 italic border-t border-slate-800 pt-2">
+          Acceso restringido. Exclusivo para el rango de General.
+        </div>
+      </div>
+
+      <!-- MÓDULOS EN CONSTRUCCIÓN -->
+      <div class="military-card p-4 rounded-xl opacity-75">
+        <div class="flex items-center gap-2 mb-1">
+          <i class="fa-solid fa-bullhorn text-amber-400"></i>
+          <h3 class="font-bold text-white text-sm">Central de Novedades</h3>
+        </div>
+        <p class="text-xs text-slate-400">Anuncios oficiales y órdenes del día.</p>
+        <span class="inline-block mt-2 text-[10px] bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-800 font-bold">EN CONSTRUCCIÓN</span>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let currentUser = null;
+    let shiftTimer = null;
+    let shiftSeconds = 0;
+    let deferredPrompt = null;
+
+    // CAPTURA DE EVENTO PARA INSTALAR PWA EN EL CELULAR
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installAppBanner').classList.remove('hidden');
+    });
+
+    document.getElementById('btnInstall').addEventListener('click', () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+          document.getElementById('installAppBanner').classList.add('hidden');
+        });
+      }
+    });
+
+    // SISTEMA DE REGISTRO E INICIO DE SESIÓN
+    function handleAuth(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const rank = document.getElementById('userRank').value;
+
+      currentUser = { username, rank };
+      localStorage.setItem('rioRiseUser', JSON.stringify(currentUser));
+      loadUserSession();
+    }
+
+    function loadUserSession() {
+      const saved = localStorage.getItem('rioRiseUser');
+      if (saved) {
+        currentUser = JSON.parse(saved);
+        document.getElementById('authSection').classList.add('hidden');
+        document.getElementById('mainDashboard').classList.remove('hidden');
+        
+        document.getElementById('profileName').innerText = currentUser.username;
+        const rankEl = document.getElementById('profileRank');
+        rankEl.innerText = currentUser.rank;
+        rankEl.className = `text-[10px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
+        
+        applyPermissions(currentUser.rank);
+      }
+    }
+
+    // REGLA DE PERMISOS: SOLO EL RANGO 'GENERAL' TIENE PERMISOS ADMINISTRATIVOS
+    function applyPermissions(rank) {
+      const isGeneral = (rank === 'General');
+      const commandModule = document.getElementById('commandPanelModule');
+      const commandBadge = document.getElementById('commandAccessBadge');
+      const commandContent = document.getElementById('commandContent');
+
+      if (isGeneral) {
+        commandModule.classList.remove('opacity-60');
+        commandBadge.innerText = 'Acceso de General';
+        commandBadge.className = 'text-[10px] bg-purple-900/60 text-purple-300 px-2 py-0.5 rounded border border-purple-700 font-bold';
+        commandContent.innerHTML = `
+          <div class="space-y-2 text-slate-200">
+            <p class="font-semibold text-purple-300">✔ Herramientas de Comandante activas:</p>
+            <button class="w-full bg-purple-700 hover:bg-purple-600 text-white text-xs font-bold py-1.5 rounded">
+              Aprobar Ascensos de Tropa
+            </button>
+            <button class="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-1.5 rounded border border-slate-700">
+              Supervisar Historial de Turnos
+            </button>
+          </div>
+        `;
+      } else {
+        commandModule.classList.add('opacity-60');
+        commandBadge.innerText = 'Solo General';
+        commandBadge.className = 'text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700';
+        commandContent.innerText = 'Acceso restringido. Exclusivo para el rango de General.';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('rioRiseUser');
+      location.reload();
+    }
+
+    // CONTROL DE TURNOS
+    function toggleShift() {
+      const btn = document.getElementById('btnToggleShift');
+      const badge = document.getElementById('shiftStatusBadge');
+      const timerDisplay = document.getElementById('timerDisplay');
+
+      if (!shiftTimer) {
+        shiftTimer = setInterval(() => {
+          shiftSeconds++;
+          const hrs = String(Math.floor(shiftSeconds / 3600)).padStart(2, '0');
+          const mins = String(Math.floor((shiftSeconds % 3600) / 60)).padStart(2, '0');
+          const secs = String(shiftSeconds % 60).padStart(2, '0');
+          document.getElementById('stopwatch').innerText = `${hrs}:${mins}:${secs}`;
+        }, 1000);
+
+        btn.innerHTML = '<i class="fa-solid fa-square mr-1"></i> Finalizar Turno';
+        btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded text-sm transition';
+        badge.innerText = 'EN SERVICIO';
+        badge.className = 'text-[10px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold';
+        timerDisplay.classList.remove('hidden');
+      } else {
+        clearInterval(shiftTimer);
+        shiftTimer = null;
+        alert(`Turno finalizado. Tiempo registrado: ${document.getElementById('stopwatch').innerText}`);
+        shiftSeconds = 0;
+        document.getElementById('stopwatch').innerText = '00:00:00';
+        
+        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> Iniciar Turno';
+        btn.className = 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-sm transition';
+        badge.innerText = 'FUERA DE SERVICIO';
+        badge.className = 'text-[10px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
+        timerDisplay.classList.add('hidden');
+      }
+    }
+
+    // REGISTRO DE SERVICE WORKER PARA PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+
+    window.onload = loadUserSession;
+  </script>
+</body>
+</html>
