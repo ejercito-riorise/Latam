@@ -165,6 +165,7 @@
             <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
               <i class="fa-solid fa-play mr-1"></i> Iniciar Turno
             </button>
+            <p class="text-[10px] text-slate-400 text-center italic"><i class="fa-solid fa-circle-info mr-1"></i> Horario de servicio habilitado: 18:00 a 03:00 (Hora Colombia)</p>
           </div>
         </div>
 
@@ -434,7 +435,7 @@
           <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Publicar</button>
           <button onclick="switchAdminTab('approveNews')" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Aprobar</button>
         `;
-        switchAdminTab('active');
+        if (!editingOldTitle) switchAdminTab('active');
       } else if (isCoronel) {
         tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
@@ -444,7 +445,7 @@
           <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Publicar</button>
           <button onclick="switchAdminTab('approveNews')" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Aprobar</button>
         `;
-        switchAdminTab('active');
+        if (!editingOldTitle) switchAdminTab('active');
       } else if (isMayor) {
         tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
@@ -453,7 +454,7 @@
           <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
           <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Proponer</button>
         `;
-        switchAdminTab('active');
+        if (!editingOldTitle) switchAdminTab('active');
       } else {
         tabsContainer.className = "grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
@@ -531,7 +532,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.remove('hidden');
+      document.getElementById('loadingOverlay').classList.add('hidden');
 
       try {
         const response = await fetch(WEB_APP_URL);
@@ -741,7 +742,11 @@
       if (!item) return;
 
       editingOldTitle = item.titulo;
+      
+      // Abrir el panel de control automáticamente y saltar a la pestaña de publicar
+      toggleControlPanel(true);
       switchAdminTab('newsAdmin');
+
       document.getElementById('newsTitle').value = item.titulo;
       document.getElementById('newsMessage').value = item.mensaje;
       document.getElementById('newsImage').value = item.imagen || '';
@@ -853,11 +858,25 @@
       const activeShiftKey = `shiftStart_${currentUser.username}`;
       const savedStart = localStorage.getItem(activeShiftKey);
 
+      // Si NO está en turno, verificamos la restricción horaria (18:00 a 03:00 Hora Colombia)
       if (!savedStart) {
+        const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
+        const colombiaDate = new Date(colombiaTimeStr);
+        const currentHour = colombiaDate.getHours();
+
+        // Rango permitido: de 18:00 (6 PM) hasta las 02:59 AM (antes de las 3:00)
+        const isAllowedHour = (currentHour >= 18 || currentHour < 3);
+
+        if (!isAllowedHour) {
+          alert('⛔ Fuera de horario de servicio.\n\nLos turnos solo pueden iniciarse entre las 18:00 y las 03:00 (Hora Colombia).');
+          return;
+        }
+
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
         activateShiftUI(startTime);
       } else {
+        // Finalizar turno (siempre permitido si ya lo tenía activo)
         clearInterval(shiftInterval);
         shiftInterval = null;
 
