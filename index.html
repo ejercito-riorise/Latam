@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ejército RioRise - Intranet</title>
   
-  <!-- FAVICON E ICONO PWA CON EL DISEÑO EXACTO DEL ESCUDO TÁCTICO -->
+  <!-- FAVICON E ICONO PWA -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
+
+  <!-- ETIQUETAS PARA QUE WHATSAPP MUESTRE EL TÍTULO, DESCRIPCIÓN E ICONO CORRECTO -->
+  <meta property="og:title" content="Ejército RioRise - Portal Interno">
+  <meta property="og:description" content="Intranet oficial del Ejército RioRise. Control de turnos y órdenes del día.">
+  <meta property="og:image" content="https://img.icons8.com/color/512/shield.png">
+  <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f172a">
@@ -736,7 +742,7 @@
           adminActions = `
             <div class="flex gap-1.5">
               <button onclick="triggerEdit(${index})" class="text-blue-400 hover:text-blue-300 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-blue-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           `;
         }
@@ -1457,7 +1463,7 @@
 
     async function deleteUser(username) {
       if (!confirm(`⚠ ¿Estás seguro de eliminar/rechazar a ${username}?`)) return;
-      document.getElementById('loadingOverlay').classList.remove('hidden');
+      document.getElementById('loadingOverlay').classList.add('hidden');
       try {
         const response = await fetch(WEB_APP_URL, {
           method: 'POST',
