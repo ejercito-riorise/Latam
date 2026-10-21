@@ -12,7 +12,6 @@
   <style>
     body { background-color: #0b0f19; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
     .military-card { background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid #334155; }
-    .military-card:hover { border-color: #3b82f6; }
     .badge-general { background-color: #7c3aed; color: #fff; }
     .badge-coronel { background-color: #dc2626; color: #fff; }
     .badge-mayor { background-color: #ea580c; color: #fff; }
@@ -35,38 +34,52 @@
           <p class="text-xs text-slate-400">Portal interno de la facción</p>
         </div>
       </div>
-      <div id="userBadgeHeader" class="hidden">
-        <span id="headerRankBadge" class="text-xs px-2 py-1 rounded font-bold uppercase"></span>
-      </div>
     </div>
   </header>
 
   <main class="max-w-md mx-auto p-4 space-y-4">
 
-    <!-- BOTÓN INSTALAR APP (PWA) -->
-    <div id="installAppBanner" class="hidden bg-blue-900/40 border border-blue-500/50 p-3 rounded-lg flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <i class="fa-solid fa-mobile-screen-button text-blue-400 text-xl"></i>
-        <span class="text-xs text-slate-200">Instala la App en tu celular</span>
-      </div>
-      <button id="btnInstall" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded">
-        Instalar
-      </button>
+    <!-- SPINNER DE CARGA -->
+    <div id="loadingOverlay" class="hidden text-center py-4">
+      <i class="fa-solid fa-spinner fa-spin text-blue-400 text-2xl"></i>
+      <p class="text-xs text-slate-400 mt-1">Conectando con la base de datos...</p>
     </div>
 
     <!-- SECCIÓN AUTENTICACIÓN -->
     <div id="authSection" class="military-card p-5 rounded-xl shadow-lg">
-      <h2 class="text-lg font-bold text-white mb-4 text-center border-b border-slate-700 pb-2">
-        Acceso Militar
-      </h2>
-      <form id="loginForm" onsubmit="handleAuth(event)" class="space-y-3">
+      <div class="flex border-b border-slate-700 mb-4">
+        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="w-1/2 py-2 text-sm font-bold text-blue-400 border-b-2 border-blue-500">Ingresar</button>
+        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="w-1/2 py-2 text-sm font-bold text-slate-400 hover:text-white">Registrarse</button>
+      </div>
+
+      <!-- FORMULARIO DE INGRESO -->
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre / Nick del Soldado</label>
-          <input type="text" id="username" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+          <input type="text" id="loginUsername" required placeholder="Ej: Mike_Covid" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Rango Actual</label>
-          <select id="userRank" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Contraseña</label>
+          <input type="password" id="loginPassword" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-sm transition">
+          Ingresar al Sistema
+        </button>
+      </form>
+
+      <!-- FORMULARIO DE REGISTRO -->
+      <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre / Nick deseado</label>
+          <input type="text" id="regUsername" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Contraseña</label>
+          <input type="password" id="regPassword" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Rango Solicitado</label>
+          <select id="regRank" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-blue-500">
             <option value="Privado">Privado</option>
             <option value="Sargento">Sargento</option>
             <option value="Teniente">Teniente</option>
@@ -75,8 +88,8 @@
             <option value="General">General</option>
           </select>
         </div>
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-sm transition">
-          Ingresar al Sistema
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-sm transition">
+          Solicitar Registro
         </button>
       </form>
     </div>
@@ -98,7 +111,7 @@
         </button>
       </div>
 
-      <!-- MÓDULO 1: CONTROL DE TURNOS (ACCESIBLE PARA TODOS) -->
+      <!-- MÓDULO CONTROL DE TURNOS -->
       <div class="military-card p-4 rounded-xl">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
@@ -119,116 +132,217 @@
         </div>
       </div>
 
-      <!-- MÓDULO 2: PANEL DE COMANDANCIA (SOLO RANGO GENERAL) -->
-      <div id="commandPanelModule" class="military-card p-4 rounded-xl opacity-60">
+      <!-- MÓDULO COMANDANCIA (SOLO PARA GENERAL Y MIKE_COVID) -->
+      <div id="commandPanelModule" class="military-card p-4 rounded-xl">
         <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-user-gear text-purple-400"></i>
             <h3 class="font-bold text-white text-sm">Panel de Comandancia</h3>
           </div>
-          <span id="commandAccessBadge" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">Solo General</span>
+          <span id="commandAccessBadge" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">Restringido</span>
         </div>
-        <p class="text-xs text-slate-400 mb-3">Gestión de mandos, administración de usuarios y reportes globales.</p>
-        <div id="commandContent" class="text-xs text-slate-500 italic border-t border-slate-800 pt-2">
-          Acceso restringido. Exclusivo para el rango de General.
-        </div>
-      </div>
 
-      <!-- MÓDULOS EN CONSTRUCCIÓN -->
-      <div class="military-card p-4 rounded-xl opacity-75">
-        <div class="flex items-center gap-2 mb-1">
-          <i class="fa-solid fa-bullhorn text-amber-400"></i>
-          <h3 class="font-bold text-white text-sm">Central de Novedades</h3>
+        <!-- SOLICITUDES PENDIENTES DE APROBACIÓN -->
+        <div id="pendingRequestsContainer" class="mt-3 border-t border-slate-800 pt-3 hidden">
+          <h4 class="text-xs font-bold text-amber-400 mb-2">⚠ Solicitudes de Ingreso Pendientes:</h4>
+          <div id="pendingList" class="space-y-2">
+            <p class="text-xs text-slate-400 italic">Cargando solicitudes...</p>
+          </div>
         </div>
-        <p class="text-xs text-slate-400">Anuncios oficiales y órdenes del día.</p>
-        <span class="inline-block mt-2 text-[10px] bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-800 font-bold">EN CONSTRUCCIÓN</span>
+        
+        <div id="commandRestrictedText" class="text-xs text-slate-500 italic border-t border-slate-800 pt-2">
+          Acceso restringido. Exclusivo para Comandantes Autorizados.
+        </div>
       </div>
 
     </div>
   </main>
 
   <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzFMa8ZIhI93f-1KDQiOUPUMhC-4Sf0B7YJ94nYo_W9Y6BA-3IthlUgm_a1rZ7wuZ6RqA/exec";
     let currentUser = null;
     let shiftTimer = null;
     let shiftSeconds = 0;
-    let deferredPrompt = null;
 
-    // CAPTURA DE EVENTO PARA INSTALAR PWA EN EL CELULAR
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installAppBanner').classList.remove('hidden');
-    });
-
-    document.getElementById('btnInstall').addEventListener('click', () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(() => {
-          deferredPrompt = null;
-          document.getElementById('installAppBanner').classList.add('hidden');
-        });
+    function switchAuthTab(tab) {
+      if (tab === 'login') {
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('registerForm').classList.add('hidden');
+        document.getElementById('tabLoginBtn').className = 'w-1/2 py-2 text-sm font-bold text-blue-400 border-b-2 border-blue-500';
+        document.getElementById('tabRegisterBtn').className = 'w-1/2 py-2 text-sm font-bold text-slate-400 hover:text-white';
+      } else {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('registerForm').classList.remove('hidden');
+        document.getElementById('tabRegisterBtn').className = 'w-1/2 py-2 text-sm font-bold text-blue-400 border-b-2 border-blue-500';
+        document.getElementById('tabLoginBtn').className = 'w-1/2 py-2 text-sm font-bold text-slate-400 hover:text-white';
       }
-    });
-
-    // SISTEMA DE REGISTRO E INICIO DE SESIÓN
-    function handleAuth(e) {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const rank = document.getElementById('userRank').value;
-
-      currentUser = { username, rank };
-      localStorage.setItem('rioRiseUser', JSON.stringify(currentUser));
-      loadUserSession();
     }
 
-    function loadUserSession() {
-      const saved = localStorage.getItem('rioRiseUser');
-      if (saved) {
-        currentUser = JSON.parse(saved);
+    // REGISTRO CONECTADO AL GOOGLE SHEET
+    async function handleRegister(e) {
+      e.preventDefault();
+      const user = document.getElementById('regUsername').value.trim();
+      const pass = document.getElementById('regPassword').value;
+      const rank = document.getElementById('regRank').value;
+
+      // Si es Mike_Covid o General se aprueba de una vez
+      const isCommander = (rank === 'General' || user.toLowerCase() === 'mike_covid');
+      const status = isCommander ? 'approved' : 'pending';
+
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'register', username: user, password: pass, rank: rank, status: status })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+
+        if (result.status === 'success') {
+          if (isCommander) {
+            alert(`✔ Cuenta de Mando (${user}) registrada y aprobada automáticamente.`);
+          } else {
+            alert('✔ Solicitud de registro enviada con éxito.\nMike_Covid o el General deben aprobar tu acceso.');
+          }
+          document.getElementById('registerForm').reset();
+          switchAuthTab('login');
+        } else {
+          alert('⚠ Error: ' + (result.message || 'El usuario ya existe en la base de datos.'));
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error de conexión con la base de datos.');
+      }
+    }
+
+    // INICIO DE SESIÓN CONSULTANDO EL GOOGLE SHEET
+    async function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('loginUsername').value.trim();
+      const pass = document.getElementById('loginPassword').value;
+
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+
+      try {
+        const response = await fetch(WEB_APP_URL);
+        const users = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+
+        const found = users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password.toString() === pass.toString());
+
+        if (!found) {
+          alert('Usuario o contraseña incorrectos.');
+          return;
+        }
+
+        if (found.status !== 'approved') {
+          alert('⛔ Tu cuenta aún no ha sido autorizada por Mike_Covid o el General.');
+          return;
+        }
+
+        currentUser = { username: found.username, rank: found.rank };
+        localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
+        loadSession();
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al verificar las credenciales con la base de datos.');
+      }
+    }
+
+    function loadSession() {
+      const savedSession = localStorage.getItem('rioRiseCurrentSession');
+      if (savedSession) {
+        currentUser = JSON.parse(savedSession);
         document.getElementById('authSection').classList.add('hidden');
         document.getElementById('mainDashboard').classList.remove('hidden');
-        
+
         document.getElementById('profileName').innerText = currentUser.username;
         const rankEl = document.getElementById('profileRank');
         rankEl.innerText = currentUser.rank;
         rankEl.className = `text-[10px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
-        
-        applyPermissions(currentUser.rank);
+
+        applyPermissions(currentUser);
       }
     }
 
-    // REGLA DE PERMISOS: SOLO EL RANGO 'GENERAL' TIENE PERMISOS ADMINISTRATIVOS
-    function applyPermissions(rank) {
-      const isGeneral = (rank === 'General');
-      const commandModule = document.getElementById('commandPanelModule');
+    // REGLA DE ACCESO EXCLUSIVA: SOLO GENERAL O MIKE_COVID
+    function applyPermissions(user) {
+      const isAuthorizedAdmin = (user.rank === 'General' || user.username.toLowerCase() === 'mike_covid');
       const commandBadge = document.getElementById('commandAccessBadge');
-      const commandContent = document.getElementById('commandContent');
+      const pendingContainer = document.getElementById('pendingRequestsContainer');
+      const restrictedText = document.getElementById('commandRestrictedText');
 
-      if (isGeneral) {
-        commandModule.classList.remove('opacity-60');
-        commandBadge.innerText = 'Acceso de General';
+      if (isAuthorizedAdmin) {
+        commandBadge.innerText = 'Mando Autorizado';
         commandBadge.className = 'text-[10px] bg-purple-900/60 text-purple-300 px-2 py-0.5 rounded border border-purple-700 font-bold';
-        commandContent.innerHTML = `
-          <div class="space-y-2 text-slate-200">
-            <p class="font-semibold text-purple-300">✔ Herramientas de Comandante activas:</p>
-            <button class="w-full bg-purple-700 hover:bg-purple-600 text-white text-xs font-bold py-1.5 rounded">
-              Aprobar Ascensos de Tropa
-            </button>
-            <button class="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-1.5 rounded border border-slate-700">
-              Supervisar Historial de Turnos
-            </button>
-          </div>
-        `;
+        pendingContainer.classList.remove('hidden');
+        restrictedText.classList.add('hidden');
+        fetchPendingUsers();
       } else {
-        commandModule.classList.add('opacity-60');
-        commandBadge.innerText = 'Solo General';
+        commandBadge.innerText = 'Restringido';
         commandBadge.className = 'text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700';
-        commandContent.innerText = 'Acceso restringido. Exclusivo para el rango de General.';
+        pendingContainer.classList.add('hidden');
+        restrictedText.classList.remove('hidden');
+      }
+    }
+
+    // OBTENER SOLICITUDES PENDIENTES DEL GOOGLE SHEET
+    async function fetchPendingUsers() {
+      const pendingList = document.getElementById('pendingList');
+      pendingList.innerHTML = '<p class="text-xs text-slate-400 italic">Cargando solicitudes...</p>';
+
+      try {
+        const response = await fetch(WEB_APP_URL);
+        const users = await response.json();
+        const pendingUsers = users.filter(u => u.status === 'pending');
+
+        pendingList.innerHTML = '';
+        if (pendingUsers.length === 0) {
+          pendingList.innerHTML = '<p class="text-xs text-slate-400 italic">No hay solicitudes pendientes.</p>';
+          return;
+        }
+
+        pendingUsers.forEach(u => {
+          const item = document.createElement('div');
+          item.className = 'bg-slate-900 p-2 rounded border border-slate-700 flex items-center justify-between text-xs';
+          item.innerHTML = `
+            <div>
+              <span class="font-bold text-white">${u.username}</span>
+              <span class="text-[10px] text-slate-400 ml-1">(${u.rank})</span>
+            </div>
+            <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px]">
+              Aprobar
+            </button>
+          `;
+          pendingList.appendChild(item);
+        });
+      } catch (err) {
+        pendingList.innerHTML = '<p class="text-xs text-red-400">Error al cargar solicitudes.</p>';
+      }
+    }
+
+    // APROBAR USUARIO EN EL GOOGLE SHEET
+    async function approveUser(username) {
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'approve', username: username })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          alert(`✔ La cuenta de ${username} ha sido aprobada.`);
+          fetchPendingUsers();
+        } else {
+          alert('No se pudo aprobar la cuenta.');
+        }
+      } catch (err) {
+        alert('Error de conexión.');
       }
     }
 
     function logout() {
-      localStorage.removeItem('rioRiseUser');
+      localStorage.removeItem('rioRiseCurrentSession');
       location.reload();
     }
 
@@ -255,7 +369,7 @@
       } else {
         clearInterval(shiftTimer);
         shiftTimer = null;
-        alert(`Turno finalizado. Tiempo registrado: ${document.getElementById('stopwatch').innerText}`);
+        alert(`Turno finalizado. Tiempo registrado: ${document.getElementById('stopwatch'].innerText}`);
         shiftSeconds = 0;
         document.getElementById('stopwatch').innerText = '00:00:00';
         
@@ -267,12 +381,7 @@
       }
     }
 
-    // REGISTRO DE SERVICE WORKER PARA PWA
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    }
-
-    window.onload = loadUserSession;
+    window.onload = loadSession;
   </script>
 </body>
 </html>
