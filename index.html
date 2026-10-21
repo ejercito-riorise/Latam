@@ -226,20 +226,20 @@
           </div>
         </div>
 
-        <!-- VISTA 3: REPORTE DIARIO -->
+        <!-- VISTA 3: REPORTE DIARIO (RANKING) -->
         <div id="viewDaily" class="space-y-2 hidden">
           <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1 mb-2">
-            <i class="fa-solid fa-calendar-day"></i> Consolidado de Servicio de Hoy:
+            <i class="fa-solid fa-trophy"></i> Ranking Diario de Servicio (Hoy):
           </h4>
           <div id="dailyReportList" class="space-y-2">
-            <p class="text-xs text-slate-400 italic">Calculando reporte de hoy...</p>
+            <p class="text-xs text-slate-400 italic">Calculando ranking de hoy...</p>
           </div>
         </div>
 
-        <!-- VISTA 4: FILTROS -->
+        <!-- VISTA 4: FILTROS (RANKING HISTÓRICO) -->
         <div id="viewFilters" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1">
-            <i class="fa-solid fa-filter"></i> Filtros de Historial:
+            <i class="fa-solid fa-ranking-star"></i> Ranking de Rendimiento:
           </h4>
           
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
@@ -258,7 +258,7 @@
           </div>
 
           <div id="filteredHistoryList" class="space-y-1.5">
-            <p class="text-xs text-slate-400 italic">Selecciona un filtro para ver el rendimiento...</p>
+            <p class="text-xs text-slate-400 italic">Selecciona un filtro para ver el ranking...</p>
           </div>
         </div>
 
@@ -471,7 +471,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.remove('hidden');
+      document.getElementById('loadingOverlay').classList.add('hidden');
 
       try {
         const response = await fetch(WEB_APP_URL);
@@ -534,12 +534,10 @@
       }
     }
 
-    // CÁLCULO EN TIEMPO REAL DE LAS HORAS DE HOY (Historial + Turno Activo)
     function updateTodayHoursLive() {
       const todayStr = new Date().toLocaleDateString();
       let todayTotalHours = 0;
 
-      // 1. Sumar lo registrado y guardado hoy en el historial
       if (globalHistoryCache && globalHistoryCache.length > 0) {
         globalHistoryCache.forEach(h => {
           if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase() && normalizeDate(h.fecha) === todayStr) {
@@ -548,7 +546,6 @@
         });
       }
 
-      // 2. Si hay un turno activo en curso, sumarle en tiempo real los segundos que lleva corriendo
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
       if (activeShiftStart) {
         const activeSeconds = Math.floor((Date.now() - parseInt(activeShiftStart)) / 1000);
@@ -664,7 +661,6 @@
         const secs = String(diffSeconds % 60).padStart(2, '0');
         document.getElementById('stopwatch').innerText = `${hrs}:${mins}:${secs}`;
 
-        // Actualizar en tiempo real el contador "Hoy: HH:MM"
         updateTodayHoursLive();
       }, 1000);
     }
@@ -834,30 +830,42 @@
           });
         }
 
-        // 3. REPORTE DIARIO DE HOY
+        // 3. REPORTE DIARIO DE HOY (ORDENADO COMO RANKING DE MAYOR A MENOR)
         const todayStr = new Date().toLocaleDateString();
         let dailyTotals = {};
-        activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = 0; });
+        activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; });
 
         if (history) {
           history.forEach(h => {
             if (normalizeDate(h.fecha) === todayStr && h.username) {
               const uKey = h.username.toLowerCase();
-              dailyTotals[uKey] = (dailyTotals[uKey] || 0) + parseFloat(h.horas || 0);
+              if (dailyTotals[uKey]) {
+                dailyTotals[uKey].hours += parseFloat(h.horas || 0);
+              }
             }
           });
         }
 
+        // Convertir a array y ordenar de mayor a menor horas
+        const dailyArray = Object.values(dailyTotals).sort((a, b) => b.hours - a.hours);
+
         dailyReportList.innerHTML = '';
-        activeUsers.forEach(u => {
-          const uKey = u.username.toLowerCase();
-          const todayHM = decimalToHM(dailyTotals[uKey] || 0);
+        dailyArray.forEach((u, index) => {
+          const todayHM = decimalToHM(u.hours);
+          let medalIcon = `<span class="text-[10px] text-slate-500 font-bold w-5 text-center">#${index + 1}</span>`;
+          if (index === 0 && u.hours > 0) medalIcon = `<i class="fa-solid fa-trophy text-amber-400 text-xs w-5 text-center" title="1er Lugar"></i>`;
+          else if (index === 1 && u.hours > 0) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center" title="2do Lugar"></i>`;
+          else if (index === 2 && u.hours > 0) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center" title="3er Lugar"></i>`;
+
           const item = document.createElement('div');
           item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs';
           item.innerHTML = `
-            <div>
-              <span class="font-bold text-white">${u.username}</span>
-              <span class="text-[9px] text-slate-400 ml-1">(${u.rank})</span>
+            <div class="flex items-center gap-2">
+              ${medalIcon}
+              <div>
+                <span class="font-bold text-white">${u.username}</span>
+                <span class="text-[9px] text-slate-400 ml-1">(${u.rank})</span>
+              </div>
             </div>
             <span class="text-cyan-400 font-mono font-bold">Hoy: ${todayHM}</span>
           `;
@@ -872,6 +880,7 @@
       }
     }
 
+    // APLICAR FILTROS Y ORDENAR COMO RANKING DE MAYOR A MENOR
     function applyHistoryFilter() {
       if (!cachedData || !cachedData.history) return;
 
@@ -909,19 +918,32 @@
         userSummary[name] = (userSummary[name] || 0) + parseFloat(h.horas || 0);
       });
 
+      // Convertir a array y ordenar de mayor a menor (`b - a`)
+      const rankedArray = Object.keys(userSummary).map(name => ({
+        name: name,
+        totalHours: userSummary[name]
+      })).sort((a, b) => b.totalHours - a.totalHours);
+
       historyList.innerHTML = '';
-      const keys = Object.keys(userSummary);
-      if (keys.length === 0) {
+      if (rankedArray.length === 0) {
         historyList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay registros para este filtro.</p>';
         return;
       }
 
-      keys.forEach(name => {
-        const totalHM = decimalToHM(userSummary[name]);
+      rankedArray.forEach((itemObj, index) => {
+        const totalHM = decimalToHM(itemObj.totalHours);
+        let medalIcon = `<span class="text-[10px] text-slate-500 font-bold w-5 text-center">#${index + 1}</span>`;
+        if (index === 0) medalIcon = `<i class="fa-solid fa-trophy text-amber-400 text-xs w-5 text-center"></i>`;
+        else if (index === 1) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center"></i>`;
+        else if (index === 2) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center"></i>`;
+
         const item = document.createElement('div');
         item.className = 'bg-slate-900 p-2 rounded border border-slate-800 flex items-center justify-between text-xs';
         item.innerHTML = `
-          <span class="font-bold text-white">${name}</span>
+          <div class="flex items-center gap-2">
+            ${medalIcon}
+            <span class="font-bold text-white">${itemObj.name}</span>
+          </div>
           <span class="text-emerald-400 font-mono font-bold">${totalHM}</span>
         `;
         historyList.appendChild(item);
