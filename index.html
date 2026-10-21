@@ -131,7 +131,7 @@
               <h3 id="profileName" class="font-bold text-white text-xs"></h3>
               <div class="flex items-center gap-2 mt-0.5">
                 <span id="profileRank" class="text-[9px] px-2 py-0.5 rounded font-bold uppercase"></span>
-                <span id="profileHours" class="text-[10px] text-emerald-400 font-mono font-semibold">0.00 hrs</span>
+                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Horas de servicio hoy">Hoy: 0.00 hrs</span>
               </div>
             </div>
           </div>
@@ -165,7 +165,7 @@
     </main>
   </div>
 
-  <!-- VENTANA FLOTANTE: PANEL DE CONTROL -->
+  <!-- VENTANA FLOTANTE: PANEL DE CONTROL (COMANDANCIA) -->
   <div id="controlPanelModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-md max-h-[90vh] overflow-y-auto p-4 rounded-xl border border-purple-500/40 shadow-2xl space-y-4">
       
@@ -189,13 +189,23 @@
         </div>
       </div>
 
-      <!-- PERSONAL ACTIVO -->
+      <!-- PERSONAL ACTIVO (TOTALES) -->
       <div class="border-t border-slate-800 pt-3 space-y-2">
         <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1">
-          <i class="fa-solid fa-users-gear"></i> Historial y Personal Activo:
+          <i class="fa-solid fa-users-gear"></i> Personal Activo y Totales:
         </h4>
         <div id="activeList" class="space-y-2">
           <p class="text-xs text-slate-400 italic">Cargando...</p>
+        </div>
+      </div>
+
+      <!-- HISTORIAL DETALLADO DE TURNOS (DÍAS Y FECHAS) -->
+      <div class="border-t border-slate-800 pt-3 space-y-2">
+        <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1">
+          <i class="fa-solid fa-calendar-days"></i> Bitácora e Historial por Días:
+        </h4>
+        <div id="historyList" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+          <p class="text-xs text-slate-400 italic">Cargando historial...</p>
         </div>
       </div>
 
@@ -235,7 +245,7 @@
       const modal = document.getElementById('controlPanelModal');
       if (show) {
         modal.classList.remove('hidden');
-        loadUsersData();
+        loadControlPanelData();
       } else {
         modal.classList.add('hidden');
       }
@@ -288,10 +298,10 @@
 
       try {
         const response = await fetch(WEB_APP_URL);
-        const users = await response.json();
+        const resData = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
 
-        const found = users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password.toString() === pass.toString());
+        const found = resData.users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password.toString() === pass.toString());
 
         if (!found) {
           alert('Usuario o contraseña incorrectos.');
@@ -299,20 +309,22 @@
         }
 
         if (found.status !== 'approved') {
-          alert('⛔ Tu cuenta aún no ha sido autorizada por los superiores. Por favor espera la verificación.');
+          alert('⛔ Tu cuenta aún no ha sido autorizada por los superiores.');
           return;
         }
 
-        currentUser = { username: found.username, rank: found.rank, hours: found.hours || 0 };
+        currentUser = { username: found.username, rank: found.rank };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-        loadSession();
+        
+        // Calcular horas de hoy basándose en el historial general si viene incluido
+        loadSession(resData.history);
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('Error al verificar las credenciales con la base de datos.');
       }
     }
 
-    function loadSession() {
+    async function loadSession(historyData = null) {
       const savedSession = localStorage.getItem('rioRiseCurrentSession');
       if (savedSession) {
         currentUser = JSON.parse(savedSession);
@@ -323,12 +335,34 @@
         const rankEl = document.getElementById('profileRank');
         rankEl.innerText = currentUser.rank;
         rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
-        
-        document.getElementById('profileHours').innerText = `${Number(currentUser.hours || 0).toFixed(2)} hrs`;
 
+        // Si no tenemos el historial cargado, lo pedimos para calcular las horas de hoy
+        if (!historyData) {
+          try {
+            const response = await fetch(WEB_APP_URL);
+            const resData = await response.json();
+            historyData = resData.history;
+          } catch (e) { historyData = []; }
+        }
+
+        calculateTodayHours(historyData);
         applyPermissions(currentUser);
         checkActiveShiftOnLoad();
       }
+    }
+
+    function calculateTodayHours(history) {
+      const todayStr = new Date().toLocaleDateString();
+      let todayTotal = 0;
+
+      if (history && history.length > 0) {
+        history.forEach(h => {
+          if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase() && h.fecha === todayStr) {
+            todayTotal += parseFloat(h.horas || 0);
+          }
+        });
+      }
+      document.getElementById('profileTodayHours').innerText = `Hoy: ${todayTotal.toFixed(2)} hrs`;
     }
 
     function applyPermissions(user) {
@@ -406,8 +440,6 @@
         const finalMins = Math.floor((totalSeconds % 3600) / 60);
         const finalSecs = totalSeconds % 60;
         const timeSpentMsg = `${finalHrs}h ${finalMins}m ${finalSecs}s`;
-
-        // Obtener la fecha actual en formato legible (Ej: 21/10/2026)
         const currentDate = new Date().toLocaleDateString();
 
         saveShiftLog(hoursWorked, timeSpentMsg, currentDate);
@@ -432,9 +464,8 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         if (result.status === 'success') {
-          // Recargar sesión local para refrescar horas
-          alert(`✔ Turno finalizado con éxito.\n📅 Fecha: ${new Date().toLocaleDateString()}\n⏱ Duración: ${timeSpentMsg}\n¡Guardado en el historial de la facción!`);
-          location.reload();
+          alert(`✔ Turno finalizado con éxito.\n📅 Fecha: ${currentDate}\n⏱ Duración de este turno: ${timeSpentMsg}\n¡Registrado en la bitácora de la facción!`);
+          loadSession();
         } else {
           alert('⚠ Turno terminado, pero hubo un error al sincronizar con el historial.');
         }
@@ -444,15 +475,21 @@
       }
     }
 
-    async function loadUsersData() {
+    // CARGAR DATOS EN EL PANEL DE CONTROL DEL MANDO
+    async function loadControlPanelData() {
       const pendingList = document.getElementById('pendingList');
       const activeList = document.getElementById('activeList');
+      const historyList = document.getElementById('historyList');
+      
       pendingList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
       activeList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
+      historyList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando bitácora...</p>';
 
       try {
         const response = await fetch(WEB_APP_URL);
-        const users = await response.json();
+        const resData = await response.json();
+        const users = resData.users;
+        const history = resData.history;
 
         // 1. PENDIENTES
         const pendingUsers = users.filter(u => u.status === 'pending');
@@ -482,11 +519,11 @@
           });
         }
 
-        // 2. ACTIVOS
+        // 2. ACTIVOS Y TOTALES ACUMULADOS
         const activeUsers = users.filter(u => u.status === 'approved');
         activeList.innerHTML = '';
         if (activeUsers.length === 0) {
-          activeList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay personal activo registrado.</p>';
+          activeList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay personal activo.</p>';
         } else {
           activeUsers.forEach(u => {
             const item = document.createElement('div');
@@ -496,7 +533,7 @@
                 <div>
                   <span class="font-bold text-white text-[11px]">${u.username}</span>
                   <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ml-1 badge-${u.rank.toLowerCase()}">${u.rank}</span>
-                  <p class="text-[9px] text-emerald-400 font-mono font-bold mt-0.5">⏱ Horas Totales: ${Number(u.hours || 0).toFixed(2)} hrs</p>
+                  <p class="text-[9px] text-emerald-400 font-mono font-bold mt-0.5">⏱ Total Acumulado: ${Number(u.hours || 0).toFixed(2)} hrs</p>
                 </div>
                 <button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario">
                   <i class="fa-solid fa-trash-can"></i>
@@ -519,9 +556,31 @@
           });
         }
 
+        // 3. BITÁCORA E HISTORIAL POR DÍAS
+        historyList.innerHTML = '';
+        if (!history || history.length === 0) {
+          historyList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay registros en la bitácora.</p>';
+        } else {
+          // Mostrar del más reciente al más antiguo
+          history.reverse().forEach(h => {
+            const logItem = document.createElement('div');
+            logItem.className = 'bg-slate-900/90 p-2 rounded border border-slate-800 text-[11px] flex items-center justify-between';
+            logItem.innerHTML = `
+              <div>
+                <span class="font-bold text-white">${h.username}</span>
+                <span class="text-slate-400 text-[10px] ml-1">(${h.fecha})</span>
+                <div class="text-[10px] text-slate-300">Duración: ${h.duracion}</div>
+              </div>
+              <span class="text-emerald-400 font-mono font-bold text-[10px]">+${Number(h.horas || 0).toFixed(2)}h</span>
+            `;
+            historyList.appendChild(logItem);
+          });
+        }
+
       } catch (err) {
-        pendingList.innerHTML = '<p class="text-xs text-red-400">Error al cargar datos.</p>';
-        activeList.innerHTML = '<p class="text-xs text-red-400">Error al cargar datos.</p>';
+        pendingList.innerHTML = '<p class="text-xs text-red-400">Error al cargar.</p>';
+        activeList.innerHTML = '<p class="text-xs text-red-400">Error al cargar.</p>';
+        historyList.innerHTML = '<p class="text-xs text-red-400">Error al cargar bitácora.</p>';
       }
     }
 
@@ -534,16 +593,13 @@
         const result = await response.json();
         if (result.status === 'success') {
           alert(`✔ La cuenta de ${username} ha sido aprobada.`);
-          loadUsersData();
+          loadControlPanelData();
         }
-      } catch (err) {
-        alert('Error de conexión.');
-      }
+      } catch (err) { alert('Error de conexión.'); }
     }
 
     async function changeUserRank(username, newRank) {
       if (!confirm(`¿Confirmas cambiar el rango de ${username} a "${newRank}"?`)) return;
-
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         const response = await fetch(WEB_APP_URL, {
@@ -552,10 +608,9 @@
         });
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
-
         if (result.status === 'success') {
           alert(`✔ Rango de ${username} actualizado a ${newRank}.`);
-          loadUsersData();
+          loadControlPanelData();
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -565,7 +620,6 @@
 
     async function deleteUser(username) {
       if (!confirm(`⚠ ¿Estás seguro de eliminar/rechazar a ${username}?`)) return;
-
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         const response = await fetch(WEB_APP_URL, {
@@ -574,10 +628,9 @@
         });
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
-
-        if (result.status === 'success') {
-          alert(`✔ Usuario ${username} eliminado de la base de datos.`);
-          loadUsersData();
+        if (resDataStatus = result.status) {
+          alert(`✔ Usuario ${username} eliminado.`);
+          loadControlPanelData();
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -590,7 +643,7 @@
       location.reload();
     }
 
-    window.onload = loadSession;
+    window.onload = () => loadSession();
   </script>
 </body>
 </html>
