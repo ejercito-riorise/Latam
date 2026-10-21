@@ -20,84 +20,84 @@
     .badge-privado { background-color: #475569; color: #fff; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between pb-6">
+<body class="min-h-screen flex flex-col justify-between">
 
   <div>
     <!-- ENCABEZADO TÁCTICO -->
-    <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 shadow-lg">
+    <header class="bg-slate-900 border-b border-slate-800 p-3 sticky top-0 z-50 shadow-lg">
       <div class="max-w-md mx-auto flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-slate-800 border border-blue-500 flex items-center justify-center shadow-md shadow-blue-500/20">
-            <i class="fa-solid fa-shield-halved text-blue-400 text-lg"></i>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-slate-800 border border-blue-500 flex items-center justify-center shadow-md shadow-blue-500/20">
+            <i class="fa-solid fa-shield-halved text-blue-400 text-sm"></i>
           </div>
           <div>
-            <h1 class="font-bold tracking-wider text-white text-base">EJÉRCITO RIORISE</h1>
-            <p class="text-xs text-slate-400">Portal Interno de la Facción</p>
+            <h1 class="font-bold tracking-wider text-white text-xs">EJÉRCITO RIORISE</h1>
+            <p class="text-[10px] text-slate-400">Portal Interno</p>
           </div>
         </div>
       </div>
     </header>
 
-    <main class="max-w-md mx-auto p-4 space-y-4">
+    <main class="max-w-md mx-auto p-3 space-y-3">
 
       <!-- OVERLAY CARGANDO -->
-      <div id="loadingOverlay" class="hidden text-center py-4 bg-slate-900/80 border border-blue-500/30 rounded-xl p-3">
-        <i class="fa-solid fa-spinner fa-spin text-blue-400 text-2xl"></i>
-        <p class="text-xs text-slate-300 font-semibold mt-2">Sincronizando con la Base de Datos Militar...</p>
+      <div id="loadingOverlay" class="hidden text-center py-2 bg-slate-900/80 border border-blue-500/30 rounded-lg p-2">
+        <i class="fa-solid fa-spinner fa-spin text-blue-400 text-xl"></i>
+        <p class="text-[11px] text-slate-300 font-semibold mt-1">Sincronizando con Base de Datos...</p>
       </div>
 
       <!-- SECCIÓN DE AUTENTICACIÓN -->
-      <div id="authSection" class="military-card p-5 rounded-xl shadow-xl border border-slate-700">
+      <div id="authSection" class="military-card p-4 rounded-xl shadow-xl border border-slate-700">
         
-        <!-- BOTONES DE PESTAÑAS (LOGIN / REGISTRO) -->
-        <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-5">
-          <button id="tabLoginBtn" type="button" onclick="showAuthTab('login')" class="py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow">
+        <!-- PESTAÑAS LOGIN / REGISTRO -->
+        <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3">
+          <button id="tabLoginBtn" type="button" onclick="showAuthTab('login')" class="py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow">
             <i class="fa-solid fa-right-to-bracket mr-1"></i> Ingresar
           </button>
-          <button id="tabRegisterBtn" type="button" onclick="showAuthTab('register')" class="py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white">
+          <button id="tabRegisterBtn" type="button" onclick="showAuthTab('register')" class="py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white">
             <i class="fa-solid fa-user-plus mr-1"></i> Registrarse
           </button>
         </div>
 
         <!-- FORMULARIO 1: INGRESO -->
-        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Nick / Nombre de Usuario</label>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nick / Usuario</label>
             <div class="relative">
-              <i class="fa-solid fa-user absolute left-3 top-3 text-slate-500 text-xs"></i>
+              <i class="fa-solid fa-user absolute left-3 top-2.5 text-slate-500 text-xs"></i>
               <input type="text" id="loginUsername" required placeholder="Ingresa tu Nick" class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Contraseña</label>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Contraseña</label>
             <div class="relative">
-              <i class="fa-solid fa-lock absolute left-3 top-3 text-slate-500 text-xs"></i>
+              <i class="fa-solid fa-lock absolute left-3 top-2.5 text-slate-500 text-xs"></i>
               <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
           </div>
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg text-xs tracking-wider uppercase transition shadow-lg shadow-blue-600/30">
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg text-xs uppercase transition shadow-lg shadow-blue-600/30">
             Ingresar al Portal
           </button>
         </form>
 
-        <!-- FORMULARIO 2: REGISTRO CON EDAD Y PAÍS -->
-        <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
+        <!-- FORMULARIO 2: REGISTRO -->
+        <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-2.5 hidden">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre / Nick Oficial</label>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nick Oficial</label>
             <input type="text" id="regUsername" required placeholder="Ej: Soldado_1" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Edad (Años)</label>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Edad</label>
               <input type="number" id="regAge" required placeholder="Ej: 22" min="12" max="99" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">País</label>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">País</label>
               <input type="text" id="regCountry" required placeholder="Ej: Colombia" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Rango Solicitado</label>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Rango Solicitado</label>
             <select id="regRank" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
               <option value="Privado">Privado</option>
               <option value="Sargento">Sargento</option>
@@ -108,10 +108,10 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Contraseña de Acceso</label>
-            <input type="password" id="regPassword" required placeholder="Crea tu clave secreta" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Contraseña</label>
+            <input type="password" id="regPassword" required placeholder="Crea tu clave" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
           </div>
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-600/30">
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-xs uppercase transition shadow-lg shadow-emerald-600/30">
             Enviar Ficha de Registro
           </button>
         </form>
@@ -119,15 +119,15 @@
       </div>
 
       <!-- PANEL PRINCIPAL (POST-LOGIN) -->
-      <div id="mainDashboard" class="hidden space-y-4">
+      <div id="mainDashboard" class="hidden space-y-3">
         
         <!-- PERFIL DE USUARIO -->
-        <div class="military-card p-4 rounded-xl flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <i class="fa-solid fa-user-shield text-2xl text-blue-400"></i>
+        <div class="military-card p-3 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <i class="fa-solid fa-user-shield text-xl text-blue-400"></i>
             <div>
-              <h3 id="profileName" class="font-bold text-white text-sm"></h3>
-              <span id="profileRank" class="text-[10px] px-2 py-0.5 rounded font-bold uppercase"></span>
+              <h3 id="profileName" class="font-bold text-white text-xs"></h3>
+              <span id="profileRank" class="text-[9px] px-2 py-0.5 rounded font-bold uppercase"></span>
             </div>
           </div>
           <button onclick="logout()" class="text-xs text-red-400 hover:underline flex items-center gap-1">
@@ -135,57 +135,55 @@
           </button>
         </div>
 
-        <!-- MÓDULO CONTROL DE TURNOS -->
-        <div class="military-card p-4 rounded-xl">
-          <div class="flex items-center justify-between mb-3">
+        <!-- MÓDULO CONTROL DE TURNOS (ESTÁNDAR PARA TODOS) -->
+        <div id="shiftModuleContainer" class="military-card p-3 rounded-xl">
+          <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-clock text-blue-400"></i>
-              <h3 class="font-bold text-white text-sm">Control de Turnos</h3>
+              <i class="fa-solid fa-clock text-blue-400 text-sm"></i>
+              <h3 class="font-bold text-white text-xs">Control de Turnos</h3>
             </div>
-            <span id="shiftStatusBadge" class="text-[10px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold">FUERA DE SERVICIO</span>
+            <span id="shiftStatusBadge" class="text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold">FUERA DE SERVICIO</span>
           </div>
 
-          <div id="shiftControls" class="space-y-3">
-            <div id="timerDisplay" class="hidden text-center py-2 bg-slate-950 rounded border border-slate-800">
-              <p class="text-xs text-slate-400">Tiempo en servicio:</p>
-              <p id="stopwatch" class="text-2xl font-mono font-bold text-green-400">00:00:00</p>
+          <div id="shiftControls" class="space-y-2">
+            <div id="timerDisplay" class="hidden text-center py-1.5 bg-slate-950 rounded border border-slate-800">
+              <p class="text-[10px] text-slate-400">Tiempo en servicio:</p>
+              <p id="stopwatch" class="text-xl font-mono font-bold text-green-400">00:00:00</p>
             </div>
-            <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-sm transition">
+            <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
               <i class="fa-solid fa-play mr-1"></i> Iniciar Turno
             </button>
           </div>
         </div>
 
-        <!-- MÓDULO COMANDANCIA (GESTIÓN TOTAL) -->
-        <div id="commandPanelModule" class="military-card p-4 rounded-xl space-y-4">
-          <div class="flex items-center justify-between mb-2">
+        <!-- PANEL DE CONTROL EXCLUSIVO (SOLO GENERAL Y MIKE_COVID - APARTADO INDEPENDIENTE) -->
+        <div id="controlPanelModule" class="hidden military-card p-3 rounded-xl space-y-3 border border-purple-800/40">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-user-gear text-purple-400"></i>
-              <h3 class="font-bold text-white text-sm">Panel de Comandancia</h3>
+              <i class="fa-solid fa-sliders text-purple-400 text-sm"></i>
+              <h3 class="font-bold text-white text-xs">Panel de Control</h3>
             </div>
-            <span id="commandAccessBadge" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">Restringido</span>
+            <span class="text-[9px] bg-purple-900/60 text-purple-300 px-2 py-0.5 rounded border border-purple-700 font-bold">Comandancia</span>
           </div>
 
-          <div id="commandAdminContent" class="hidden space-y-4">
-            <!-- PENDIENTES -->
-            <div class="border-t border-slate-800 pt-3">
-              <h4 class="text-xs font-bold text-amber-400 mb-2 flex items-center gap-1">
-                <i class="fa-solid fa-clock-rotate-left"></i> Solicitudes Pendientes:
-              </h4>
-              <div id="pendingList" class="space-y-2"></div>
-            </div>
-
-            <!-- DIRECTORIO Y GESTIÓN DE TROPA -->
-            <div class="border-t border-slate-800 pt-3">
-              <h4 class="text-xs font-bold text-blue-400 mb-2 flex items-center gap-1">
-                <i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:
-              </h4>
-              <div id="activeList" class="space-y-2"></div>
+          <!-- SOLICITUDES PENDIENTES -->
+          <div>
+            <h4 class="text-[11px] font-bold text-amber-400 mb-1.5 flex items-center gap-1">
+              <i class="fa-solid fa-clock-rotate-left"></i> Solicitudes Pendientes:
+            </h4>
+            <div id="pendingList" class="space-y-1.5">
+              <p class="text-[11px] text-slate-400 italic">Cargando...</p>
             </div>
           </div>
-          
-          <div id="commandRestrictedText" class="text-xs text-slate-500 italic border-t border-slate-800 pt-2">
-            Acceso restringido. Exclusivo para Comandantes Autorizados.
+
+          <!-- GESTIÓN DE PERSONAL ACTIVO -->
+          <div class="border-t border-slate-800 pt-2.5">
+            <h4 class="text-[11px] font-bold text-blue-400 mb-1.5 flex items-center gap-1">
+              <i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:
+            </h4>
+            <div id="activeList" class="space-y-2">
+              <p class="text-[11px] text-slate-400 italic">Cargando...</p>
+            </div>
           </div>
         </div>
 
@@ -193,8 +191,8 @@
     </main>
   </div>
 
-  <!-- PIE DE PÁGINA (CREDITOS MIKE_COVID) -->
-  <footer class="text-center py-4 text-[11px] text-slate-500 border-t border-slate-900 mt-6">
+  <!-- PIE DE PÁGINA FIJO Y COMPACTO -->
+  <footer class="text-center py-3 text-[10px] text-slate-500 border-t border-slate-900 mt-2 bg-slate-950/40">
     <p>Desarrollado y diseñado por <span class="font-bold text-blue-400">Mike_Covid</span> • Ejército RioRise</p>
   </footer>
 
@@ -213,17 +211,16 @@
       if (tab === 'login') {
         loginForm.classList.remove('hidden');
         registerForm.classList.add('hidden');
-        tabLoginBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
-        tabRegisterBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white";
+        tabLoginBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
+        tabRegisterBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white";
       } else {
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
-        tabRegisterBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
-        tabLoginBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white";
+        tabRegisterBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
+        tabLoginBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white";
       }
     }
 
-    // REGISTRO
     async function handleRegister(e) {
       e.preventDefault();
       const user = document.getElementById('regUsername').value.trim();
@@ -262,7 +259,6 @@
       }
     }
 
-    // INICIO DE SESIÓN
     async function handleLogin(e) {
       e.preventDefault();
       const user = document.getElementById('loginUsername').value.trim();
@@ -306,39 +302,29 @@
         document.getElementById('profileName').innerText = currentUser.username;
         const rankEl = document.getElementById('profileRank');
         rankEl.innerText = currentUser.rank;
-        rankEl.className = `text-[10px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
+        rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
 
         applyPermissions(currentUser);
       }
     }
 
-    // APLICAR PERMISOS
     function applyPermissions(user) {
       const isAuthorizedAdmin = (user.rank === 'General' || user.username.toLowerCase() === 'mike_covid');
-      const commandBadge = document.getElementById('commandAccessBadge');
-      const adminContent = document.getElementById('commandAdminContent');
-      const restrictedText = document.getElementById('commandRestrictedText');
+      const controlPanel = document.getElementById('controlPanelModule');
 
       if (isAuthorizedAdmin) {
-        commandBadge.innerText = 'Mando Autorizado';
-        commandBadge.className = 'text-[10px] bg-purple-900/60 text-purple-300 px-2 py-0.5 rounded border border-purple-700 font-bold';
-        adminContent.classList.remove('hidden');
-        restrictedText.classList.add('hidden');
+        controlPanel.classList.remove('hidden');
         loadUsersData();
       } else {
-        commandBadge.innerText = 'Restringido';
-        commandBadge.className = 'text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700';
-        adminContent.classList.add('hidden');
-        restrictedText.classList.remove('hidden');
+        controlPanel.classList.add('hidden');
       }
     }
 
-    // CARGAR PENDIENTES Y PERSONAL ACTIVO
     async function loadUsersData() {
       const pendingList = document.getElementById('pendingList');
       const activeList = document.getElementById('activeList');
-      pendingList.innerHTML = '<p class="text-xs text-slate-400 italic">Cargando pendientes...</p>';
-      activeList.innerHTML = '<p class="text-xs text-slate-400 italic">Cargando personal activo...</p>';
+      pendingList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
+      activeList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
 
       try {
         const response = await fetch(WEB_APP_URL);
@@ -355,9 +341,9 @@
             item.className = 'bg-slate-900 p-2 rounded-lg border border-amber-900/40 flex items-center justify-between text-xs';
             item.innerHTML = `
               <div>
-                <span class="font-bold text-white">${u.username}</span>
-                <span class="text-[10px] text-amber-400 ml-1">(${u.rank})</span>
-                <p class="text-[10px] text-slate-400">Edad: ${u.age || 'N/A'} • País: ${u.country || 'N/A'}</p>
+                <span class="font-bold text-white text-[11px]">${u.username}</span>
+                <span class="text-[9px] text-amber-400 ml-1">(${u.rank})</span>
+                <p class="text-[9px] text-slate-400">Edad: ${u.age || 'N/A'} • ${u.country || 'N/A'}</p>
               </div>
               <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px]">
                 Aprobar
@@ -367,7 +353,7 @@
           });
         }
 
-        // 2. PERSONAL ACTIVO
+        // 2. ACTIVOS
         const activeUsers = users.filter(u => u.status === 'approved');
         activeList.innerHTML = '';
         if (activeUsers.length === 0) {
@@ -375,22 +361,22 @@
         } else {
           activeUsers.forEach(u => {
             const item = document.createElement('div');
-            item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-2';
+            item.className = 'bg-slate-900 p-2 rounded-lg border border-slate-800 space-y-1.5';
             item.innerHTML = `
               <div class="flex items-center justify-between">
                 <div>
-                  <span class="font-bold text-white text-xs">${u.username}</span>
+                  <span class="font-bold text-white text-[11px]">${u.username}</span>
                   <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ml-1 badge-${u.rank.toLowerCase()}">${u.rank}</span>
-                  <p class="text-[10px] text-slate-400">Edad: ${u.age || 'N/A'} • País: ${u.country || 'N/A'}</p>
+                  <p class="text-[9px] text-slate-400">Edad: ${u.age || 'N/A'} • ${u.country || 'N/A'}</p>
                 </div>
                 <button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
               <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60">
-                <span class="text-[10px] text-slate-400">Cambiar Rango:</span>
-                <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none">
-                  <option value="" disabled selected>Seleccionar Rango</option>
+                <span class="text-[10px] text-slate-400">Rango:</span>
+                <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none w-full">
+                  <option value="" disabled selected>Cambiar rango...</option>
                   <option value="Privado">Privado</option>
                   <option value="Sargento">Sargento</option>
                   <option value="Teniente">Teniente</option>
@@ -410,7 +396,6 @@
       }
     }
 
-    // APROBAR
     async function approveUser(username) {
       try {
         const response = await fetch(WEB_APP_URL, {
@@ -427,7 +412,6 @@
       }
     }
 
-    // CAMBIAR RANGO
     async function changeUserRank(username, newRank) {
       if (!confirm(`¿Confirmas cambiar el rango de ${username} a "${newRank}"?`)) return;
 
@@ -441,7 +425,7 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         if (result.status === 'success') {
-          alert(`✔ Rango de ${username} actualizado a ${newRank} con éxito.`);
+          alert(`✔ Rango de ${username} actualizado a ${newRank}.`);
           loadUsersData();
         }
       } catch (err) {
@@ -450,9 +434,8 @@
       }
     }
 
-    // ELIMINAR USUARIO
     async function deleteUser(username) {
-      if (!confirm(`⚠ ¿Estás seguro de ELIMINAR permanentemente a ${username} del sistema?`)) return;
+      if (!confirm(`⚠ ¿Estás seguro de ELIMINAR a ${username} del sistema?`)) return;
 
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
@@ -464,7 +447,7 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         if (result.status === 'success') {
-          alert(`✔ Usuario ${username} eliminado de la base de datos.`);
+          alert(`✔ Usuario ${username} eliminado.`);
           loadUsersData();
         }
       } catch (err) {
@@ -478,7 +461,6 @@
       location.reload();
     }
 
-    // CONTROL DE TURNOS
     function toggleShift() {
       const btn = document.getElementById('btnToggleShift');
       const badge = document.getElementById('shiftStatusBadge');
@@ -494,21 +476,21 @@
         }, 1000);
 
         btn.innerHTML = '<i class="fa-solid fa-square mr-1"></i> Finalizar Turno';
-        btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded text-sm transition';
+        btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded text-xs transition';
         badge.innerText = 'EN SERVICIO';
-        badge.className = 'text-[10px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold';
+        badge.className = 'text-[9px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold';
         timerDisplay.classList.remove('hidden');
       } else {
         clearInterval(shiftTimer);
         shiftTimer = null;
-        alert(`Turno finalizado. Tiempo registrado: ${document.getElementById('stopwatch').innerText}`);
+        alert(`Turno finalizado. Tiempo: ${document.getElementById('stopwatch').innerText}`);
         shiftSeconds = 0;
         document.getElementById('stopwatch').innerText = '00:00:00';
         
         btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> Iniciar Turno';
-        btn.className = 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-sm transition';
+        btn.className = 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition';
         badge.innerText = 'FUERA DE SERVICIO';
-        badge.className = 'text-[10px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
+        badge.className = 'text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
         timerDisplay.classList.add('hidden');
       }
     }
