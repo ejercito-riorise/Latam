@@ -262,11 +262,14 @@
           </div>
         </div>
 
-        <!-- VISTA 5: PUBLICAR NOVEDADES -->
+        <!-- VISTA 5: PUBLICAR / MODIFICAR NOVEDADES -->
         <div id="viewNewsAdmin" class="space-y-3 hidden">
-          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2">
-            <i class="fa-solid fa-bullhorn"></i> Redactar / Publicar Orden del Día:
-          </h4>
+          <div class="flex items-center justify-between">
+            <h4 id="newsFormTitle" class="text-xs font-bold text-amber-400 flex items-center gap-1">
+              <i class="fa-solid fa-bullhorn"></i> Redactar / Publicar Orden del Día:
+            </h4>
+            <button id="cancelEditBtn" onclick="cancelEditNews()" class="hidden text-[10px] bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded">Cancelar Edición</button>
+          </div>
           <form onsubmit="handlePublishNews(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800">
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">Título del Comunicado</label>
@@ -313,6 +316,7 @@
     let cachedData = null;
     let deferredPrompt = null;
     let globalHistoryCache = [];
+    let editingOldTitle = null;
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -416,7 +420,7 @@
       if (isMayor) {
         btnText.innerText = "Enviar a Aprobación";
       } else {
-        btnText.innerText = "Publicar Comunicado";
+        btnText.innerText = editingOldTitle ? "Guardar Cambios" : "Publicar Comunicado";
       }
 
       if (isSuperAdmin) {
@@ -640,8 +644,8 @@
         if (canManageNews) {
           adminActions = `
             <div class="flex gap-1.5">
-              <button onclick="editNews('${item.titulo}', '${item.mensaje}', '${item.imagen || ''}')" class="text-blue-400 hover:text-blue-300 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteNews('${item.titulo}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+              <button onclick="editNews('${item.titulo.replace(/'/g, "\\'")}', '${item.mensaje.replace(/'/g, "\\'").replace(/\n/g, "\\n")}', '${item.imagen || ''}')" class="text-blue-400 hover:text-blue-300 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           `;
         }
@@ -686,6 +690,7 @@
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const author = `${currentUser.username} (${currentUser.rank})`;
 
+      const actionType = editingOldTitle ? "editNews" : "publishNews";
       const status = (isMayor) ? 'pending' : 'approved';
 
       document.getElementById('loadingOverlay').classList.remove('hidden');
@@ -694,7 +699,8 @@
         const response = await fetch(WEB_APP_URL, {
           method: 'POST',
           body: JSON.stringify({
-            action: 'publishNews',
+            action: actionType,
+            oldTitle: editingOldTitle,
             fecha: dateStr,
             hora: timeStr,
             autor: author,
@@ -708,23 +714,44 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         if (result.status === 'success') {
-          if (isMayor) {
+          if (editingOldTitle) {
+            alert('✔ Comunicado modificado con éxito.');
+          } else if (isMayor) {
             alert('✔ Comunicado enviado al Alto Mando para su revisión y aprobación.');
           } else {
             alert('✔ Orden del día publicada con éxito.');
           }
-          document.getElementById('newsTitle').value = '';
-          document.getElementById('newsMessage').value = '';
-          document.getElementById('newsImage').value = '';
+          cancelEditNews();
           toggleControlPanel(false);
           loadSession();
         } else {
-          alert('⚠ Error al publicar el comunicado.');
+          alert('⚠ Error al procesar el comunicado.');
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('Error de conexión con la base de datos.');
       }
+    }
+
+    function editNews(title, message, image) {
+      editingOldTitle = title;
+      switchAdminTab('newsAdmin');
+      document.getElementById('newsTitle').value = title;
+      document.getElementById('newsMessage').value = message;
+      document.getElementById('newsImage').value = image;
+      document.getElementById('newsFormTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Modificar Orden del Día:`;
+      document.getElementById('newsBtnText').innerText = "Guardar Cambios";
+      document.getElementById('cancelEditBtn').classList.remove('hidden');
+    }
+
+    function cancelEditNews() {
+      editingOldTitle = null;
+      document.getElementById('newsTitle').value = '';
+      document.getElementById('newsMessage').value = '';
+      document.getElementById('newsImage').value = '';
+      document.getElementById('newsFormTitle').innerHTML = `<i class="fa-solid fa-bullhorn"></i> Redactar / Publicar Orden del Día:`;
+      document.getElementById('newsBtnText').innerText = "Publicar Comunicado";
+      document.getElementById('cancelEditBtn').classList.add('hidden');
     }
 
     async function approveNews(title) {
@@ -767,14 +794,6 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('Error al eliminar.');
       }
-    }
-
-    function editNews(title, message, image) {
-      switchAdminTab('newsAdmin');
-      document.getElementById('newsTitle').value = title;
-      document.getElementById('newsMessage').value = message;
-      document.getElementById('newsImage').value = image;
-      alert('Modifica los datos en el formulario y vuelve a publicar (puedes eliminar el anterior si lo deseas).');
     }
 
     function applyPermissions(user) {
@@ -960,8 +979,8 @@
                 <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
                 <p class="text-[11px] text-slate-300">${item.mensaje}</p>
                 <div class="flex gap-2 pt-1">
-                  <button onclick="approveNews('${item.titulo}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-check"></i> Aprobar</button>
-                  <button onclick="deleteNews('${item.titulo}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Rechazar</button>
+                  <button onclick="approveNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-check"></i> Aprobar</button>
+                  <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Rechazar</button>
                 </div>
               `;
               pendingNewsList.appendChild(newsItem);
