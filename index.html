@@ -263,7 +263,7 @@
     let shiftInterval = null;
     let cachedData = null;
 
-    // Función auxiliar corregida para convertir horas decimales a formato "HH:MM"
+    // Conversión exacta de decimales de hora a formato "HH:MM" (Ej: 0.05 horas = 3 minutos -> 00:03)
     function decimalToHM(decimalHours) {
       const num = parseFloat(decimalHours);
       if (isNaN(num) || num < 0) return "00:00";
@@ -271,6 +271,16 @@
       const hrs = Math.floor(totalMinutes / 60);
       const mins = totalMinutes % 60;
       return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    }
+
+    // Normalizar fechas para asegurar que coincidan sin importar formato de barra o guion
+    function normalizeDate(dateStr) {
+      if (!dateStr) return "";
+      let d = new Date(dateStr);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString();
+      }
+      return dateStr.toString().trim();
     }
 
     function showAuthTab(tab) {
@@ -375,7 +385,8 @@
           return;
         }
 
-        currentUser = { username: found.username, rank: found.rank };
+        // Guardamos las horas totales reales que vienen de la base de datos
+        currentUser = { username: found.username, rank: found.rank, hours: found.hours || 0 };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
         loadSession(resData.history);
       } catch (err) {
@@ -401,6 +412,9 @@
             const response = await fetch(WEB_APP_URL);
             const resData = await response.json();
             historyData = resData.history;
+            // Actualizar horas totales actualizadas de la BD
+            const freshUser = resData.users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
+            if (freshUser) currentUser.hours = freshUser.hours || 0;
           } catch (e) { historyData = []; }
         }
 
@@ -416,7 +430,7 @@
 
       if (history && history.length > 0) {
         history.forEach(h => {
-          if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase() && h.fecha === todayStr) {
+          if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase() && normalizeDate(h.fecha) === todayStr) {
             todayTotal += parseFloat(h.horas || 0);
           }
         });
@@ -523,6 +537,8 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
 
         if (result.status === 'success') {
+          currentUser.hours = result.total;
+          localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
           alert(`✔ Turno finalizado con éxito.\n📅 Fecha: ${currentDate}\n⏱ Duración: ${timeSpentMsg}`);
           loadSession();
         } else {
@@ -573,7 +589,7 @@
           });
         }
 
-        // 2. ACTIVOS
+        // 2. ACTIVOS (Muestra Total Acumulado Correctamente en formato 00:00)
         const activeUsers = users.filter(u => u.status === 'approved');
         activeList.innerHTML = '';
         if (activeUsers.length === 0) {
@@ -609,14 +625,14 @@
           });
         }
 
-        // 3. REPORTE DIARIO DE HOY
+        // 3. REPORTE DIARIO DE HOY (Suma exacta por fecha normalizada)
         const todayStr = new Date().toLocaleDateString();
         let dailyTotals = {};
         activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = 0; });
 
         if (history) {
           history.forEach(h => {
-            if (h.fecha === todayStr && h.username) {
+            if (normalizeDate(h.fecha) === todayStr && h.username) {
               const uKey = h.username.toLowerCase();
               dailyTotals[uKey] = (dailyTotals[uKey] || 0) + parseFloat(h.horas || 0);
             }
@@ -666,13 +682,14 @@
       if (filterType === 'day' && dateInput) {
         const parts = dateInput.split('-');
         const formattedDate = `${parseInt(parts[2])}/${parseInt(parts[1])}/${parts[0]}`;
-        filtered = cachedData.history.filter(h => h.fecha === formattedDate || h.fecha === dateInput);
+        filtered = cachedData.history.filter(h => normalizeDate(h.fecha) === formattedDate || normalizeDate(h.fecha) === dateInput);
       } else if (filterType === 'month') {
         const currentMonth = new Date().getMonth() + 1;
         const currentYear = new Date().getFullYear();
         filtered = cachedData.history.filter(h => {
           if (!h.fecha) return false;
-          return h.fecha.includes(`/${currentMonth}/${currentYear}`) || h.fecha.startsWith(`${currentYear}-${String(currentMonth).padStart(2, '0')}`);
+          let norm = normalizeDate(h.fecha);
+          return norm.includes(`/${currentMonth}/${currentYear}`) || norm.startsWith(`${currentYear}-${String(currentMonth).padStart(2, '0')}`);
         });
       }
 
