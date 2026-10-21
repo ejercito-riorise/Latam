@@ -262,7 +262,7 @@
           </div>
         </div>
 
-        <!-- VISTA 5: PUBLICAR NOVEDADES -->
+        <!-- VISTA 5: PUBLICAR NOVEDADES (GENERAL / MIKE_COVID) -->
         <div id="viewNewsAdmin" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2">
             <i class="fa-solid fa-bullhorn"></i> Publicar Orden del Día / Comunicado:
@@ -830,7 +830,7 @@
           });
         }
 
-        // 3. REPORTE DIARIO DE HOY (ORDENADO COMO RANKING DE MAYOR A MENOR)
+        // 3. REPORTE DIARIO DE HOY (ORDENADO COMO RANKING)
         const todayStr = new Date().toLocaleDateString();
         let dailyTotals = {};
         activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; });
@@ -846,7 +846,6 @@
           });
         }
 
-        // Convertir a array y ordenar de mayor a menor horas
         const dailyArray = Object.values(dailyTotals).sort((a, b) => b.hours - a.hours);
 
         dailyReportList.innerHTML = '';
@@ -880,7 +879,6 @@
       }
     }
 
-    // APLICAR FILTROS Y ORDENAR COMO RANKING DE MAYOR A MENOR
     function applyHistoryFilter() {
       if (!cachedData || !cachedData.history) return;
 
@@ -918,7 +916,6 @@
         userSummary[name] = (userSummary[name] || 0) + parseFloat(h.horas || 0);
       });
 
-      // Convertir a array y ordenar de mayor a menor (`b - a`)
       const rankedArray = Object.keys(userSummary).map(name => ({
         name: name,
         totalHours: userSummary[name]
