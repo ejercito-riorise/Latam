@@ -311,14 +311,12 @@
       }
     }
 
-    // Configurar qué pestañas ve cada rol al abrir el panel
     function configureTabsForRole() {
       const rankLower = (currentUser.rank || '').toLowerCase();
       const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general' || rankLower === 'coronel';
       const tabsContainer = document.getElementById('adminTabsContainer');
 
       if (isSuperAdmin) {
-        // General, Coronel y Mike_Covid ven 4 pestañas
         tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('pending')" id="adminTabPending" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Solicitudes</button>
@@ -328,7 +326,6 @@
         `;
         switchAdminTab('active');
       } else {
-        // Sargento, Teniente y Mayor solo ven 2 pestañas (Hoy y Filtros - solo tiempos)
         tabsContainer.className = "grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Hoy</button>
@@ -399,7 +396,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
 
       try {
         const response = await fetch(WEB_APP_URL);
@@ -427,31 +424,53 @@
       }
     }
 
+    // VALIDACIÓN DE SEGURIDAD EN VIVO: Verifica si el usuario sigue existiendo y aprobado en la BD
     async function loadSession(historyData = null) {
       const savedSession = localStorage.getItem('rioRiseCurrentSession');
       if (savedSession) {
         currentUser = JSON.parse(savedSession);
-        document.getElementById('authSection').classList.add('hidden');
-        document.getElementById('mainDashboard').classList.remove('hidden');
 
-        document.getElementById('profileName').innerText = currentUser.username;
-        const rankEl = document.getElementById('profileRank');
-        rankEl.innerText = currentUser.rank;
-        rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+        try {
+          const response = await fetch(WEB_APP_URL);
+          const resData = await response.json();
+          document.getElementById('loadingOverlay').classList.add('hidden');
 
-        if (!historyData) {
-          try {
-            const response = await fetch(WEB_APP_URL);
-            const resData = await response.json();
-            historyData = resData.history;
-            const freshUser = resData.users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
-            if (freshUser) currentUser.hours = freshUser.hours || 0;
-          } catch (e) { historyData = []; }
+          // Buscar si el usuario actual sigue en la base de datos con estado approved
+          const activeUserCheck = resData.users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase() && u.status === 'approved');
+
+          if (!activeUserCheck) {
+            alert('⛔ Tu cuenta ha sido eliminada o dada de baja por el Mando. Sesión finalizada.');
+            logout();
+            return;
+          }
+
+          // Actualizar datos frescos
+          currentUser.rank = activeUserCheck.rank;
+          currentUser.hours = activeUserCheck.hours || 0;
+          localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
+
+          document.getElementById('authSection').classList.add('hidden');
+          document.getElementById('mainDashboard').classList.remove('hidden');
+
+          document.getElementById('profileName').innerText = currentUser.username;
+          const rankEl = document.getElementById('profileRank');
+          rankEl.innerText = currentUser.rank;
+          rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
+
+          calculateTodayHours(resData.history);
+          applyPermissions(currentUser);
+          checkActiveShiftOnLoad();
+
+        } catch (e) {
+          document.getElementById('loadingOverlay').classList.add('hidden');
+          // Si falla la red, permitimos operar con lo que hay localmente para no bloquear turnos
+          document.getElementById('authSection').classList.add('hidden');
+          document.getElementById('mainDashboard').classList.remove('hidden');
+          document.getElementById('profileName').innerText = currentUser.username;
+          applyPermissions(currentUser);
+          checkActiveShiftOnLoad();
         }
-
-        calculateTodayHours(historyData);
-        applyPermissions(currentUser);
-        checkActiveShiftOnLoad();
       }
     }
 
@@ -601,9 +620,8 @@
 
         const rankLower = (currentUser.rank || '').toLowerCase();
         const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
-        const isCoronelOrAbove = isSuperAdmin || rankLower === 'coronel';
 
-        // 1. PENDIENTES (Solo General y mike_covid)
+        // 1. PENDIENTES
         const pendingUsers = users.filter(u => u.status === 'pending');
         pendingList.innerHTML = '';
         if (!isSuperAdmin) {
@@ -629,7 +647,7 @@
           });
         }
 
-        // 2. ACTIVOS (Coronel ve todo sin editar; Sargento, Teniente y Mayor no ven esta pestaña)
+        // 2. ACTIVOS
         const activeUsers = users.filter(u => u.status === 'approved');
         activeList.innerHTML = '';
         if (activeUsers.length === 0) {
@@ -680,7 +698,7 @@
           });
         }
 
-        // 3. REPORTE DIARIO DE HOY (Visible para todos)
+        // 3. REPORTE DIARIO DE HOY
         const todayStr = new Date().toLocaleDateString();
         let dailyTotals = {};
         activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = 0; });
