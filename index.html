@@ -168,6 +168,17 @@
           </div>
         </div>
 
+        <!-- TABLÓN DE ÓRDENES DEL DÍA Y NOVEDADES -->
+        <div class="military-card p-3 rounded-xl space-y-2">
+          <div class="flex items-center gap-2 border-b border-slate-800 pb-1.5">
+            <i class="fa-solid fa-bullhorn text-amber-400 text-sm"></i>
+            <h3 class="font-bold text-white text-xs">Órdenes del Día y Comunicados</h3>
+          </div>
+          <div id="newsFeedContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+            <p class="text-[11px] text-slate-400 italic">Cargando boletines oficiales...</p>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
@@ -188,11 +199,8 @@
       </div>
 
       <!-- SUB-PESTAÑAS TÁCTICAS DINÁMICAS -->
-      <div id="adminTabsContainer" class="grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center">
-        <button onclick="switchAdminTab('pending')" id="adminTabPending" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Solicitudes</button>
-        <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Tropa</button>
-        <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
-        <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
+      <div id="adminTabsContainer" class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center">
+        <!-- Generado dinámicamente según rol -->
       </div>
 
       <!-- CONTENEDOR DE LAS SECCIONES (SCROLLABLE) -->
@@ -254,6 +262,26 @@
           </div>
         </div>
 
+        <!-- VISTA 5: PUBLICAR NOVEDADES -->
+        <div id="viewNewsAdmin" class="space-y-3 hidden">
+          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2">
+            <i class="fa-solid fa-bullhorn"></i> Publicar Orden del Día / Comunicado:
+          </h4>
+          <form onsubmit="handlePublishNews(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800">
+            <div>
+              <label class="block text-[10px] text-slate-300 mb-1">Título del Comunicado</label>
+              <input type="text" id="newsTitle" required placeholder="Ej: Directiva de Servicio No. 04" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-300 mb-1">Mensaje / Orden Oficial</label>
+              <textarea id="newsMessage" required rows="4" placeholder="Escribe aquí los detalles de la orden..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
+              Publicar Comunicado Oficial
+            </button>
+          </form>
+        </div>
+
       </div>
 
     </div>
@@ -270,8 +298,8 @@
     let shiftInterval = null;
     let cachedData = null;
     let deferredPrompt = null;
+    let globalHistoryCache = [];
 
-    // --- REGISTRO DE SERVICE WORKER PARA HABILITAR PWA ---
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
@@ -346,14 +374,24 @@
 
     function configureTabsForRole() {
       const rankLower = (currentUser.rank || '').toLowerCase();
-      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general' || rankLower === 'coronel';
+      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
+      const isCoronel = rankLower === 'coronel';
       const tabsContainer = document.getElementById('adminTabsContainer');
 
       if (isSuperAdmin) {
-        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('pending')" id="adminTabPending" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Solicitudes</button>
-          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Tropa</button>
+          <button onclick="switchAdminTab('pending')" id="adminTabPending" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Solicitudes</button>
+          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Tropa</button>
+          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
+          <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
+          <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Publicar</button>
+        `;
+        switchAdminTab('active');
+      } else if (isCoronel) {
+        tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.innerHTML = `
+          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
           <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
           <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
         `;
@@ -370,20 +408,24 @@
 
     function switchAdminTab(tab) {
       const rankLower = (currentUser.rank || '').toLowerCase();
-      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general' || rankLower === 'coronel';
+      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
+      const isCoronel = rankLower === 'coronel';
 
-      const views = isSuperAdmin ? ['pending', 'active', 'daily', 'filters'] : ['daily', 'filters'];
+      let views = ['daily', 'filters'];
+      if (isSuperAdmin) views = ['pending', 'active', 'daily', 'filters', 'newsAdmin'];
+      else if (isCoronel) views = ['active', 'daily', 'filters'];
+
       views.forEach(v => {
         const viewEl = document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`);
         const tabEl = document.getElementById(`adminTab${v.charAt(0).toUpperCase() + v.slice(1)}`);
         if (viewEl) viewEl.classList.add('hidden');
-        if (tabEl) tabEl.className = "py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition";
+        if (tabEl) tabEl.className = "py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
       });
 
       const targetView = document.getElementById(`view${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       const targetTab = document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       if (targetView) targetView.classList.remove('hidden');
-      if (targetTab) targetTab.className = "py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition";
+      if (targetTab) targetTab.className = "py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition";
     }
 
     async function handleRegister(e) {
@@ -450,15 +492,14 @@
 
         currentUser = { username: found.username, rank: found.rank, hours: found.hours || 0 };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-        loadSession(resData.history);
+        loadSession(resData.history, resData.news);
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('Error al verificar las credenciales con la base de datos.');
       }
     }
 
-    // INICIO DE SESIÓN ESTABLE Y SEGURO
-    async function loadSession(historyData = null) {
+    async function loadSession(historyData = null, newsData = null) {
       const savedSession = localStorage.getItem('rioRiseCurrentSession');
       if (savedSession) {
         currentUser = JSON.parse(savedSession);
@@ -471,34 +512,113 @@
         rankEl.innerText = currentUser.rank;
         rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
 
-        if (!historyData) {
+        if (!historyData || !newsData) {
           try {
             const response = await fetch(WEB_APP_URL);
             const resData = await response.json();
             historyData = resData.history;
+            newsData = resData.news;
             const freshUser = resData.users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
             if (freshUser) currentUser.hours = freshUser.hours || 0;
-          } catch (e) { historyData = []; }
+          } catch (e) { 
+            historyData = historyData || []; 
+            newsData = newsData || []; 
+          }
         }
 
-        calculateTodayHours(historyData);
+        globalHistoryCache = historyData || [];
+        updateTodayHoursLive();
+        renderNewsFeed(newsData);
         applyPermissions(currentUser);
         checkActiveShiftOnLoad();
       }
     }
 
-    function calculateTodayHours(history) {
+    // CÁLCULO EN TIEMPO REAL DE LAS HORAS DE HOY (Historial + Turno Activo)
+    function updateTodayHoursLive() {
       const todayStr = new Date().toLocaleDateString();
-      let todayTotal = 0;
+      let todayTotalHours = 0;
 
-      if (history && history.length > 0) {
-        history.forEach(h => {
+      // 1. Sumar lo registrado y guardado hoy en el historial
+      if (globalHistoryCache && globalHistoryCache.length > 0) {
+        globalHistoryCache.forEach(h => {
           if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase() && normalizeDate(h.fecha) === todayStr) {
-            todayTotal += parseFloat(h.horas || 0);
+            todayTotalHours += parseFloat(h.horas || 0);
           }
         });
       }
-      document.getElementById('profileTodayHours').innerText = `Hoy: ${decimalToHM(todayTotal)}`;
+
+      // 2. Si hay un turno activo en curso, sumarle en tiempo real los segundos que lleva corriendo
+      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
+      if (activeShiftStart) {
+        const activeSeconds = Math.floor((Date.now() - parseInt(activeShiftStart)) / 1000);
+        todayTotalHours += (activeSeconds / 3600);
+      }
+
+      document.getElementById('profileTodayHours').innerText = `Hoy: ${decimalToHM(todayTotalHours)}`;
+    }
+
+    function renderNewsFeed(news) {
+      const feed = document.getElementById('newsFeedContainer');
+      feed.innerHTML = '';
+
+      if (!news || news.length === 0) {
+        feed.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay órdenes del día publicadas.</p>';
+        return;
+      }
+
+      const sortedNews = [...news].reverse();
+      sortedNews.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1';
+        card.innerHTML = `
+          <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
+            <span class="font-bold text-amber-400"><i class="fa-solid fa-shield-halved mr-1"></i>${item.autor || 'Mando'}</span>
+            <span>${item.fecha || ''}</span>
+          </div>
+          <h4 class="font-bold text-white text-xs">${item.titulo || ''}</h4>
+          <p class="text-[11px] text-slate-300 whitespace-pre-wrap leading-relaxed">${item.mensaje || ''}</p>
+        `;
+        feed.appendChild(card);
+      });
+    }
+
+    async function handlePublishNews(e) {
+      e.preventDefault();
+      const title = document.getElementById('newsTitle').value.trim();
+      const message = document.getElementById('newsMessage').value.trim();
+      const dateStr = new Date().toLocaleDateString();
+      const author = `${currentUser.username} (${currentUser.rank})`;
+
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'publishNews',
+            fecha: dateStr,
+            autor: author,
+            titulo: title,
+            mensaje: message
+          })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+
+        if (result.status === 'success') {
+          alert('✔ Orden del día publicada con éxito.');
+          document.getElementById('newsTitle').value = '';
+          document.getElementById('newsMessage').value = '';
+          toggleControlPanel(false);
+          loadSession();
+        } else {
+          alert('⚠ Error al publicar el comunicado.');
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error de conexión con la base de datos.');
+      }
     }
 
     function applyPermissions(user) {
@@ -515,7 +635,6 @@
       }
     }
 
-    // CRONÓMETRO PERSISTENTE (No se reinicia al cerrar la pestaña o recargar)
     function checkActiveShiftOnLoad() {
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
       if (activeShiftStart) {
@@ -544,6 +663,9 @@
         const mins = String(Math.floor((diffSeconds % 3600) / 60)).padStart(2, '0');
         const secs = String(diffSeconds % 60).padStart(2, '0');
         document.getElementById('stopwatch').innerText = `${hrs}:${mins}:${secs}`;
+
+        // Actualizar en tiempo real el contador "Hoy: HH:MM"
+        updateTodayHoursLive();
       }, 1000);
     }
 
@@ -846,14 +968,9 @@
       try {
         const response = await fetch(WEB_APP_URL, {
           method: 'POST',
-          body: `JSON.stringify({ action: 'deleteUser', username: username })`
-        });
-        // Corrección de sintaxis segura para el fetch
-        const responseClean = await fetch(WEB_APP_URL, {
-          method: 'POST',
           body: JSON.stringify({ action: 'deleteUser', username: username })
         });
-        const result = await responseClean.json();
+        const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
           alert(`✔ Usuario ${username} eliminado.`);
