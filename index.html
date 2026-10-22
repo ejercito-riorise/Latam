@@ -3,21 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ejército RioRise - Intranet</title>
+  <title>Intranet EB - Ejército RioRise</title>
   
   <!-- FAVICON E ICONOS OFICIALES -->
   <link rel="icon" type="image/png" href="https://img.icons8.com/color/512/shield.png">
   <link rel="apple-touch-icon" href="https://img.icons8.com/color/512/shield.png">
 
-  <!-- ETIQUETAS PARA WHATSAPP (PREVISUALIZACIÓN Y LOGO) -->
-  <meta property="og:title" content="Ejército RioRise - Portal Interno">
-  <meta property="og:description" content="Intranet oficial del Ejército RioRise. Control de turnos y órdenes del día.">
+  <!-- ETIQUETAS PARA WHATSAPP -->
+  <meta property="og:title" content="Intranet EB - Ejército RioRise">
+  <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
   <meta property="og:image" content="https://img.icons8.com/color/512/shield.png">
-  <meta property="og:url" content="">
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#0b0f19">
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -43,8 +42,8 @@
             <i class="fa-solid fa-shield-halved text-blue-400 text-sm"></i>
           </div>
           <div>
-            <h1 class="font-bold tracking-wider text-white text-xs">EJÉRCITO RIORISE</h1>
-            <p class="text-[10px] text-slate-400">Portal Interno</p>
+            <h1 class="font-bold tracking-wider text-white text-xs">INTRANET EB</h1>
+            <p class="text-[10px] text-slate-400">Ejército RioRise</p>
           </div>
         </div>
         <div class="flex items-center gap-1.5">
@@ -349,7 +348,7 @@
 
   <!-- PIE DE PÁGINA -->
   <footer class="text-center py-3 text-[10px] text-slate-500 border-t border-slate-900 mt-2 bg-slate-950/40">
-    <p>Desarrollado y diseñado por <span class="font-bold text-blue-400">Mike_Covid</span> • Ejército RioRise</p>
+    <p>Desarrollado y diseñado por <span class="font-bold text-blue-400">Mike_Covid</span> • Intranet EB</p>
   </footer>
 
   <script>
@@ -364,14 +363,6 @@
     let editingDoctrinaOldTitle = null;
     let newsStorageMap = {};
     let doctrinaStorageMap = {};
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
-          reg.update();
-        }).catch(err => console.log('SW error:', err));
-      });
-    }
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -788,7 +779,7 @@
           adminActions = `
             <div class="flex gap-1.5">
               <button onclick="triggerEdit(${index})" class="text-blue-400 hover:text-blue-300 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-blue-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           `;
         }
