@@ -59,10 +59,10 @@
 
     <main class="max-w-md mx-auto p-3 space-y-3">
 
-      <!-- OVERLAY CARGANDO RÁPIDO -->
+      <!-- OVERLAY CARGANDO PROFESIONAL -->
       <div id="loadingOverlay" class="hidden text-center py-2 bg-slate-900/90 border border-blue-500/30 rounded-lg p-2">
         <i class="fa-solid fa-spinner fa-spin text-blue-400 text-xl"></i>
-        <p class="text-[11px] text-slate-300 font-semibold mt-1">Conectando con base de datos...</p>
+        <p class="text-[11px] text-slate-300 font-semibold mt-1">Conectando al sistema...</p>
       </div>
 
       <!-- SECCIÓN DE AUTENTICACIÓN -->
@@ -625,14 +625,19 @@
         const resData = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
 
-        const found = resData.users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass);
+        if (!resData || !resData.users) {
+          alert('Error al conectar con la base de datos.');
+          return;
+        }
+
+        const found = resData.users.find(u => String(u.username).trim().toLowerCase() === user.toLowerCase() && String(u.password).trim() === pass.trim());
 
         if (!found) {
           alert('Usuario o contraseña incorrectos.');
           return;
         }
 
-        if (found.status.toLowerCase() !== 'approved') {
+        if (String(found.status).trim().toLowerCase() !== 'approved') {
           alert('⛔ Tu cuenta aún no ha sido autorizada por los superiores.');
           return;
         }
@@ -666,7 +671,7 @@
             historyData = resData.history;
             newsData = resData.news;
             doctrinaData = resData.doctrina;
-            const freshUser = resData.users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
+            const freshUser = resData.users.find(u => String(u.username).trim().toLowerCase() === currentUser.username.toLowerCase());
             if (freshUser) {
               currentUser.hours = parseFloat(freshUser.hours || 0);
               currentUser.activeShiftStart = freshUser.activeShiftStart;
