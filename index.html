@@ -156,6 +156,30 @@
           </button>
         </div>
 
+        <!-- MÓDULO CONTROL DE SERVICIO (UBICADO ARRIBA) -->
+        <div class="military-card p-3 rounded-xl">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-clock text-blue-400 text-sm"></i>
+              <h3 class="font-bold text-white text-xs">Control de Servicio</h3>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span id="scheduleStatusIndicator" class="text-[9px] px-2 py-0.5 rounded font-bold">Verificando...</span>
+              <span id="shiftStatusBadge" class="text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold">FUERA DE SERVICIO</span>
+            </div>
+          </div>
+
+          <div id="shiftControls" class="space-y-2">
+            <div id="timerDisplay" class="hidden text-center py-1.5 bg-slate-950 rounded border border-slate-800">
+              <p class="text-[10px] text-slate-400">Tiempo transcurrido en servicio:</p>
+              <p id="stopwatch" class="text-xl font-mono font-bold text-green-400">00:00:00</p>
+            </div>
+            <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
+              <i class="fa-solid fa-play mr-1"></i> Iniciar Servicio
+            </button>
+          </div>
+        </div>
+
         <!-- PESTAÑAS DE NAVEGACIÓN PRINCIPAL -->
         <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
           <button id="navNewsBtn" onclick="switchMainTab('news')" class="py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5">
@@ -193,27 +217,6 @@
           </div>
           <div id="doctrinaFeedContainer" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
             <p class="text-[11px] text-slate-400 italic">Cargando manuales...</p>
-          </div>
-        </div>
-
-        <!-- MÓDULO CONTROL DE TURNOS -->
-        <div class="military-card p-3 rounded-xl">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-clock text-blue-400 text-sm"></i>
-              <h3 class="font-bold text-white text-xs">Control de Turnos</h3>
-            </div>
-            <span id="shiftStatusBadge" class="text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold">FUERA DE SERVICIO</span>
-          </div>
-
-          <div id="shiftControls" class="space-y-2">
-            <div id="timerDisplay" class="hidden text-center py-1.5 bg-slate-950 rounded border border-slate-800">
-              <p class="text-[10px] text-slate-400">Tiempo transcurrido en turno:</p>
-              <p id="stopwatch" class="text-xl font-mono font-bold text-green-400">00:00:00</p>
-            </div>
-            <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
-              <i class="fa-solid fa-play mr-1"></i> Iniciar Turno
-            </button>
           </div>
         </div>
 
@@ -446,6 +449,22 @@
         if (fileId) return `https://lh3.googleusercontent.com/d/${fileId}`;
       }
       return trimmed;
+    }
+
+    function updateScheduleIndicator() {
+      const indicator = document.getElementById('scheduleStatusIndicator');
+      if (!indicator) return;
+      const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
+      const currentHour = new Date(colombiaTimeStr).getHours();
+      const isAllowedHour = (currentHour >= 18 || currentHour < 3);
+
+      if (isAllowedHour) {
+        indicator.innerText = "🟢 Servicio Habilitado";
+        indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
+      } else {
+        indicator.innerText = "🔴 Fuera de Horario";
+        indicator.className = "text-[9px] bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold";
+      }
     }
 
     function showAuthTab(tab) {
@@ -689,6 +708,7 @@
         renderDoctrinaFeed(doctrinaData);
         applyPermissions(currentUser);
         checkActiveShiftOnLoad();
+        updateScheduleIndicator();
         startRealtimeSync();
       }
     }
@@ -698,6 +718,7 @@
       if (syncInterval) clearInterval(syncInterval);
       syncInterval = setInterval(async () => {
         try {
+          updateScheduleIndicator();
           const response = await fetch(WEB_APP_URL);
           const resData = await response.json();
           globalHistoryCache = resData.history || [];
@@ -1137,12 +1158,24 @@
       badge.innerText = 'EN SERVICIO';
       badge.className = 'text-[9px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold animate-pulse';
       
-      btn.innerHTML = '<i class="fa-solid fa-square mr-1"></i> Finalizar Turno';
+      btn.innerHTML = '<i class="fa-solid fa-square mr-1"></i> Finalizar Servicio';
       btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded text-xs transition';
 
       if (shiftInterval) clearInterval(shiftInterval);
       shiftInterval = setInterval(() => {
         const now = Date.now();
+
+        // CIERRE AUTOMÁTICO DE EMERGENCIA A LAS 03:00 (HORA COLOMBIA)
+        const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
+        const colombiaDate = new Date(colombiaTimeStr);
+        if (colombiaDate.getHours() === 3 && colombiaDate.getMinutes() === 0 && colombiaDate.getSeconds() < 10) {
+          if (localStorage.getItem(`shiftStart_${currentUser.username}`)) {
+            alert('⏰ Son las 03:00 a.m. El sistema ha finalizado tu servicio automáticamente.');
+            toggleShift();
+            return;
+          }
+        }
+
         const diffSeconds = Math.floor((now - startTime) / 1000);
         
         const hrs = String(Math.floor(diffSeconds / 3600)).padStart(2, '0');
@@ -1197,7 +1230,7 @@
         const badge = document.getElementById('shiftStatusBadge');
         const timerDisplay = document.getElementById('timerDisplay');
 
-        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> Iniciar Turno';
+        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> Iniciar Servicio';
         btn.className = 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition';
         badge.innerText = 'FUERA DE SERVICIO';
         badge.className = 'text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
@@ -1233,14 +1266,14 @@
         if (result.status === 'success') {
           currentUser.hours = result.total;
           localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-          alert(`✔ Turno finalizado con éxito.\n📅 Fecha: ${currentDate}\n⏱ Duración: ${timeSpentMsg}`);
+          alert(`✔ Servicio finalizado con éxito.\n📅 Fecha: ${currentDate}\n⏱ Duración: ${timeSpentMsg}`);
           loadSession();
         } else {
-          alert('⚠ Error al sincronizar el turno.');
+          alert('⚠ Error al sincronizar el servicio.');
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error de red al registrar el turno.');
+        alert('Error de red al registrar el servicio.');
       }
     }
 
