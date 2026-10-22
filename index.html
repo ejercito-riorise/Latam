@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intranet EB - Ejército RioRise</title>
   
-  <!-- FAVICON E ICONOS OFICIALES -->
-  <link rel="icon" type="image/png" href="https://img.icons8.com/color/512/shield.png">
-  <link rel="apple-touch-icon" href="https://img.icons8.com/color/512/shield.png">
+  <!-- FAVICON E ICONOS OFICIALES (MISMO ESTILO DEL ENCABEZADO) -->
+  <link rel="icon" type="image/svg+xml" href="https://api.iconify.design/fa6-solid:shield-halved.svg?color=%2360a5fa">
+  <link rel="apple-touch-icon" href="https://api.iconify.design/fa6-solid:shield-halved.svg?color=%2360a5fa">
 
   <!-- ETIQUETAS PARA WHATSAPP -->
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
   <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
-  <meta property="og:image" content="https://img.icons8.com/color/512/shield.png">
+  <meta property="og:image" content="https://api.iconify.design/fa6-solid:shield-halved.svg?color=%2360a5fa">
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
@@ -1549,7 +1549,7 @@
           body: JSON.stringify({ action: 'updateRank', username: username, newRank: newRank })
         });
         const result = await response.json();
-        document.getElementById('loadingOverlay').classList.add('hidden');
+        document.getElementById('loadingOverlay'].classList.add('hidden');
         if (result.status === 'success') {
           alert(`✔ Rango de ${username} actualizado a ${newRank}.`);
           loadControlPanelData();
