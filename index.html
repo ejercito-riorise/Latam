@@ -164,7 +164,7 @@
       <!-- PANEL PRINCIPAL (POST-LOGIN) -->
       <div id="mainDashboard" class="hidden space-y-3">
         
-        <!-- PERFIL DE USUARIO CON MEDALLA / NIVEL -->
+        <!-- PERFIL DE USUARIO CON MEDALLA / NIVEL Y BOTÓN PRO DE INFO -->
         <div class="military-card p-3 rounded-xl flex items-center justify-between">
           <div class="flex items-center gap-2.5">
             <i class="fa-solid fa-user-shield text-xl text-blue-400"></i>
@@ -172,7 +172,10 @@
               <h3 id="profileName" class="font-bold text-white text-xs"></h3>
               <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                 <span id="profileRank" class="text-[9px] px-2 py-0.5 rounded font-bold uppercase"></span>
-                <span id="profileBadgeLevel" class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded font-bold">🎖️ Soldado Raso</span>
+                <div class="flex items-center gap-1 bg-amber-500/20 border border-amber-500/40 px-1.5 py-0.5 rounded">
+                  <span id="profileBadgeLevel" class="text-[9px] text-amber-300 font-bold">🔰 Soldado Raso</span>
+                  <button onclick="openRankInfoModal()" class="text-[10px] text-amber-400 hover:text-white transition" title="Ver tabla de rangos y niveles"><i class="fa-solid fa-circle-question"></i></button>
+                </div>
                 <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Horas de servicio hoy">Hoy: 00:00</span>
               </div>
             </div>
@@ -338,6 +341,48 @@
     </div>
   </div>
 
+  <!-- MODAL DE INFORMACIÓN DE RANGOS / NIVELES -->
+  <div id="rankInfoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
+    <div class="military-card w-full max-w-sm p-4 rounded-xl border border-amber-500/40 shadow-2xl space-y-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-ranking-star"></i> Escala de Insignias y Niveles
+        </h4>
+        <button onclick="closeRankInfoModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="text-[11px] text-slate-300">
+        Tu insignia de nivel se actualiza automáticamente acumulando horas totales de servicio en el portal:
+      </p>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
+          <span class="font-bold text-amber-300">🔥 Leyenda Élite</span>
+          <span class="text-slate-400 font-mono">50 Horas o más</span>
+        </div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
+          <span class="font-bold text-purple-300">⭐ Veterano Táctico</span>
+          <span class="text-slate-400 font-mono">30 a 49 Horas</span>
+        </div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
+          <span class="font-bold text-blue-300">🎖️ Soldado Destacado</span>
+          <span class="text-slate-400 font-mono">15 a 29 Horas</span>
+        </div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
+          <span class="font-bold text-emerald-300">🛡️ Operativo Activo</span>
+          <span class="text-slate-400 font-mono">5 a 14 Horas</span>
+        </div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
+          <span class="font-bold text-slate-300">🔰 Soldado Raso</span>
+          <span class="text-slate-400 font-mono">Menos de 5 Horas</span>
+        </div>
+      </div>
+      <button onclick="closeRankInfoModal()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
+        ¡Entendido, a Servir!
+      </button>
+    </div>
+  </div>
+
   <!-- MODAL DOCTRINA -->
   <div id="doctrinaModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-md p-4 rounded-xl border border-blue-500/40 shadow-2xl space-y-3">
@@ -440,7 +485,15 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // EXPORTAR EXACTAMENTE LO QUE SE VE EN EL RANKING FILTRADO A EXCEL (TEXTO PURO)
+    // ABRIR / CERRAR MODAL DE NIVELES
+    function openRankInfoModal() {
+      document.getElementById('rankInfoModal').classList.remove('hidden');
+    }
+    function closeRankInfoModal() {
+      document.getElementById('rankInfoModal').classList.add('hidden');
+    }
+
+    // EXPORTAR RANKING FILTRADO A EXCEL
     function exportVisualRankingCSV() {
       if (!currentRankedExportArray || currentRankedExportArray.length === 0) {
         alert('No hay datos visibles en el ranking para exportar.');
@@ -460,7 +513,6 @@
       document.body.removeChild(link);
     }
 
-    // ASIGNAR MEDALLA / NIVEL SEGÚN LAS HORAS ACUMULADAS
     function getUserBadgeLevel(totalHours) {
       if (totalHours >= 50) return "🔥 Leyenda Élite";
       if (totalHours >= 30) return "⭐ Veterano Táctico";
@@ -742,6 +794,7 @@
       document.getElementById('loadingOverlay').classList.remove('hidden');
 
       try {
+        // OPTIMIZACIÓN ULTRA RÁPIDA: Hacemos una sola petición limpia y ligera
         const response = await fetch(WEB_APP_URL);
         const resData = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -765,7 +818,12 @@
 
         currentUser = { username: found.username, rank: found.rank, hours: parseFloat(found.hours || 0), activeShiftStart: found.activeShiftStart };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-        loadSession(resData.history, resData.news, resData.doctrina);
+        
+        // Guardamos en caché global de una vez para que el panel cargue instantáneo sin demoras
+        cachedData = resData;
+        globalHistoryCache = resData.history || [];
+
+        renderDashboardUI(resData);
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('Error al verificar las credenciales.');
@@ -785,29 +843,32 @@
         rankEl.innerText = currentUser.rank;
         rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
 
-        if (!historyData || !newsData || !doctrinaData) {
+        // Si ya tenemos caché local o pasamos datos, evitamos peticiones innecesarias
+        if (historyData && newsData && doctrinaData) {
+          globalHistoryCache = historyData || [];
+          renderNewsFeed(newsData);
+          renderDoctrinaFeed(doctrinaData);
+          updateTodayHoursLive();
+        } else {
+          // Carga inicial rápida en segundo plano
           try {
             const response = await fetch(WEB_APP_URL);
-            const resData = await response.json();
-            historyData = resData.history;
-            newsData = resData.news;
-            doctrinaData = resData.doctrina;
-            const freshUser = resData.users.find(u => String(u.username).trim().toLowerCase() === currentUser.username.toLowerCase());
+            cachedData = await response.json();
+            globalHistoryCache = cachedData.history || [];
+            renderNewsFeed(cachedData.news);
+            renderDoctrinaFeed(cachedData.doctrina);
+            
+            const freshUser = cachedData.users.find(u => String(u.username).trim().toLowerCase() === currentUser.username.toLowerCase());
             if (freshUser) {
               currentUser.hours = parseFloat(freshUser.hours || 0);
               currentUser.activeShiftStart = freshUser.activeShiftStart;
             }
-          } catch (e) { 
-            historyData = historyData || []; 
-            newsData = newsData || []; 
-            doctrinaData = doctrinaData || [];
+            updateTodayHoursLive();
+          } catch (e) {
+            globalHistoryCache = [];
           }
         }
 
-        globalHistoryCache = historyData || [];
-        updateTodayHoursLive();
-        renderNewsFeed(newsData);
-        renderDoctrinaFeed(doctrinaData);
         applyPermissions(currentUser);
         checkActiveShiftOnLoad();
         updateScheduleIndicator();
@@ -815,7 +876,26 @@
       }
     }
 
-    // SINCRONIZACIÓN EN TIEMPO REAL CADA 5 SEGUNDOS
+    function renderDashboardUI(resData) {
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('mainDashboard').classList.remove('hidden');
+
+      document.getElementById('profileName').innerText = currentUser.username;
+      const rankEl = document.getElementById('profileRank');
+      rankEl.innerText = currentUser.rank;
+      rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
+
+      globalHistoryCache = resData.history || [];
+      renderNewsFeed(resData.news);
+      renderDoctrinaFeed(resData.doctrina);
+      updateTodayHoursLive();
+      applyPermissions(currentUser);
+      checkActiveShiftOnLoad();
+      updateScheduleIndicator();
+      startRealtimeSync();
+    }
+
+    // SINCRONIZACIÓN EN TIEMPO REAL CADA 5 SEGUNDOS (LIGERA Y EFICIENTE)
     function startRealtimeSync() {
       if (syncInterval) clearInterval(syncInterval);
       syncInterval = setInterval(async () => {
@@ -1400,11 +1480,17 @@
       if (pendingNewsList) pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
 
       try {
-        const response = await fetch(WEB_APP_URL);
-        cachedData = await response.json();
-        const users = cachedData.users;
-        const history = cachedData.history;
-        const news = cachedData.news;
+        // Usamos caché previa si existe para que abra instantáneo
+        let resData = cachedData;
+        if (!resData) {
+          const response = await fetch(WEB_APP_URL);
+          resData = await response.json();
+          cachedData = resData;
+        }
+
+        const users = resData.users;
+        const history = resData.history;
+        const news = resData.news;
 
         const rankLower = (currentUser.rank || '').toLowerCase();
         const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
@@ -1711,7 +1797,7 @@
           body: JSON.stringify({ action: 'deleteUser', username: username })
         });
         const resultJson = await response.json();
-        document.getElementById('loadingOverlay').classList.add('hidden');
+        document.getElementById('loadingOverlay'].classList.add('hidden');
         if (resultJson.status === 'success') {
           alert(`✔ Usuario eliminado.`);
           loadControlPanelData();
