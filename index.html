@@ -173,7 +173,7 @@
               <i class="fa-solid fa-bullhorn text-amber-400 text-sm"></i>
               <h3 class="font-bold text-white text-xs">Órdenes del Día y Comunicados</h3>
             </div>
-            <span class="text-[9px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px] animate-pulse"></i> En vivo</span>
+            <span class="text-[9px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px] animate-pulse"></i> En tiempo real (5s)</span>
           </div>
           <div id="newsFeedContainer" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
             <p class="text-[11px] text-slate-400 italic">Cargando boletines...</p>
@@ -689,7 +689,7 @@
       }
     }
 
-    // SINCRONIZACIÓN LIGERA Y RÁPIDA CADA 15 SEGUNDOS (SIN BLOQUEAR LA WEB)
+    // SINCRONIZACIÓN EN TIEMPO REAL CADA 5 SEGUNDOS (SUPER RÁPIDO)
     function startRealtimeSync() {
       if (syncInterval) clearInterval(syncInterval);
       syncInterval = setInterval(async () => {
@@ -710,7 +710,7 @@
             }
           }
         } catch (e) {}
-      }, 15000);
+      }, 5000);
     }
 
     function updateTodayHoursLive() {
