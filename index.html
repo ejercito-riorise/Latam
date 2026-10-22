@@ -335,9 +335,15 @@
           </form>
         </div>
 
-        <div id="viewApproveNews" class="space-y-2 hidden">
-          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-check-to-slot"></i> Comunicados Pendientes de Aprobación:</h4>
-          <div id="pendingNewsList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
+        <div id="viewApproveNews" class="space-y-3 hidden">
+          <div>
+            <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-bullhorn"></i> Comunicados Pendientes:</h4>
+            <div id="pendingNewsList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
+          </div>
+          <div class="pt-2 border-t border-slate-800">
+            <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-graduation-cap"></i> Doctrinas y Normas Pendientes:</h4>
+            <div id="pendingDoctrinaList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
+          </div>
         </div>
       </div>
     </div>
@@ -449,7 +455,6 @@
     let newsStorageMap = {};
     let doctrinaStorageMap = {};
 
-    // SISTEMA DE AUDIO TÁCTICO INTEGRADO (SIN ARCHIVOS EXTERNOS)
     function playTacticalSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -476,7 +481,6 @@
       } catch (e) {}
     }
 
-    // CARGAR TEMA GUARDADO
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('rioRiseTheme') || 'noche';
       changeTheme(savedTheme, false);
@@ -487,10 +491,9 @@
       document.body.className = "min-h-screen flex flex-col justify-between";
       if (themeName === 'selva') document.body.classList.add('theme-selva');
       else if (themeName === 'desierto') document.body.classList.add('theme-desierto');
-      if (save) localStorage.setItem('rioRiseTheme', themeName);
+      if (save) localStorage.getItem('rioRiseTheme', themeName);
     }
 
-    // ABRIR / CERRAR MODAL DE NIVELES
     function openRankInfoModal() {
       document.getElementById('rankInfoModal').classList.remove('hidden');
     }
@@ -498,7 +501,6 @@
       document.getElementById('rankInfoModal').classList.add('hidden');
     }
 
-    // EXPORTAR RANKING FILTRADO A EXCEL
     function exportVisualRankingCSV() {
       if (!currentRankedExportArray || currentRankedExportArray.length === 0) {
         alert('No hay datos visibles en el ranking para exportar.');
@@ -733,16 +735,56 @@
       }
     }
 
-    // ACTUALIZACIÓN DE NOTIFICACIONES TÁCTICAS PARA EL ALTO MANDO
-    function updateCommandAlertBadges(users, news) {
+    // VERIFICADOR DE NOTIFICACIONES DE ESTADO PARA LOS AUTORES (COMUNICADOS Y DOCTRINAS)
+    function checkAuthorNotifications(news, doctrina) {
+      if (!currentUser) return;
+      const usernameLower = currentUser.username.toLowerCase();
+
+      if (news) {
+        news.forEach(item => {
+          if (item.autor && item.autor.toLowerCase().includes(usernameLower)) {
+            const notifKey = `notif_news_${item.titulo}`;
+            if (!localStorage.getItem(notifKey)) {
+              if (item.estado && item.estado.toLowerCase() === 'approved') {
+                alert(`🎯 ¡Atención Mayor! Su comunicado "${item.titulo}" fue APROBADO y publicado con éxito.`);
+                localStorage.setItem(notifKey, 'notified');
+              } else if (item.estado && item.estado.toLowerCase() === 'rejected') {
+                alert(`⚠ Aviso: Su comunicado "${item.titulo}" fue rechazado por el Alto Mando.`);
+                localStorage.setItem(notifKey, 'notified');
+              }
+            }
+          }
+        });
+      }
+
+      if (doctrina) {
+        doctrina.forEach(item => {
+          if (item.autor && item.autor.toLowerCase().includes(usernameLower)) {
+            const notifKey = `notif_doc_${item.titulo}`;
+            if (!localStorage.getItem(notifKey)) {
+              if (item.estado && item.estado.toLowerCase() === 'approved') {
+                alert(`🎯 ¡Atención Mayor! Su tema de doctrina "${item.titulo}" fue APROBADO y publicado con éxito.`);
+                localStorage.setItem(notifKey, 'notified');
+              } else if (item.estado && item.estado.toLowerCase() === 'rejected') {
+                alert(`⚠ Aviso: Su tema de doctrina "${item.titulo}" fue rechazado por el Alto Mando.`);
+                localStorage.setItem(notifKey, 'notified');
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function updateCommandAlertBadges(users, news, doctrina) {
       const rankLower = (currentUser.rank || '').toLowerCase();
       const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
       const isCoronel = rankLower === 'coronel';
 
       const pendingUsersCount = users ? users.filter(u => u.status && u.status.toLowerCase() === 'pending').length : 0;
       const pendingNewsCount = news ? news.filter(item => item.estado && item.estado.toLowerCase() === 'pending').length : 0;
+      const pendingDoctrinaCount = doctrina ? doctrina.filter(item => item.estado && item.estado.toLowerCase() === 'pending').length : 0;
       
-      const totalPending = (isSuperAdmin ? pendingUsersCount : 0) + ((isSuperAdmin || isCoronel) ? pendingNewsCount : 0);
+      const totalPending = (isSuperAdmin ? pendingUsersCount : 0) + ((isSuperAdmin || isCoronel) ? (pendingNewsCount + pendingDoctrinaCount) : 0);
 
       const globalDot = document.getElementById('globalPanelAlertDot');
       const globalBadge = document.getElementById('globalPanelAlertBadge');
@@ -756,7 +798,6 @@
         }
       }
 
-      // Alertas en pestañas internas del panel
       const tabPending = document.getElementById('adminTabPending');
       if (tabPending) {
         if (pendingUsersCount > 0) {
@@ -768,8 +809,9 @@
 
       const tabApproveNews = document.getElementById('adminTabApproveNews');
       if (tabApproveNews) {
-        if (pendingNewsCount > 0) {
-          tabApproveNews.innerHTML = `Aprobar <span class="bg-red-500 text-white text-[8px] px-1.5 py-0.2 rounded-full font-bold ml-1">${pendingNewsCount}</span>`;
+        const totalApprovePending = pendingNewsCount + pendingDoctrinaCount;
+        if (totalApprovePending > 0) {
+          tabApproveNews.innerHTML = `Aprobar <span class="bg-red-500 text-white text-[8px] px-1.5 py-0.2 rounded-full font-bold ml-1">${totalApprovePending}</span>`;
         } else {
           tabApproveNews.innerHTML = `Aprobar`;
         }
@@ -843,13 +885,6 @@
         const viewEl = document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`);
         const tabEl = document.getElementById(`adminTab${v.charAt(0).toUpperCase() + v.slice(1)}`);
         if (viewEl) viewEl.classList.add('hidden');
-        if (tabEl) {
-          // Mantener colores base preservando notificaciones si existen
-          const hasBadge = tabEl.innerHTML.includes('bg-red-500');
-          const badgeHtml = hasBadge ? tabEl.innerHTML.substring(tabEl.innerHTML.indexOf('<span')) : '';
-          const cleanText = tabEl.innerText.replace(/[0-9]/g, '').trim();
-          tabEl.className = "py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
-        }
       });
 
       const targetView = document.getElementById(`view${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
@@ -955,6 +990,7 @@
           globalHistoryCache = historyData || [];
           renderNewsFeed(newsData);
           renderDoctrinaFeed(doctrinaData);
+          checkAuthorNotifications(newsData, doctrinaData);
           updateTodayHoursLive();
         } else {
           try {
@@ -963,7 +999,8 @@
             globalHistoryCache = cachedData.history || [];
             renderNewsFeed(cachedData.news);
             renderDoctrinaFeed(cachedData.doctrina);
-            updateCommandAlertBadges(cachedData.users, cachedData.news);
+            checkAuthorNotifications(cachedData.news, cachedData.doctrina);
+            updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina);
             
             const freshUser = cachedData.users.find(u => String(u.username).trim().toLowerCase() === currentUser.username.toLowerCase());
             if (freshUser) {
@@ -995,7 +1032,8 @@
       globalHistoryCache = resData.history || [];
       renderNewsFeed(resData.news);
       renderDoctrinaFeed(resData.doctrina);
-      updateCommandAlertBadges(resData.users, resData.news);
+      checkAuthorNotifications(resData.news, resData.doctrina);
+      updateCommandAlertBadges(resData.users, resData.news, resData.doctrina);
       updateTodayHoursLive();
       applyPermissions(currentUser);
       checkActiveShiftOnLoad();
@@ -1014,7 +1052,8 @@
           globalHistoryCache = resData.history || [];
           renderNewsFeed(resData.news);
           renderDoctrinaFeed(resData.doctrina);
-          updateCommandAlertBadges(resData.users, resData.news);
+          checkAuthorNotifications(resData.news, resData.doctrina);
+          updateCommandAlertBadges(resData.users, resData.news, resData.doctrina);
           updateTodayHoursLive();
 
           const modal = document.getElementById('controlPanelModal');
@@ -1283,7 +1322,6 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
-          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ SIN ESPERAR F5
           if (cachedData && cachedData.doctrina) {
             cachedData.doctrina = cachedData.doctrina.filter(d => d.titulo !== title);
             renderDoctrinaFeed(cachedData.doctrina);
@@ -1398,11 +1436,10 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
-          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ
           if (cachedData && cachedData.news) {
             cachedData.news = cachedData.news.map(n => n.titulo === title ? {...n, estado: 'approved'} : n);
             renderNewsFeed(cachedData.news);
-            updateCommandAlertBadges(cachedData.users, cachedData.news);
+            updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina);
           }
           alert('✔ Comunicado aprobado y publicado.');
           loadControlPanelData();
@@ -1415,7 +1452,7 @@
     }
 
     async function deleteNews(title) {
-      if (!confirm(`⚠ ¿Estás seguro de eliminar este comunicado?`)) return;
+      if (!confirm(`⚠ ¿Estás seguro de rechazar/eliminar este comunicado?`)) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         const response = await fetch(WEB_APP_URL, {
@@ -1425,19 +1462,70 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
-          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ
           if (cachedData && cachedData.news) {
-            cachedData.news = cachedData.news.filter(n => n.titulo !== title);
+            cachedData.news = cachedData.news.map(n => n.titulo === title ? {...n, estado: 'rejected'} : n).filter(n => n.titulo !== title);
             renderNewsFeed(cachedData.news);
-            updateCommandAlertBadges(cachedData.users, cachedData.news);
+            updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina);
           }
-          alert('✔ Comunicado eliminado.');
+          alert('✔ Comunicado rechazado/eliminado.');
           loadControlPanelData();
           loadSession();
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('Error al eliminar.');
+      }
+    }
+
+    async function approveDoctrina(title) {
+      if (!confirm(`¿Aprobar y publicar la doctrina o norma "${title}"?`)) return;
+      document.getElementById('loadingOverlay').classList.add('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'approveDoctrina', titulo: title })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        if (result.status === 'success') {
+          if (cachedData && cachedData.doctrina) {
+            cachedData.doctrina = cachedData.doctrina.map(d => d.titulo === title ? {...d, estado: 'approved'} : d);
+            renderDoctrinaFeed(cachedData.doctrina);
+            updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina);
+          }
+          alert('✔ Doctrina aprobada y publicada.');
+          loadControlPanelData();
+          loadSession();
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al aprobar doctrina.');
+      }
+    }
+
+    async function deleteDoctrinaPending(title) {
+      if (!confirm(`⚠ ¿Estás seguro de rechazar/eliminar esta doctrina o norma?`)) return;
+      document.getElementById('loadingOverlay').classList.add('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'deleteDoctrina', titulo: title })
+        });
+        const result = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        if (result.status === 'success') {
+          if (cachedData && cachedData.doctrina) {
+            cachedData.doctrina = cachedData.doctrina.map(d => d.titulo === title ? {...d, estado: 'rejected'} : d).filter(d => d.titulo !== title);
+            renderDoctrinaFeed(cachedData.doctrina);
+            updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina);
+          }
+          alert('✔ Doctrina rechazada/eliminada.');
+          loadControlPanelData();
+          loadSession();
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al rechazar doctrina.');
       }
     }
 
@@ -1600,11 +1688,13 @@
       const activeList = document.getElementById('activeList');
       const dailyReportList = document.getElementById('dailyReportList');
       const pendingNewsList = document.getElementById('pendingNewsList');
+      const pendingDoctrinaList = document.getElementById('pendingDoctrinaList');
       
       if (pendingList) pendingList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
       if (activeList) activeList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
       if (dailyReportList) dailyReportList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
       if (pendingNewsList) pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
+      if (pendingDoctrinaList) pendingDoctrinaList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
 
       try {
         let resData = cachedData;
@@ -1617,8 +1707,9 @@
         const users = resData.users;
         const history = resData.history;
         const news = resData.news;
+        const doctrina = resData.doctrina;
 
-        updateCommandAlertBadges(users, news);
+        updateCommandAlertBadges(users, news, doctrina);
 
         const rankLower = (currentUser.rank || '').toLowerCase();
         const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
@@ -1655,7 +1746,7 @@
           const pendingNews = news ? news.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
           pendingNewsList.innerHTML = '';
           if (pendingNews.length === 0) {
-            pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay publicaciones pendientes de aprobación.</p>';
+            pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay comunicados pendientes.</p>';
           } else {
             pendingNews.forEach(item => {
               const newsItem = document.createElement('div');
@@ -1673,6 +1764,32 @@
                 </div>
               `;
               pendingNewsList.appendChild(newsItem);
+            });
+          }
+        }
+
+        if (pendingDoctrinaList && (isSuperAdmin || isCoronel)) {
+          const pendingDoctrina = doctrina ? doctrina.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
+          pendingDoctrinaList.innerHTML = '';
+          if (pendingDoctrina.length === 0) {
+            pendingDoctrinaList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay doctrinas pendientes.</p>';
+          } else {
+            pendingDoctrina.forEach(item => {
+              const docItem = document.createElement('div');
+              docItem.className = 'bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1.5';
+              docItem.innerHTML = `
+                <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-800 pb-1">
+                  <span class="font-bold text-blue-400">Autor: ${item.autor}</span>
+                  <span>${normalizeDate(item.fecha)}</span>
+                </div>
+                <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
+                <p class="text-[11px] text-slate-300">${item.mensaje}</p>
+                <div class="flex gap-2 pt-1">
+                  <button onclick="approveDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-check"></i> Aprobar</button>
+                  <button onclick="deleteDoctrinaPending('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Rechazar</button>
+                </div>
+              `;
+              pendingDoctrinaList.appendChild(docItem);
             });
           }
         }
@@ -1904,7 +2021,6 @@
         });
         const result = await response.json();
         if (result.status === 'success') {
-          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ
           if (cachedData && cachedData.users) {
             cachedData.users = cachedData.users.map(u => u.username === username ? {...u, status: 'approved'} : u);
             loadControlPanelData();
@@ -1948,7 +2064,6 @@
         const resultJson = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (resultJson.status === 'success') {
-          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ
           if (cachedData && cachedData.users) {
             cachedData.users = cachedData.users.filter(u => u.username !== username);
             loadControlPanelData();
