@@ -272,12 +272,7 @@
         </div>
 
         <div id="viewActive" class="space-y-2 hidden">
-          <div class="flex items-center justify-between mb-1">
-            <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1"><i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:</h4>
-            <button onclick="exportReportCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
-              <i class="fa-solid fa-file-excel"></i> Exportar CSV
-            </button>
-          </div>
+          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:</h4>
           <div id="activeList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
@@ -287,7 +282,12 @@
         </div>
 
         <div id="viewFilters" class="space-y-3 hidden">
-          <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Ranking de Rendimiento:</h4>
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Ranking de Rendimiento:</h4>
+            <button onclick="exportHistoryBitacoraCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
+              <i class="fa-solid fa-file-excel"></i> Descargar Bitácora
+            </button>
+          </div>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
             <div>
               <label class="block text-[10px] text-slate-400 mb-1">Rango de Filtro:</label>
@@ -438,20 +438,20 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // EXPORTAR REPORTE A CSV (EXCEL)
-    function exportReportCSV() {
-      if (!cachedData || !cachedData.users) {
-        alert('No hay datos para exportar.');
+    // EXPORTAR BITÁCORA COMPLETA A CSV (EXCEL)
+    function exportHistoryBitacoraCSV() {
+      if (!cachedData || !cachedData.history || cachedData.history.length === 0) {
+        alert('No hay registros en la bitácora para exportar.');
         return;
       }
-      let csvContent = "data:text/csv;charset=utf-8,Usuario,Rango,Estado,Horas Acumuladas\n";
-      cachedData.users.forEach(u => {
-        csvContent += `"${u.username}","${u.rank}","${u.status}","${u.hours || 0}"\n`;
+      let csvContent = "data:text/csv;charset=utf-8,Usuario,Fecha,Duracion,Horas\n";
+      cachedData.history.forEach(h => {
+        csvContent += `"${h.username || 'N/A'}","${h.fecha || 'N/A'}","${h.duracion || 'N/A'}","${h.horas || 0}"\n`;
       });
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `reporte_tropa_riorise_${getColombiaDateString().replace(/\//g, '-')}.csv`);
+      link.setAttribute("download", `bitacora_completa_riorise_${getColombiaDateString().replace(/\//g, '-')}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -811,6 +811,7 @@
           updateScheduleIndicator();
           const response = await fetch(WEB_APP_URL);
           const resData = await response.json();
+          cachedData = resData;
           globalHistoryCache = resData.history || [];
           renderNewsFeed(resData.news);
           renderDoctrinaFeed(resData.doctrina);
@@ -818,7 +819,6 @@
 
           const modal = document.getElementById('controlPanelModal');
           if (modal && !modal.classList.contains('hidden')) {
-            cachedData = resData;
             const dailyView = document.getElementById('viewDaily');
             if (dailyView && !dailyView.classList.contains('hidden')) {
               renderDailyRanking(resData.users, resData.history);
