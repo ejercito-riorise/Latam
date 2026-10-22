@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intranet EB - Ejército RioRise</title>
   
-  <!-- FAVICON E ICONOS OFICIALES (MISMO ESTILO DEL ENCABEZADO) -->
-  <link rel="icon" type="image/svg+xml" href="https://api.iconify.design/fa6-solid:shield-halved.svg?color=%2360a5fa">
-  <link rel="apple-touch-icon" href="https://api.iconify.design/fa6-solid:shield-halved.svg?color=%2360a5fa">
+  <!-- FAVICON E ICONO PWA OFICIAL -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
 
   <!-- ETIQUETAS PARA WHATSAPP -->
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
   <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
-  <meta property="og:image" content="https://api.iconify.design/fa6-solid:shield-halved.svg?color=%2360a5fa">
+  <meta property="og:image" content="https://img.icons8.com/color/512/shield.png">
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
@@ -214,6 +214,7 @@
             <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
               <i class="fa-solid fa-play mr-1"></i> Iniciar Turno
             </button>
+            <p class="text-[10px] text-slate-400 text-center italic"><i class="fa-solid fa-circle-info mr-1"></i> Horario habilitado: 18:00 a 03:00 (Hora Colombia)</p>
           </div>
         </div>
 
@@ -336,7 +337,7 @@
     </div>
   </div>
 
-  <!-- MODAL ZOOM IMAGEN -->
+  <!-- MODAL PARA VER IMAGEN EN GRANDE (ZOOM) -->
   <div id="imageModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-center p-4">
     <div class="relative max-w-4xl w-full flex flex-col items-center">
       <button onclick="closeImageModal()" class="absolute -top-10 right-0 bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1 rounded-lg text-xs shadow-lg flex items-center gap-1.5 transition">
@@ -363,6 +364,12 @@
     let editingDoctrinaOldTitle = null;
     let newsStorageMap = {};
     let doctrinaStorageMap = {};
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
+      });
+    }
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -662,7 +669,6 @@
             historyData = resData.history;
             newsData = resData.news;
             doctrinaData = resData.doctrina;
-            cachedData = resData;
             const freshUser = resData.users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
             if (freshUser) currentUser.hours = parseFloat(freshUser.hours || 0);
           } catch (e) { 
@@ -678,7 +684,6 @@
         renderDoctrinaFeed(doctrinaData);
         applyPermissions(currentUser);
         checkActiveShiftOnLoad();
-        checkAutoCloseAt3AM();
         startRealtimeSync();
       }
     }
@@ -689,38 +694,21 @@
         try {
           const response = await fetch(WEB_APP_URL);
           const resData = await response.json();
-          cachedData = resData;
           globalHistoryCache = resData.history || [];
           renderNewsFeed(resData.news);
           renderDoctrinaFeed(resData.doctrina);
           updateTodayHoursLive();
-          checkAutoCloseAt3AM();
 
           const modal = document.getElementById('controlPanelModal');
           if (modal && !modal.classList.contains('hidden')) {
+            cachedData = resData;
             const dailyView = document.getElementById('viewDaily');
             if (dailyView && !dailyView.classList.contains('hidden')) {
               renderDailyRanking(resData.users, resData.history);
             }
           }
         } catch (e) {}
-      }, 8000);
-    }
-
-    function checkAutoCloseAt3AM() {
-      const activeShiftKey = `shiftStart_${currentUser.username}`;
-      const savedStart = localStorage.getItem(activeShiftKey);
-
-      if (savedStart) {
-        const colStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
-        const colDate = new Date(colStr);
-        const hrs = colDate.getHours();
-        const mins = colDate.getMinutes();
-
-        if (hrs === 3 && mins <= 5) {
-          toggleShift(true);
-        }
-      }
+      }, 10000);
     }
 
     function updateTodayHoursLive() {
@@ -779,7 +767,7 @@
           adminActions = `
             <div class="flex gap-1.5">
               <button onclick="triggerEdit(${index})" class="text-blue-400 hover:text-blue-300 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-blue-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           `;
         }
@@ -1155,7 +1143,7 @@
       }, 1000);
     }
 
-    async function toggleShift(isAutoClose = false) {
+    function toggleShift() {
       const activeShiftKey = `shiftStart_${currentUser.username}`;
       const savedStart = localStorage.getItem(activeShiftKey);
 
@@ -1167,17 +1155,16 @@
         const isAllowedHour = (currentHour >= 18 || currentHour < 3);
 
         if (!isAllowedHour) {
-          alert('Aún no esta en horario de servicio');
+          alert('⛔ Fuera de horario de servicio.\n\nLos turnos solo pueden iniciarse entre las 18:00 y las 03:00 (Hora Colombia).');
           return;
         }
 
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
-
-        fetch(WEB_APP_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'setShiftState', username: currentUser.username, active: true, startTime: startTime })
-        }).catch(e => {});
+        
+        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
+        activeShifts[currentUser.username.toLowerCase()] = startTime;
+        localStorage.setItem('rioRiseActiveShifts', JSON.stringify(activeShifts));
 
         activateShiftUI(startTime);
       } else {
@@ -1190,11 +1177,10 @@
         const hoursWorked = totalSeconds / 3600;
 
         localStorage.removeItem(activeShiftKey);
-
-        fetch(WEB_APP_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'setShiftState', username: currentUser.username, active: false })
-        }).catch(e => {});
+        
+        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
+        delete activeShifts[currentUser.username.toLowerCase()];
+        localStorage.setItem('rioRiseActiveShifts', JSON.stringify(activeShifts));
 
         const btn = document.getElementById('btnToggleShift');
         const badge = document.getElementById('shiftStatusBadge');
@@ -1212,11 +1198,11 @@
         const timeSpentMsg = `${finalHrs}h ${finalMins}m ${finalSecs}s`;
         const currentDate = getColombiaDateString();
 
-        saveShiftLog(hoursWorked, timeSpentMsg, currentDate, isAutoClose);
+        saveShiftLog(hoursWorked, timeSpentMsg, currentDate);
       }
     }
 
-    async function saveShiftLog(hoursWorked, timeSpentMsg, currentDate, isAutoClose = false) {
+    async function saveShiftLog(hoursWorked, timeSpentMsg, currentDate) {
       document.getElementById('loadingOverlay').classList.remove('hidden');
 
       try {
@@ -1236,11 +1222,7 @@
         if (result.status === 'success') {
           currentUser.hours = result.total;
           localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-          if (isAutoClose) {
-            alert(`⏰ Turno finalizado automáticamente (Límite 03:00 a.m.).\n⏱ Tiempo registrado: ${timeSpentMsg}`);
-          } else {
-            alert(`✔ Turno finalizado con éxito.\n📅 Fecha: ${currentDate}\n⏱ Duración: ${timeSpentMsg}`);
-          }
+          alert(`✔ Turno finalizado con éxito.\n📅 Fecha: ${currentDate}\n⏱ Duración: ${timeSpentMsg}`);
           loadSession();
         } else {
           alert('⚠ Error al sincronizar el turno.');
@@ -1380,7 +1362,7 @@
       let dailyTotals = {};
 
       activeUsers.forEach(u => { 
-        dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0, activeShiftStart: u.activeShiftStart || null }; 
+        dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; 
       });
 
       if (history) {
@@ -1394,18 +1376,23 @@
         });
       }
 
+      let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
       const now = Date.now();
+      
       const myActiveStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
-      if (myActiveStart && dailyTotals[currentUser.username.toLowerCase()]) {
-        dailyTotals[currentUser.username.toLowerCase()].activeShiftStart = parseInt(myActiveStart);
+      if (myActiveStart) {
+        activeShifts[currentUser.username.toLowerCase()] = parseInt(myActiveStart);
       }
 
-      Object.keys(dailyTotals).forEach(uKey => {
-        const uObj = dailyTotals[uKey];
-        if (uObj.activeShiftStart) {
-          const startTime = parseInt(uObj.activeShiftStart);
-          const activeSeconds = Math.floor((now - startTime) / 1000);
-          uObj.hours += (activeSeconds / 3600);
+      Object.keys(activeShifts).forEach(uKey => {
+        const startTime = activeShifts[uKey];
+        const activeSeconds = Math.floor((now - startTime) / 1000);
+        const activeHours = activeSeconds / 3600;
+        
+        if (dailyTotals[uKey]) {
+          dailyTotals[uKey].hours += activeHours;
+        } else {
+          dailyTotals[uKey] = { username: uKey, rank: 'Soldado', hours: activeHours };
         }
       });
 
@@ -1424,7 +1411,7 @@
         else if (index === 1 && u.hours > 0) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center"></i>`;
         else if (index === 2 && u.hours > 0) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center"></i>`;
 
-        const isCurrentlyActive = !!u.activeShiftStart;
+        const isCurrentlyActive = activeShifts[u.username.toLowerCase()] || (u.username.toLowerCase() === currentUser.username.toLowerCase() && localStorage.getItem(`shiftStart_${currentUser.username}`));
         
         let statusBadge = isCurrentlyActive 
           ? `<span class="text-[8px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-1.5 py-0.5 rounded font-bold animate-pulse ml-1">EN SERVICIO</span>`
@@ -1484,14 +1471,15 @@
         userSummary[name] = (userSummary[name] || 0) + parseFloat(h.horas || 0);
       });
 
-      if ((isFilterToday || filterType === 'all') && cachedData.users) {
+      if (isFilterToday || filterType === 'all') {
+        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
+        const myActiveStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
+        if (myActiveStart) activeShifts[currentUser.username.toLowerCase()] = parseInt(myActiveStart);
+        
         const now = Date.now();
-        cachedData.users.forEach(u => {
-          if (u.activeShiftStart) {
-            const uKey = u.username;
-            const activeHours = (now - parseInt(u.activeShiftStart)) / 3600000;
-            userSummary[uKey] = (userSummary[uKey] || 0) + activeHours;
-          }
+        Object.keys(activeShifts).forEach(uKey => {
+          const activeHours = (now - activeShifts[uKey]) / 3600000;
+          userSummary[uKey] = (userSummary[uKey] || 0) + activeHours;
         });
       }
 
@@ -1549,7 +1537,7 @@
           body: JSON.stringify({ action: 'updateRank', username: username, newRank: newRank })
         });
         const result = await response.json();
-        document.getElementById('loadingOverlay'].classList.add('hidden');
+        document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
           alert(`✔ Rango de ${username} actualizado a ${newRank}.`);
           loadControlPanelData();
