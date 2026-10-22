@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
 
-  <!-- ETIQUETAS PARA QUE WHATSAPP MUESTRE EL TÍTULO, DESCRIPCIÓN E ICONO CORRECTO -->
+  <!-- ETIQUETAS PARA WHATSAPP -->
   <meta property="og:title" content="Ejército RioRise - Portal Interno">
   <meta property="og:description" content="Intranet oficial del Ejército RioRise. Control de turnos y órdenes del día.">
   <meta property="og:image" content="https://img.icons8.com/color/512/shield.png">
@@ -47,11 +47,9 @@
           </div>
         </div>
         <div class="flex items-center gap-1.5">
-          <!-- BOTÓN INSTALAR PWA -->
           <button id="btnInstallApp" onclick="installPWA()" class="hidden bg-emerald-600/80 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded-lg border border-emerald-500 shadow transition flex items-center gap-1 font-bold animate-pulse">
             <i class="fa-solid fa-download"></i> Instalar App
           </button>
-          <!-- BOTÓN PANEL DE CONTROL -->
           <button id="btnOpenControlPanel" onclick="toggleControlPanel(true)" class="hidden bg-purple-600/80 hover:bg-purple-500 text-white text-xs px-2.5 py-1 rounded-lg border border-purple-500 shadow transition flex items-center gap-1 font-bold">
             <i class="fa-solid fa-sliders"></i> Panel
           </button>
@@ -158,7 +156,7 @@
           </button>
         </div>
 
-        <!-- PESTAÑAS DE NAVEGACIÓN PRINCIPAL (COMUNICADOS / DOCTRINA) -->
+        <!-- PESTAÑAS DE NAVEGACIÓN PRINCIPAL -->
         <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
           <button id="navNewsBtn" onclick="switchMainTab('news')" class="py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-bullhorn"></i> Novedades
@@ -168,7 +166,7 @@
           </button>
         </div>
 
-        <!-- SECCIÓN 1: TABLÓN DE NOVEDADES -->
+        <!-- SECCIÓN 1: NOVEDADES -->
         <div id="sectionNews" class="military-card p-3 rounded-xl space-y-2">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <div class="flex items-center gap-2">
@@ -182,7 +180,7 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 2: DOCTRINA Y NORMAS (INDEPENDIENTE) -->
+        <!-- SECCIÓN 2: DOCTRINA -->
         <div id="sectionDoctrina" class="military-card p-3 rounded-xl space-y-2.5 hidden">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <div class="flex items-center gap-2">
@@ -224,11 +222,10 @@
     </main>
   </div>
 
-  <!-- VENTANA FLOTANTE: PANEL DE CONTROL CON PESTAÑAS TÁCTICAS -->
+  <!-- PANEL DE CONTROL -->
   <div id="controlPanelModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-md h-[85vh] flex flex-col p-4 rounded-xl border border-purple-500/40 shadow-2xl">
       
-      <!-- ENCABEZADO MODAL -->
       <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-sliders text-purple-400 text-base"></i>
@@ -239,10 +236,8 @@
         </button>
       </div>
 
-      <!-- SUB-PESTAÑAS TÁCTICAS DINÁMICAS -->
       <div id="adminTabsContainer" class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center"></div>
 
-      <!-- CONTENEDOR DE LAS SECCIONES -->
       <div class="flex-1 overflow-y-auto pr-1 space-y-2">
         <div id="viewPending" class="space-y-2">
           <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-clock-rotate-left"></i> Solicitudes de Ingreso Pendientes:</h4>
@@ -254,11 +249,13 @@
           <div id="activeList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
+        <!-- AQUÍ SE MUESTRAN LOS TIEMPOS EN VIVO EN LA SECCIÓN "HOY" -->
         <div id="viewDaily" class="space-y-2 hidden">
           <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-trophy"></i> Ranking Diario de Servicio (Hoy):</h4>
           <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando ranking...</p></div>
         </div>
 
+        <!-- AQUÍ TAMBIÉN SE MUESTRAN LOS TIEMPOS EN TIEMPO REAL EN LOS FILTROS -->
         <div id="viewFilters" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Ranking de Rendimiento:</h4>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
@@ -310,7 +307,7 @@
     </div>
   </div>
 
-  <!-- MODAL PARA PUBLICAR / EDITAR DOCTRINA Y NORMAS -->
+  <!-- MODAL DOCTRINA -->
   <div id="doctrinaModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-md p-4 rounded-xl border border-blue-500/40 shadow-2xl space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
@@ -681,10 +678,9 @@
           const modal = document.getElementById('controlPanelModal');
           if (modal && !modal.classList.contains('hidden')) {
             cachedData = resData;
-            // Si el panel está abierto en la pestaña Tropa, actualizamos en vivo los cronómetros de los activos
-            const activeView = document.getElementById('viewActive');
-            if (activeView && !activeView.classList.contains('hidden')) {
-              renderActivePersonnelList(resData.users);
+            const dailyView = document.getElementById('viewDaily');
+            if (dailyView && !dailyView.classList.contains('hidden')) {
+              renderDailyRanking(resData.users, resData.history);
             }
           }
         } catch (e) {}
@@ -747,7 +743,7 @@
           adminActions = `
             <div class="flex gap-1.5">
               <button onclick="triggerEdit(${index})" class="text-blue-400 hover:text-blue-300 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-blue-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           `;
         }
@@ -1143,6 +1139,12 @@
 
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
+        
+        // Sincronizamos el inicio del turno guardándolo de forma visible en localStorage global para que otros lo detecten en el ranking
+        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
+        activeShifts[currentUser.username.toLowerCase()] = startTime;
+        localStorage.setItem('rioRiseActiveShifts', JSON.stringify(activeShifts));
+
         activateShiftUI(startTime);
       } else {
         clearInterval(shiftInterval);
@@ -1154,6 +1156,10 @@
         const hoursWorked = totalSeconds / 3600;
 
         localStorage.removeItem(activeShiftKey);
+        
+        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
+        delete activeShifts[currentUser.username.toLowerCase()];
+        localStorage.setItem('rioRiseActiveShifts', JSON.stringify(activeShifts));
 
         const btn = document.getElementById('btnToggleShift');
         const badge = document.getElementById('shiftStatusBadge');
@@ -1208,10 +1214,12 @@
 
     async function loadControlPanelData() {
       const pendingList = document.getElementById('pendingList');
+      const activeList = document.getElementById('activeList');
       const dailyReportList = document.getElementById('dailyReportList');
       const pendingNewsList = document.getElementById('pendingNewsList');
       
       pendingList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
+      activeList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
       dailyReportList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
       if (pendingNewsList) pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
 
@@ -1277,48 +1285,48 @@
           }
         }
 
-        renderActivePersonnelList(users);
-
-        const todayStr = new Date().toLocaleDateString();
-        let dailyTotals = {};
         const activeUsers = users.filter(u => u.status && u.status.toString().trim() === 'approved');
-        activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; });
+        activeList.innerHTML = '';
+        if (activeUsers.length === 0) {
+          activeList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay personal activo.</p>';
+        } else {
+          activeUsers.forEach(u => {
+            const totalHM = decimalToHM(parseFloat(u.hours || 0));
+            const item = document.createElement('div');
+            item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5';
+            
+            let adminActionsHtml = isSuperAdmin ? `<button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario"><i class="fa-solid fa-trash-can"></i></button>` : '';
+            let rankSelectorHtml = isSuperAdmin ? `
+              <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60">
+                <span class="text-[10px] text-slate-400">Rango:</span>
+                <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none w-full">
+                  <option value="" disabled selected>Cambiar rango...</option>
+                  <option value="Privado">Privado</option>
+                  <option value="Sargento">Sargento</option>
+                  <option value="Teniente">Teniente</option>
+                  <option value="Mayor">Mayor</option>
+                  <option value="Coronel">Coronel</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+            ` : '';
 
-        if (history) {
-          history.forEach(h => {
-            if (normalizeDate(h.fecha) === todayStr && h.username) {
-              const uKey = h.username.toLowerCase();
-              if (dailyTotals[uKey]) {
-                dailyTotals[uKey].hours += parseFloat(h.horas || 0);
-              }
-            }
+            item.innerHTML = `
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-white text-[11px]">${u.username}</span>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ml-1 badge-${u.rank.toLowerCase()}">${u.rank}</span>
+                  <p class="text-[9px] text-emerald-400 font-mono font-bold mt-0.5">⏱ Total Acumulado: ${totalHM}</p>
+                </div>
+                ${adminActionsHtml}
+              </div>
+              ${rankSelectorHtml}
+            `;
+            activeList.appendChild(item);
           });
         }
 
-        const dailyArray = Object.values(dailyTotals).sort((a, b) => b.hours - a.hours);
-        dailyReportList.innerHTML = '';
-        dailyArray.forEach((u, index) => {
-          const todayHM = decimalToHM(u.hours);
-          let medalIcon = `<span class="text-[10px] text-slate-500 font-bold w-5 text-center">#${index + 1}</span>`;
-          if (index === 0 && u.hours > 0) medalIcon = `<i class="fa-solid fa-trophy text-amber-400 text-xs w-5 text-center"></i>`;
-          else if (index === 1 && u.hours > 0) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center"></i>`;
-          else if (index === 2 && u.hours > 0) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center"></i>`;
-
-          const item = document.createElement('div');
-          item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs';
-          item.innerHTML = `
-            <div class="flex items-center gap-2">
-              ${medalIcon}
-              <div>
-                <span class="font-bold text-white">${u.username}</span>
-                <span class="text-[9px] text-slate-400 ml-1">(${u.rank})</span>
-              </div>
-            </div>
-            <span class="text-cyan-400 font-mono font-bold">Hoy: ${todayHM}</span>
-          `;
-          dailyReportList.appendChild(item);
-        });
-
+        renderDailyRanking(activeUsers, history);
         document.getElementById('filterDateInput').valueAsDate = new Date();
         applyHistoryFilter();
 
@@ -1327,70 +1335,86 @@
       }
     }
 
-    function renderActivePersonnelList(users) {
-      const activeList = document.getElementById('activeList');
-      const activeUsers = users.filter(u => u.status && u.status.toString().trim() === 'approved');
-      
-      const rankLower = (currentUser.rank || '').toLowerCase();
-      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
+    function renderDailyRanking(activeUsers, history) {
+      const dailyReportList = document.getElementById('dailyReportList');
+      const todayStr = new Date().toLocaleDateString();
+      let dailyTotals = {};
 
-      activeList.innerHTML = '';
-      if (activeUsers.length === 0) {
-        activeList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay personal activo.</p>';
+      activeUsers.forEach(u => { 
+        dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; 
+      });
+
+      if (history) {
+        history.forEach(h => {
+          if (normalizeDate(h.fecha) === todayStr && h.username) {
+            const uKey = h.username.toLowerCase();
+            if (dailyTotals[uKey]) {
+              dailyTotals[uKey].hours += parseFloat(h.horas || 0);
+            }
+          }
+        });
+      }
+
+      // Sumamos también en tiempo real el turno activo de los que están conectados ahora mismo
+      let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
+      const now = Date.now();
+      
+      // Si el usuario actual tiene su propio shift activo en este navegador, aseguramos agregarlo
+      const myActiveStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
+      if (myActiveStart) {
+        activeShifts[currentUser.username.toLowerCase()] = parseInt(myActiveStart);
+      }
+
+      Object.keys(activeShifts).forEach(uKey => {
+        const startTime = activeShifts[uKey];
+        const activeSeconds = Math.floor((now - startTime) / 1000);
+        const activeHours = activeSeconds / 3600;
+        
+        if (dailyTotals[uKey]) {
+          dailyTotals[uKey].hours += activeHours;
+        } else {
+          // Si por alguna razón no estaba en activeUsers pero está activo
+          dailyTotals[uKey] = { username: uKey, rank: 'Soldado', hours: activeHours };
+        }
+      });
+
+      const dailyArray = Object.values(dailyTotals).sort((a, b) => b.hours - a.hours);
+      dailyReportList.innerHTML = '';
+
+      if (dailyArray.length === 0) {
+        dailyReportList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay registros hoy.</p>';
         return;
       }
 
-      activeUsers.forEach(u => {
-        const totalHM = decimalToHM(parseFloat(u.hours || 0));
-        const activeShiftStart = localStorage.getItem(`shiftStart_${u.username}`);
+      dailyArray.forEach((u, index) => {
+        const todayHM = decimalToHM(u.hours);
+        let medalIcon = `<span class="text-[10px] text-slate-500 font-bold w-5 text-center">#${index + 1}</span>`;
+        if (index === 0 && u.hours > 0) medalIcon = `<i class="fa-solid fa-trophy text-amber-400 text-xs w-5 text-center"></i>`;
+        else if (index === 1 && u.hours > 0) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center"></i>`;
+        else if (index === 2 && u.hours > 0) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center"></i>`;
+
+        const isCurrentlyActive = activeShifts[u.username.toLowerCase()] || (u.username.toLowerCase() === currentUser.username.toLowerCase() && localStorage.getItem(`shiftStart_${currentUser.username}`));
         
-        let statusBadgeHtml = '';
-        if (activeShiftStart) {
-          const activeSeconds = Math.floor((Date.now() - parseInt(activeShiftStart)) / 1000);
-          const hrs = String(Math.floor(activeSeconds / 3600)).padStart(2, '0');
-          const mins = String(Math.floor((activeSeconds % 3600) / 60)).padStart(2, '0');
-          const secs = String(activeSeconds % 60).padStart(2, '0');
-          statusBadgeHtml = `<span class="text-[9px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold animate-pulse inline-flex items-center gap-1"><i class="fa-solid fa-circle text-[5px]"></i> EN SERVICIO (${hrs}:${mins}:${secs})</span>`;
-        } else {
-          statusBadgeHtml = `<span class="text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold inline-flex items-center gap-1"><i class="fa-solid fa-circle text-[5px]"></i> DESCONECTADO</span>`;
-        }
+        let statusBadge = isCurrentlyActive 
+          ? `<span class="text-[8px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-1.5 py-0.5 rounded font-bold animate-pulse ml-1">EN SERVICIO</span>`
+          : `<span class="text-[8px] bg-red-950 text-red-400 border border-red-900 px-1.5 py-0.5 rounded font-bold ml-1">DESCONECTADO</span>`;
 
         const item = document.createElement('div');
-        item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5';
-        
-        let adminActionsHtml = isSuperAdmin ? `<button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario"><i class="fa-solid fa-trash-can"></i></button>` : '';
-        let rankSelectorHtml = isSuperAdmin ? `
-          <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60">
-            <span class="text-[10px] text-slate-400">Rango:</span>
-            <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none w-full">
-              <option value="" disabled selected>Cambiar rango...</option>
-              <option value="Privado">Privado</option>
-              <option value="Sargento">Sargento</option>
-              <option value="Teniente">Teniente</option>
-              <option value="Mayor">Mayor</option>
-              <option value="Coronel">Coronel</option>
-              <option value="General">General</option>
-            </select>
-          </div>
-        ` : '';
-
+        item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs';
         item.innerHTML = `
-          <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            ${medalIcon}
             <div>
-              <div class="flex items-center gap-1.5">
-                <span class="font-bold text-white text-[11px]">${u.username}</span>
-                <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase badge-${u.rank.toLowerCase()}">${u.rank}</span>
+              <div class="flex items-center">
+                <span class="font-bold text-white">${u.username}</span>
+                ${statusBadge}
               </div>
-              <div class="mt-1 flex items-center gap-2">
-                ${statusBadgeHtml}
-                <span class="text-[9px] text-cyan-400 font-mono font-bold">Total: ${totalHM}</span>
-              </div>
+              <span class="text-[9px] text-slate-400">Rango: ${u.rank || 'Privado'}</span>
             </div>
-            ${adminActionsHtml}
           </div>
-          ${rankSelectorHtml}
+          <span class="text-cyan-400 font-mono font-bold">Hoy: ${todayHM}</span>
         `;
-        activeList.appendChild(item);
+        dailyReportList.appendChild(item);
       });
     }
 
@@ -1405,7 +1429,11 @@
       if (filterType === 'day') dateContainer.classList.remove('hidden');
       else dateContainer.classList.add('hidden');
 
-      let filtered = cachedData.history;
+      let filtered = [...cachedData.history];
+
+      // Si el filtro es de hoy, incluimos también los turnos activos en vivo
+      const todayStr = new Date().toLocaleDateString();
+      const isFilterToday = (filterType === 'day' && (dateInput === new Date().toISOString().split('T')[0] || dateInput === ''));
 
       if (filterType === 'day' && dateInput) {
         const parts = dateInput.split('-');
@@ -1427,6 +1455,18 @@
         const name = h.username;
         userSummary[name] = (userSummary[name] || 0) + parseFloat(h.horas || 0);
       });
+
+      if (isFilterToday || filterType === 'all') {
+        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
+        const myActiveStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
+        if (myActiveStart) activeShifts[currentUser.username.toLowerCase()] = parseInt(myActiveStart);
+        
+        const now = Date.now();
+        Object.keys(activeShifts).forEach(uKey => {
+          const activeHours = (now - activeShifts[uKey]) / 3600000;
+          userSummary[uKey] = (userSummary[uKey] || 0) + activeHours;
+        });
+      }
 
       const rankedArray = Object.keys(userSummary).map(name => ({
         name: name,
