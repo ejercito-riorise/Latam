@@ -21,8 +21,27 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { background-color: #0b0f19; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
-    .military-card { background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid #334155; }
+    :root {
+      --bg-main: #0b0f19;
+      --card-grad-1: #1e293b;
+      --card-grad-2: #0f172a;
+      --border-color: #334155;
+    }
+    body.theme-selva {
+      --bg-main: #06120b;
+      --card-grad-1: #132e1e;
+      --card-grad-2: #08170e;
+      --border-color: #1f4e31;
+    }
+    body.theme-desierto {
+      --bg-main: #140d08;
+      --card-grad-1: #362214;
+      --card-grad-2: #1c1109;
+      --border-color: #5c3922;
+    }
+
+    body { background-color: var(--bg-main); color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; transition: background 0.3s ease; }
+    .military-card { background: linear-gradient(145deg, var(--card-grad-1), var(--card-grad-2)); border: 1px solid var(--border-color); }
     .badge-general { background-color: #7c3aed; color: #fff; }
     .badge-coronel { background-color: #dc2626; color: #fff; }
     .badge-mayor { background-color: #ea580c; color: #fff; }
@@ -47,6 +66,12 @@
           </div>
         </div>
         <div class="flex items-center gap-1.5">
+          <!-- SELECTOR DE TEMAS TÁCTICOS -->
+          <select id="themeSelector" onchange="changeTheme(this.value)" class="bg-slate-950 border border-slate-700 text-slate-300 text-[10px] rounded px-1.5 py-1 focus:outline-none">
+            <option value="noche">🌙 Noche</option>
+            <option value="selva">🌲 Selva</option>
+            <option value="desierto">🏜️ Desierto</option>
+          </select>
           <button id="btnInstallApp" onclick="installPWA()" class="hidden bg-emerald-600/85 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded-lg border border-emerald-500 shadow transition flex items-center gap-1 font-bold animate-pulse">
             <i class="fa-solid fa-download"></i> Instalar
           </button>
@@ -156,7 +181,7 @@
           </button>
         </div>
 
-        <!-- MÓDULO CONTROL DE SERVICIO (UBICADO ARRIBA) -->
+        <!-- MÓDULO CONTROL DE SERVICIO -->
         <div class="military-card p-3 rounded-xl">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
@@ -247,7 +272,12 @@
         </div>
 
         <div id="viewActive" class="space-y-2 hidden">
-          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:</h4>
+          <div class="flex items-center justify-between mb-1">
+            <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1"><i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:</h4>
+            <button onclick="exportReportCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
+              <i class="fa-solid fa-file-excel"></i> Exportar CSV
+            </button>
+          </div>
           <div id="activeList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
@@ -366,6 +396,66 @@
     let editingDoctrinaOldTitle = null;
     let newsStorageMap = {};
     let doctrinaStorageMap = {};
+
+    // SISTEMA DE AUDIO TÁCTICO INTEGRADO (SIN ARCHIVOS EXTERNOS)
+    function playTacticalSound(type) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'start') {
+          osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.15);
+        } else if (type === 'end') {
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.15);
+        }
+      } catch (e) {}
+    }
+
+    // CARGAR TEMA GUARDADO
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('rioRiseTheme') || 'noche';
+      changeTheme(savedTheme, false);
+      document.getElementById('themeSelector').value = savedTheme;
+    });
+
+    function changeTheme(themeName, save = true) {
+      document.body.className = "min-h-screen flex flex-col justify-between";
+      if (themeName === 'selva') document.body.classList.add('theme-selva');
+      else if (themeName === 'desierto') document.body.classList.add('theme-desierto');
+      if (save) localStorage.setItem('rioRiseTheme', themeName);
+    }
+
+    // EXPORTAR REPORTE A CSV (EXCEL)
+    function exportReportCSV() {
+      if (!cachedData || !cachedData.users) {
+        alert('No hay datos para exportar.');
+        return;
+      }
+      let csvContent = "data:text/csv;charset=utf-8,Usuario,Rango,Estado,Horas Acumuladas\n";
+      cachedData.users.forEach(u => {
+        csvContent += `"${u.username}","${u.rank}","${u.status}","${u.hours || 0}"\n`;
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `reporte_tropa_riorise_${getColombiaDateString().replace(/\//g, '-')}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -1203,6 +1293,7 @@
           return;
         }
 
+        playTacticalSound('start');
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
         currentUser.activeShiftStart = startTime;
@@ -1215,6 +1306,7 @@
         }).catch(e => {});
 
       } else {
+        playTacticalSound('end');
         clearInterval(shiftInterval);
         shiftInterval = null;
 
