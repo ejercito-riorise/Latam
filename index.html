@@ -75,8 +75,10 @@
           <button id="btnInstallApp" onclick="installPWA()" class="hidden bg-emerald-600/85 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded-lg border border-emerald-500 shadow transition flex items-center gap-1 font-bold animate-pulse">
             <i class="fa-solid fa-download"></i> Instalar
           </button>
-          <button id="btnOpenControlPanel" onclick="toggleControlPanel(true)" class="hidden bg-purple-600/85 hover:bg-purple-500 text-white text-xs px-2.5 py-1 rounded-lg border border-purple-500 shadow transition flex items-center gap-1 font-bold">
+          <button id="btnOpenControlPanel" onclick="toggleControlPanel(true)" class="hidden relative bg-purple-600/85 hover:bg-purple-500 text-white text-xs px-2.5 py-1 rounded-lg border border-purple-500 shadow transition flex items-center gap-1 font-bold">
             <i class="fa-solid fa-sliders"></i> Panel
+            <span id="globalPanelAlertBadge" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900 animate-ping"></span>
+            <span id="globalPanelAlertDot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900"></span>
           </button>
         </div>
       </div>
@@ -174,7 +176,7 @@
                 <span id="profileRank" class="text-[9px] px-2 py-0.5 rounded font-bold uppercase"></span>
                 <div class="flex items-center gap-1 bg-amber-500/20 border border-amber-500/40 px-1.5 py-0.5 rounded">
                   <span id="profileBadgeLevel" class="text-[9px] text-amber-300 font-bold">🔰 Soldado Raso</span>
-                  <button onclick="openRankInfoModal()" class="text-[10px] text-amber-400 hover:text-white transition" title="Ver tabla de rangos y niveles"><i class="fa-solid fa-circle-question"></i></button>
+                  <button onclick="openRankInfoModal()" class="text-[10px] text-amber-400 hover:text-white transition" title="Ver tabla de rangos y niveles semanales"><i class="fa-solid fa-circle-question"></i></button>
                 </div>
                 <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Horas de servicio hoy">Hoy: 00:00</span>
               </div>
@@ -341,42 +343,45 @@
     </div>
   </div>
 
-  <!-- MODAL DE INFORMACIÓN DE RANGOS / NIVELES -->
+  <!-- MODAL DE INFORMACIÓN DE RANGOS / NIVELES SEMANALES -->
   <div id="rankInfoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-amber-500/40 shadow-2xl space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
         <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-ranking-star"></i> Escala de Insignias y Niveles
+          <i class="fa-solid fa-ranking-star"></i> Escala de Niveles Semanales
         </h4>
         <button onclick="closeRankInfoModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <p class="text-[11px] text-slate-300">
-        Tu insignia de nivel se actualiza automáticamente acumulando horas totales de servicio en el portal:
+        Tu nivel se calcula basado en las horas acumuladas <strong>durante la semana actual (Lunes a Domingo)</strong>. ¡Haz tu meta de 4 horas diarias para alcanzar la élite!
       </p>
       <div class="space-y-2 text-xs">
         <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
           <span class="font-bold text-amber-300">🔥 Leyenda Élite</span>
-          <span class="text-slate-400 font-mono">50 Horas o más</span>
+          <span class="text-slate-400 font-mono">28 Horas / semana (¡4h diarias!)</span>
         </div>
         <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
           <span class="font-bold text-purple-300">⭐ Veterano Táctico</span>
-          <span class="text-slate-400 font-mono">30 a 49 Horas</span>
+          <span class="text-slate-400 font-mono">20 a 27 Horas</span>
         </div>
         <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
           <span class="font-bold text-blue-300">🎖️ Soldado Destacado</span>
-          <span class="text-slate-400 font-mono">15 a 29 Horas</span>
+          <span class="text-slate-400 font-mono">12 a 19 Horas</span>
         </div>
         <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
           <span class="font-bold text-emerald-300">🛡️ Operativo Activo</span>
-          <span class="text-slate-400 font-mono">5 a 14 Horas</span>
+          <span class="text-slate-400 font-mono">5 a 11 Horas</span>
         </div>
         <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
           <span class="font-bold text-slate-300">🔰 Soldado Raso</span>
           <span class="text-slate-400 font-mono">Menos de 5 Horas</span>
         </div>
       </div>
+      <p class="text-[10px] text-amber-400/90 italic text-center">
+        💡 Al terminar la semana, el nivel alcanzado se congela y se mantiene fijo durante toda la semana siguiente como tu Rango de Honor.
+      </p>
       <button onclick="closeRankInfoModal()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
         ¡Entendido, a Servir!
       </button>
@@ -513,12 +518,50 @@
       document.body.removeChild(link);
     }
 
-    function getUserBadgeLevel(totalHours) {
-      if (totalHours >= 50) return "🔥 Leyenda Élite";
-      if (totalHours >= 30) return "⭐ Veterano Táctico";
-      if (totalHours >= 15) return "🎖️ Soldado Destacado";
-      if (totalHours >= 5)  return "🛡️ Operativo Activo";
+    function getWeekNumber(d) {
+      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+      var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+      var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+      return `${d.getUTCFullYear()}-W${weekNo}`;
+    }
+
+    function getWeeklyBadgeLevel(weeklyHours) {
+      if (weeklyHours >= 28) return "🔥 Leyenda Élite";
+      if (weeklyHours >= 20) return "⭐ Veterano Táctico";
+      if (weeklyHours >= 12) return "🎖️ Soldado Destacado";
+      if (weeklyHours >= 5)  return "🛡️ Operativo Activo";
       return "🔰 Soldado Raso";
+    }
+
+    function getCachedOrCurrentBadgeLevel(username, currentWeeklyHours) {
+      const now = new Date();
+      const currentWeekKey = getWeekNumber(now);
+      const storageKey = `frozenBadge_${username}_${currentWeekKey}`;
+      const previousWeekStorageKey = `frozenBadge_${username}_${getPreviousWeekKey(now)}`;
+
+      let frozen = localStorage.getItem(storageKey);
+      if (frozen) return frozen;
+
+      let currentLevel = getWeeklyBadgeLevel(currentWeeklyHours);
+      
+      if (currentWeeklyHours < 5) {
+        let previousWeekLevel = localStorage.getItem(previousWeekStorageKey);
+        if (previousWeekLevel) {
+          localStorage.setItem(storageKey, previousWeekLevel);
+          return previousWeekLevel;
+        }
+      }
+
+      localStorage.setItem(storageKey, currentLevel);
+      localStorage.setItem(previousWeekStorageKey, currentLevel);
+      return currentLevel;
+    }
+
+    function getPreviousWeekKey(d) {
+      let prevDate = new Date(d.getTime());
+      prevDate.setDate(prevDate.getDate() - 7);
+      return getWeekNumber(prevDate);
     }
 
     if ('serviceWorker' in navigator) {
@@ -564,6 +607,26 @@
       const hrs = Math.floor(totalMinutes / 60);
       const mins = totalMinutes % 60;
       return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    }
+
+    function isDateInCurrentWeek(dateStr) {
+      if (!dateStr) return false;
+      let d;
+      let str = dateStr.toString().trim();
+      if (str.includes('/')) {
+        let parts = str.split('/');
+        if (parts.length === 3) {
+          d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        }
+      } else if (str.includes('-')) {
+        d = new Date(str);
+      }
+      if (!d || isNaN(d.getTime())) return false;
+
+      const now = new Date();
+      const currentWeekNum = getWeekNumber(now);
+      const recordWeekNum = getWeekNumber(d);
+      return currentWeekNum === recordWeekNum;
     }
 
     function getColombiaDateString(dateObj = new Date()) {
@@ -670,6 +733,49 @@
       }
     }
 
+    // ACTUALIZACIÓN DE NOTIFICACIONES TÁCTICAS PARA EL ALTO MANDO
+    function updateCommandAlertBadges(users, news) {
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
+      const isCoronel = rankLower === 'coronel';
+
+      const pendingUsersCount = users ? users.filter(u => u.status && u.status.toLowerCase() === 'pending').length : 0;
+      const pendingNewsCount = news ? news.filter(item => item.estado && item.estado.toLowerCase() === 'pending').length : 0;
+      
+      const totalPending = (isSuperAdmin ? pendingUsersCount : 0) + ((isSuperAdmin || isCoronel) ? pendingNewsCount : 0);
+
+      const globalDot = document.getElementById('globalPanelAlertDot');
+      const globalBadge = document.getElementById('globalPanelAlertBadge');
+      if (globalDot && globalBadge) {
+        if (totalPending > 0) {
+          globalDot.classList.remove('hidden');
+          globalBadge.classList.remove('hidden');
+        } else {
+          globalDot.classList.add('hidden');
+          globalBadge.classList.add('hidden');
+        }
+      }
+
+      // Alertas en pestañas internas del panel
+      const tabPending = document.getElementById('adminTabPending');
+      if (tabPending) {
+        if (pendingUsersCount > 0) {
+          tabPending.innerHTML = `Solicitudes <span class="bg-red-500 text-white text-[8px] px-1.5 py-0.2 rounded-full font-bold ml-1">${pendingUsersCount}</span>`;
+        } else {
+          tabPending.innerHTML = `Solicitudes`;
+        }
+      }
+
+      const tabApproveNews = document.getElementById('adminTabApproveNews');
+      if (tabApproveNews) {
+        if (pendingNewsCount > 0) {
+          tabApproveNews.innerHTML = `Aprobar <span class="bg-red-500 text-white text-[8px] px-1.5 py-0.2 rounded-full font-bold ml-1">${pendingNewsCount}</span>`;
+        } else {
+          tabApproveNews.innerHTML = `Aprobar`;
+        }
+      }
+    }
+
     function configureTabsForRole() {
       const rankLower = (currentUser.rank || '').toLowerCase();
       const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
@@ -685,7 +791,6 @@
       }
 
       if (isSuperAdmin) {
-        // General: Solicitudes, Tropa, Hoy, Filtros, Publicar, Aprobar (6 pestañas)
         tabsContainer.className = "grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('pending')" id="adminTabPending" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Solicitudes</button>
@@ -697,7 +802,6 @@
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isCoronel) {
-        // Coronel: Tropa, Hoy, Filtros, Publicar, Aprobar (5 pestañas - Incluye Filtros)
         tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
@@ -708,7 +812,6 @@
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isMayor) {
-        // Mayor: Tropa, Hoy, Proponer (3 pestañas - SIN FILTROS)
         tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
@@ -717,7 +820,6 @@
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else {
-        // Tenientes, Sargentos y demás: Solo ven la pestaña Hoy (1 pestaña - SIN FILTROS)
         tabsContainer.className = "grid grid-cols-1 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Hoy</button>
@@ -741,7 +843,13 @@
         const viewEl = document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`);
         const tabEl = document.getElementById(`adminTab${v.charAt(0).toUpperCase() + v.slice(1)}`);
         if (viewEl) viewEl.classList.add('hidden');
-        if (tabEl) tabEl.className = "py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
+        if (tabEl) {
+          // Mantener colores base preservando notificaciones si existen
+          const hasBadge = tabEl.innerHTML.includes('bg-red-500');
+          const badgeHtml = hasBadge ? tabEl.innerHTML.substring(tabEl.innerHTML.indexOf('<span')) : '';
+          const cleanText = tabEl.innerText.replace(/[0-9]/g, '').trim();
+          tabEl.className = "py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
+        }
       });
 
       const targetView = document.getElementById(`view${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
@@ -855,6 +963,7 @@
             globalHistoryCache = cachedData.history || [];
             renderNewsFeed(cachedData.news);
             renderDoctrinaFeed(cachedData.doctrina);
+            updateCommandAlertBadges(cachedData.users, cachedData.news);
             
             const freshUser = cachedData.users.find(u => String(u.username).trim().toLowerCase() === currentUser.username.toLowerCase());
             if (freshUser) {
@@ -886,6 +995,7 @@
       globalHistoryCache = resData.history || [];
       renderNewsFeed(resData.news);
       renderDoctrinaFeed(resData.doctrina);
+      updateCommandAlertBadges(resData.users, resData.news);
       updateTodayHoursLive();
       applyPermissions(currentUser);
       checkActiveShiftOnLoad();
@@ -904,6 +1014,7 @@
           globalHistoryCache = resData.history || [];
           renderNewsFeed(resData.news);
           renderDoctrinaFeed(resData.doctrina);
+          updateCommandAlertBadges(resData.users, resData.news);
           updateTodayHoursLive();
 
           const modal = document.getElementById('controlPanelModal');
@@ -920,14 +1031,17 @@
     function updateTodayHoursLive() {
       const todayStr = getColombiaDateString();
       let todayTotalHours = 0;
-      let totalLifetimeHours = 0;
+      let weeklyTotalHours = 0;
 
       if (globalHistoryCache && globalHistoryCache.length > 0) {
         globalHistoryCache.forEach(h => {
           if (h.username.toLowerCase() === currentUser.username.toLowerCase()) {
-            totalLifetimeHours += parseFloat(h.horas || 0);
+            const hHours = parseFloat(h.horas || 0);
             if (normalizeDate(h.fecha) === todayStr) {
-              todayTotalHours += parseFloat(h.horas || 0);
+              todayTotalHours += hHours;
+            }
+            if (isDateInCurrentWeek(h.fecha)) {
+              weeklyTotalHours += hHours;
             }
           }
         });
@@ -938,11 +1052,11 @@
         const activeSeconds = Math.floor((Date.now() - parseInt(activeShiftStart)) / 1000);
         const activeHours = activeSeconds / 3600;
         todayTotalHours += activeHours;
-        totalLifetimeHours += activeHours;
+        weeklyTotalHours += activeHours;
       }
 
       document.getElementById('profileTodayHours').innerText = `Hoy: ${decimalToHM(todayTotalHours)}`;
-      document.getElementById('profileBadgeLevel').innerText = getUserBadgeLevel(totalLifetimeHours);
+      document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyTotalHours);
     }
 
     function renderNewsFeed(news) {
@@ -1169,6 +1283,11 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
+          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ SIN ESPERAR F5
+          if (cachedData && cachedData.doctrina) {
+            cachedData.doctrina = cachedData.doctrina.filter(d => d.titulo !== title);
+            renderDoctrinaFeed(cachedData.doctrina);
+          }
           alert('✔ Publicación eliminada.');
           loadSession();
         }
@@ -1279,6 +1398,12 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
+          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ
+          if (cachedData && cachedData.news) {
+            cachedData.news = cachedData.news.map(n => n.titulo === title ? {...n, estado: 'approved'} : n);
+            renderNewsFeed(cachedData.news);
+            updateCommandAlertBadges(cachedData.users, cachedData.news);
+          }
           alert('✔ Comunicado aprobado y publicado.');
           loadControlPanelData();
           loadSession();
@@ -1300,6 +1425,12 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
+          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ
+          if (cachedData && cachedData.news) {
+            cachedData.news = cachedData.news.filter(n => n.titulo !== title);
+            renderNewsFeed(cachedData.news);
+            updateCommandAlertBadges(cachedData.users, cachedData.news);
+          }
           alert('✔ Comunicado eliminado.');
           loadControlPanelData();
           loadSession();
@@ -1351,7 +1482,6 @@
       shiftInterval = setInterval(() => {
         const now = Date.now();
 
-        // CIERRE AUTOMÁTICO DE EMERGENCIA A LAS 03:00 (HORA COLOMBIA)
         const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colombiaDate = new Date(colombiaTimeStr);
         if (colombiaDate.getHours() === 3 && colombiaDate.getMinutes() === 0 && colombiaDate.getSeconds() < 10) {
@@ -1488,6 +1618,8 @@
         const history = resData.history;
         const news = resData.news;
 
+        updateCommandAlertBadges(users, news);
+
         const rankLower = (currentUser.rank || '').toLowerCase();
         const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
         const isCoronel = rankLower === 'coronel';
@@ -1577,7 +1709,7 @@
                   <div>
                     <span class="font-bold text-white text-[11px]">${u.username}</span>
                     <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ml-1 badge-${u.rank.toLowerCase()}">${u.rank}</span>
-                    <p class="text-[9px] text-emerald-400 font-mono font-bold mt-0.5">⏱ Total Acumulado: ${totalHM}</p>
+                    <p class="text-[9px] text-emerald-400 font-mono font-bold mt-0.5">⏱ Total Histórico: ${totalHM}</p>
                   </div>
                   ${adminActionsHtml}
                 </div>
@@ -1772,8 +1904,12 @@
         });
         const result = await response.json();
         if (result.status === 'success') {
+          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ
+          if (cachedData && cachedData.users) {
+            cachedData.users = cachedData.users.map(u => u.username === username ? {...u, status: 'approved'} : u);
+            loadControlPanelData();
+          }
           alert(`✔ La cuenta de ${username} ha sido aprobada.`);
-          loadControlPanelData();
         }
       } catch (err) { alert('Error de conexión.'); }
     }
@@ -1789,8 +1925,11 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
+          if (cachedData && cachedData.users) {
+            cachedData.users = cachedData.users.map(u => u.username === username ? {...u, rank: newRank} : u);
+            loadControlPanelData();
+          }
           alert(`✔ Rango de ${username} actualizado.`);
-          loadControlPanelData();
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -1809,8 +1948,12 @@
         const resultJson = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (resultJson.status === 'success') {
+          // ACTUALIZACIÓN INSTANTÁNEA EN CACHÉ
+          if (cachedData && cachedData.users) {
+            cachedData.users = cachedData.users.filter(u => u.username !== username);
+            loadControlPanelData();
+          }
           alert(`✔ Usuario eliminado.`);
-          loadControlPanelData();
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
