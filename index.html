@@ -267,7 +267,7 @@
         </button>
       </div>
 
-      <div id="adminTabsContainer" class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center"></div>
+      <div id="adminTabsContainer" class="bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center"></div>
 
       <div class="flex-1 overflow-y-auto pr-1 space-y-2">
         <div id="viewPending" class="space-y-2">
@@ -685,6 +685,7 @@
       }
 
       if (isSuperAdmin) {
+        // General: Solicitudes, Tropa, Hoy, Filtros, Publicar, Aprobar (6 pestañas)
         tabsContainer.className = "grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('pending')" id="adminTabPending" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Solicitudes</button>
@@ -696,6 +697,7 @@
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isCoronel) {
+        // Coronel: Tropa, Hoy, Filtros, Publicar, Aprobar (5 pestañas - Incluye Filtros)
         tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
@@ -706,19 +708,19 @@
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isMayor) {
-        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        // Mayor: Tropa, Hoy, Proponer (3 pestañas - SIN FILTROS)
+        tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
-          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
-          <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
-          <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">Proponer</button>
+          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Tropa</button>
+          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Hoy</button>
+          <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Proponer</button>
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else {
-        tabsContainer.className = "grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        // Tenientes, Sargentos y demás: Solo ven la pestaña Hoy (1 pestaña - SIN FILTROS)
+        tabsContainer.className = "grid grid-cols-1 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded bg-purple-600 text-white transition">Hoy</button>
-          <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Filtros</button>
         `;
         switchAdminTab('daily');
       }
@@ -730,10 +732,10 @@
       const isCoronel = rankLower === 'coronel';
       const isMayor = rankLower === 'mayor';
 
-      let views = ['daily', 'filters'];
+      let views = ['daily'];
       if (isSuperAdmin) views = ['pending', 'active', 'daily', 'filters', 'newsAdmin', 'approveNews'];
       else if (isCoronel) views = ['active', 'daily', 'filters', 'newsAdmin', 'approveNews'];
-      else if (isMayor) views = ['active', 'daily', 'filters', 'newsAdmin'];
+      else if (isMayor) views = ['active', 'daily', 'newsAdmin'];
 
       views.forEach(v => {
         const viewEl = document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`);
@@ -794,7 +796,6 @@
       document.getElementById('loadingOverlay').classList.remove('hidden');
 
       try {
-        // OPTIMIZACIÓN ULTRA RÁPIDA: Hacemos una sola petición limpia y ligera
         const response = await fetch(WEB_APP_URL);
         const resData = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -819,7 +820,6 @@
         currentUser = { username: found.username, rank: found.rank, hours: parseFloat(found.hours || 0), activeShiftStart: found.activeShiftStart };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
         
-        // Guardamos en caché global de una vez para que el panel cargue instantáneo sin demoras
         cachedData = resData;
         globalHistoryCache = resData.history || [];
 
@@ -843,14 +843,12 @@
         rankEl.innerText = currentUser.rank;
         rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
 
-        // Si ya tenemos caché local o pasamos datos, evitamos peticiones innecesarias
         if (historyData && newsData && doctrinaData) {
           globalHistoryCache = historyData || [];
           renderNewsFeed(newsData);
           renderDoctrinaFeed(doctrinaData);
           updateTodayHoursLive();
         } else {
-          // Carga inicial rápida en segundo plano
           try {
             const response = await fetch(WEB_APP_URL);
             cachedData = await response.json();
@@ -895,7 +893,6 @@
       startRealtimeSync();
     }
 
-    // SINCRONIZACIÓN EN TIEMPO REAL CADA 5 SEGUNDOS (LIGERA Y EFICIENTE)
     function startRealtimeSync() {
       if (syncInterval) clearInterval(syncInterval);
       syncInterval = setInterval(async () => {
@@ -1474,13 +1471,12 @@
       const dailyReportList = document.getElementById('dailyReportList');
       const pendingNewsList = document.getElementById('pendingNewsList');
       
-      pendingList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
-      activeList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
-      dailyReportList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
+      if (pendingList) pendingList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
+      if (activeList) activeList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
+      if (dailyReportList) dailyReportList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
       if (pendingNewsList) pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-400 italic">Cargando...</p>';
 
       try {
-        // Usamos caché previa si existe para que abra instantáneo
         let resData = cachedData;
         if (!resData) {
           const response = await fetch(WEB_APP_URL);
@@ -1496,29 +1492,31 @@
         const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
         const isCoronel = rankLower === 'coronel';
 
-        const pendingUsers = users.filter(u => u.status && u.status.toLowerCase() === 'pending');
-        pendingList.innerHTML = '';
-        if (!isSuperAdmin) {
-          pendingList.innerHTML = '<p class="text-[11px] text-amber-500/80 italic">⛔ Sección restringida para el General.</p>';
-        } else if (pendingUsers.length === 0) {
-          pendingList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay solicitudes pendientes.</p>';
-        } else {
-          pendingUsers.forEach(u => {
-            const item = document.createElement('div');
-            item.className = 'bg-slate-900 p-2.5 rounded-lg border border-amber-900/40 flex items-center justify-between text-xs';
-            item.innerHTML = `
-              <div>
-                <span class="font-bold text-white text-[11px]">${u.username}</span>
-                <span class="text-[9px] text-amber-400 ml-1">(${u.rank})</span>
-                <p class="text-[9px] text-slate-400">Edad: ${u.age || 'N/A'} • ${u.country || 'N/A'}</p>
-              </div>
-              <div class="flex gap-1">
-                <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px]" title="Aprobar"><i class="fa-solid fa-check"></i></button>
-                <button onclick="deleteUser('${u.username}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px]" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
-              </div>
-            `;
-            pendingList.appendChild(item);
-          });
+        if (pendingList) {
+          const pendingUsers = users.filter(u => u.status && u.status.toLowerCase() === 'pending');
+          pendingList.innerHTML = '';
+          if (!isSuperAdmin) {
+            pendingList.innerHTML = '<p class="text-[11px] text-amber-500/80 italic">⛔ Sección restringida para el General.</p>';
+          } else if (pendingUsers.length === 0) {
+            pendingList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay solicitudes pendientes.</p>';
+          } else {
+            pendingUsers.forEach(u => {
+              const item = document.createElement('div');
+              item.className = 'bg-slate-900 p-2.5 rounded-lg border border-amber-900/40 flex items-center justify-between text-xs';
+              item.innerHTML = `
+                <div>
+                  <span class="font-bold text-white text-[11px]">${u.username}</span>
+                  <span class="text-[9px] text-amber-400 ml-1">(${u.rank})</span>
+                  <p class="text-[9px] text-slate-400">Edad: ${u.age || 'N/A'} • ${u.country || 'N/A'}</p>
+                </div>
+                <div class="flex gap-1">
+                  <button onclick="approveUser('${u.username}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px]" title="Aprobar"><i class="fa-solid fa-check"></i></button>
+                  <button onclick="deleteUser('${u.username}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px]" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              `;
+              pendingList.appendChild(item);
+            });
+          }
         }
 
         if (pendingNewsList && (isSuperAdmin || isCoronel)) {
@@ -1547,58 +1545,69 @@
           }
         }
 
-        const activeUsers = users.filter(u => u.status && u.status.toLowerCase() === 'approved');
-        activeList.innerHTML = '';
-        if (activeUsers.length === 0) {
-          activeList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay personal activo.</p>';
-        } else {
-          activeUsers.forEach(u => {
-            const totalHM = decimalToHM(parseFloat(u.hours || 0));
-            const item = document.createElement('div');
-            item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5';
-            
-            let adminActionsHtml = isSuperAdmin ? `<button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario"><i class="fa-solid fa-trash-can"></i></button>` : '';
-            let rankSelectorHtml = isSuperAdmin ? `
-              <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60">
-                <span class="text-[10px] text-slate-400">Rango:</span>
-                <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none w-full">
-                  <option value="" disabled selected>Cambiar rango...</option>
-                  <option value="Privado">Privado</option>
-                  <option value="Sargento">Sargento</option>
-                  <option value="Teniente">Teniente</option>
-                  <option value="Mayor">Mayor</option>
-                  <option value="Coronel">Coronel</option>
-                  <option value="General">General</option>
-                </select>
-              </div>
-            ` : '';
-
-            item.innerHTML = `
-              <div class="flex items-center justify-between">
-                <div>
-                  <span class="font-bold text-white text-[11px]">${u.username}</span>
-                  <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ml-1 badge-${u.rank.toLowerCase()}">${u.rank}</span>
-                  <p class="text-[9px] text-emerald-400 font-mono font-bold mt-0.5">⏱ Total Acumulado: ${totalHM}</p>
+        if (activeList) {
+          const activeUsers = users.filter(u => u.status && u.status.toLowerCase() === 'approved');
+          activeList.innerHTML = '';
+          if (activeUsers.length === 0) {
+            activeList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay personal activo.</p>';
+          } else {
+            activeUsers.forEach(u => {
+              const totalHM = decimalToHM(parseFloat(u.hours || 0));
+              const item = document.createElement('div');
+              item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5';
+              
+              let adminActionsHtml = isSuperAdmin ? `<button onclick="deleteUser('${u.username}')" class="text-red-400 hover:text-red-300 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario"><i class="fa-solid fa-trash-can"></i></button>` : '';
+              let rankSelectorHtml = isSuperAdmin ? `
+                <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60">
+                  <span class="text-[10px] text-slate-400">Rango:</span>
+                  <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none w-full">
+                    <option value="" disabled selected>Cambiar rango...</option>
+                    <option value="Privado">Privado</option>
+                    <option value="Sargento">Sargento</option>
+                    <option value="Teniente">Teniente</option>
+                    <option value="Mayor">Mayor</option>
+                    <option value="Coronel">Coronel</option>
+                    <option value="General">General</option>
+                  </select>
                 </div>
-                ${adminActionsHtml}
-              </div>
-              ${rankSelectorHtml}
-            `;
-            activeList.appendChild(item);
-          });
+              ` : '';
+
+              item.innerHTML = `
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="font-bold text-white text-[11px]">${u.username}</span>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ml-1 badge-${u.rank.toLowerCase()}">${u.rank}</span>
+                    <p class="text-[9px] text-emerald-400 font-mono font-bold mt-0.5">⏱ Total Acumulado: ${totalHM}</p>
+                  </div>
+                  ${adminActionsHtml}
+                </div>
+                ${rankSelectorHtml}
+              `;
+              activeList.appendChild(item);
+            });
+          }
         }
 
-        renderDailyRanking(activeUsers, history);
-        document.getElementById('filterDateInput').valueAsDate = new Date();
-        applyHistoryFilter();
+        if (dailyReportList) {
+          const activeUsers = users.filter(u => u.status && u.status.toLowerCase() === 'approved');
+          renderDailyRanking(activeUsers, history);
+        }
+
+        const dateInputEl = document.getElementById('filterDateInput');
+        if (dateInputEl && (isSuperAdmin || isCoronel)) {
+          dateInputEl.valueAsDate = new Date();
+          applyHistoryFilter();
+        }
 
       } catch (err) {
-        pendingList.innerHTML = '<p class="text-xs text-red-400">Error al cargar.</p>';
+        if (pendingList) pendingList.innerHTML = '<p class="text-xs text-red-400">Error al cargar.</p>';
       }
     }
 
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
+      if (!dailyReportList) return;
+      
       const todayStr = getColombiaDateString();
       let dailyTotals = {};
 
@@ -1682,6 +1691,7 @@
       const filterType = document.getElementById('filterType').value;
       const dateInput = document.getElementById('filterDateInput').value;
       const historyList = document.getElementById('filteredHistoryList');
+      if (!historyList) return;
       
       const dateContainer = document.getElementById('dateSelectorContainer');
       if (filterType === 'day') dateContainer.classList.remove('hidden');
@@ -1797,7 +1807,7 @@
           body: JSON.stringify({ action: 'deleteUser', username: username })
         });
         const resultJson = await response.json();
-        document.getElementById('loadingOverlay'].classList.add('hidden');
+        document.getElementById('loadingOverlay').classList.add('hidden');
         if (resultJson.status === 'success') {
           alert(`✔ Usuario eliminado.`);
           loadControlPanelData();
