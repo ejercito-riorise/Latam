@@ -173,7 +173,7 @@
               <i class="fa-solid fa-bullhorn text-amber-400 text-sm"></i>
               <h3 class="font-bold text-white text-xs">Órdenes del Día y Comunicados</h3>
             </div>
-            <span class="text-[9px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px] animate-pulse"></i> En tiempo real (5s)</span>
+            <span class="text-[9px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px] animate-pulse"></i> En vivo</span>
           </div>
           <div id="newsFeedContainer" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
             <p class="text-[11px] text-slate-400 italic">Cargando boletines...</p>
@@ -214,7 +214,6 @@
             <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
               <i class="fa-solid fa-play mr-1"></i> Iniciar Turno
             </button>
-            <p class="text-[10px] text-slate-400 text-center italic"><i class="fa-solid fa-circle-info mr-1"></i> Horario habilitado: 18:00 a 03:00 (Hora Colombia)</p>
           </div>
         </div>
 
@@ -689,7 +688,7 @@
       }
     }
 
-    // SINCRONIZACIÓN EN TIEMPO REAL CADA 5 SEGUNDOS (SUPER RÁPIDO)
+    // SINCRONIZACIÓN EN TIEMPO REAL CADA 5 SEGUNDOS
     function startRealtimeSync() {
       if (syncInterval) clearInterval(syncInterval);
       syncInterval = setInterval(async () => {
@@ -813,6 +812,8 @@
       sortedDoctrina.forEach((item, index) => {
         doctrinaStorageMap[index] = item;
         const cleanDate = normalizeDate(item.fecha);
+        const cleanTime = normalizeTime(item.hora);
+        const timeStr = cleanTime ? ` • ${cleanTime}` : '';
         
         let imageHtml = '';
         if (item.imagen && item.imagen.trim() !== '') {
@@ -835,7 +836,7 @@
             <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
               <span class="font-bold text-blue-400"><i class="fa-solid fa-graduation-cap mr-1"></i>${item.autor || 'Mando'}</span>
               <div class="flex items-center gap-2">
-                <span>${cleanDate}</span>
+                <span>${cleanDate}${timeStr}</span>
                 ${adminActions}
               </div>
             </div>
@@ -1170,7 +1171,6 @@
 
         activateShiftUI(startTime);
         
-        // SINCRONIZA EL ESTADO ACTIVO AL SERVIDOR EN SEGUNDO PLANO (COLUMNA H)
         fetch(WEB_APP_URL, {
           method: 'POST',
           body: JSON.stringify({ action: 'setShiftState', username: currentUser.username, active: true, startTime: startTime })
