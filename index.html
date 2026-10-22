@@ -37,6 +37,12 @@
       --card-grad-2: #1c1109;
       --border-color: #5c3922;
     }
+    body.theme-chicas {
+      --bg-main: #140b12;
+      --card-grad-1: #31162b;
+      --card-grad-2: #190815;
+      --border-color: #5c2250;
+    }
 
     body { background-color: var(--bg-main); color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; transition: background 0.3s ease; }
     .military-card { background: linear-gradient(145deg, var(--card-grad-1), var(--card-grad-2)); border: 1px solid var(--border-color); }
@@ -51,6 +57,7 @@
 <body class="min-h-screen flex flex-col justify-between">
 
   <div>
+    <!-- ENCABEZADO TÁCTICO -->
     <header class="bg-slate-900 border-b border-slate-800 p-3 sticky top-0 z-50 shadow-lg">
       <div class="max-w-md mx-auto flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -67,6 +74,7 @@
             <option value="noche">🌙 Noche</option>
             <option value="selva">🌲 Selva</option>
             <option value="desierto">🏜️ Desierto</option>
+            <option value="chicas">🌸 Chicas EB</option>
           </select>
           <button id="btnInstallApp" onclick="installPWA()" class="hidden bg-emerald-600/85 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded-lg border border-emerald-500 shadow transition flex items-center gap-1 font-bold animate-pulse">
             <i class="fa-solid fa-download"></i> Instalar
@@ -82,6 +90,7 @@
 
     <main class="max-w-md mx-auto p-3 space-y-3">
 
+      <!-- OVERLAY CARGANDO -->
       <div id="loadingOverlay" class="hidden text-center py-2 bg-slate-900/90 border border-blue-500/30 rounded-lg p-2">
         <i class="fa-solid fa-spinner fa-spin text-blue-400 text-xl"></i>
         <p class="text-[11px] text-slate-300 font-semibold mt-1">Conectando al sistema...</p>
@@ -201,66 +210,7 @@
           </div>
         </div>
 
-        <!-- CENTRO DE ENTRENAMIENTO TÁCTICO INTERACTIVO FUERA DE HORARIO -->
-        <div id="offDutySimulatorCard" class="hidden military-card p-3 rounded-xl border border-amber-500/40 space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-crosshairs text-amber-400 text-sm animate-pulse"></i>
-              <h4 class="text-xs font-bold text-amber-300">Centro de Entrenamiento Táctico Rio Rise</h4>
-            </div>
-            <span class="text-[9px] bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded font-bold">Modo Práctica</span>
-          </div>
-
-          <!-- PESTAÑAS DEL CENTRO DE ENTRENAMIENTO -->
-          <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
-            <button id="tabTriviaBtn" onclick="switchTrainTab('trivia')" class="py-1 font-bold rounded text-white bg-amber-600 shadow">🧠 Trivia RP</button>
-            <button id="tabMapBtn" onclick="switchTrainTab('map')" class="py-1 font-bold rounded text-slate-400 hover:text-white">🗺️ Mapa Base</button>
-            <button id="tabOpsBtn" onclick="switchTrainTab('ops')" class="py-1 font-bold rounded text-slate-400 hover:text-white">📅 Operaciones</button>
-          </div>
-
-          <!-- SUB-SECCIÓN 1: TRIVIA RP -->
-          <div id="trainTriviaView" class="space-y-2 bg-slate-950 p-3 rounded-lg border border-slate-800">
-            <div class="flex justify-between items-center text-[10px]">
-              <span class="text-slate-400 font-semibold">Examen de Conocimiento Táctico</span>
-              <span class="text-amber-300 font-mono font-bold">Puntos de Honor: <span id="honorPoints">0</span></span>
-            </div>
-            <p id="triviaQuestion" class="text-xs font-bold text-white min-h-[32px]">Cargando pregunta...</p>
-            <div id="triviaOptions" class="space-y-1.5"></div>
-            <p id="triviaFeedback" class="text-[10px] font-bold hidden"></p>
-          </div>
-
-          <!-- SUB-SECCIÓN 2: RECONOCIMIENTO DE MAPA -->
-          <div id="trainMapView" class="hidden space-y-2 bg-slate-950 p-2 rounded-lg border border-slate-800">
-            <p class="text-[10px] text-slate-300 text-center">Toca los botones para reconocer los sectores estratégicos de la Base Militar:</p>
-            <div class="grid grid-cols-2 gap-1 text-[10px]">
-              <button onclick="inspectSector('Control Aéreo', 'Punto crítico para defender invasiones. Vigilancia aérea constante.')" class="bg-slate-900 hover:bg-slate-800 p-1.5 rounded text-slate-200 border border-slate-800 font-semibold text-left"><i class="fa-solid fa-tower-observation text-amber-400 mr-1"></i> Control Aéreo</button>
-              <button onclick="inspectSector('Cuartel General', 'Núcleo de mando del General y Coroneles. Máxima prioridad de defensa.')" class="bg-slate-900 hover:bg-slate-800 p-1.5 rounded text-slate-200 border border-slate-800 font-semibold text-left"><i class="fa-solid fa-building-shield text-blue-400 mr-1"></i> Cuartel General</button>
-              <button onclick="inspectSector('Puntos Tango (1-8)', 'Torres de vigilancia perimetrales alrededor de la base militar.')" class="bg-slate-900 hover:bg-slate-800 p-1.5 rounded text-slate-200 border border-slate-800 font-semibold text-left"><i class="fa-solid fa-eye text-emerald-400 mr-1"></i> Tangos (1 al 8)</button>
-              <button onclick="inspectSector('Helipuerto & Garajes', 'Puntos de despliegue rápido de aeronaves y vehículos blindados.')" class="bg-slate-900 hover:bg-slate-800 p-1.5 rounded text-slate-200 border border-slate-800 font-semibold text-left"><i class="fa-solid fa-helicopter text-cyan-400 mr-1"></i> Helipuerto / Garajes</button>
-            </div>
-            <div id="sectorInfoBox" class="hidden bg-slate-900 p-2 rounded border border-amber-500/30 text-[10px]">
-              <h5 id="sectorTitle" class="font-bold text-amber-300"></h5>
-              <p id="sectorDesc" class="text-slate-300"></p>
-            </div>
-          </div>
-
-          <!-- SUB-SECCIÓN 3: CALENDARIO DE OPERACIONES -->
-          <div id="trainOpsView" class="hidden space-y-1.5 text-[10px]">
-            <div class="bg-slate-950 p-2 rounded border border-slate-800">
-              <h5 class="font-bold text-emerald-400"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Cargamento CRM</h5>
-              <p class="text-slate-300">Todos los días a las <strong>17:00</strong> y <strong>19:00 /time</strong>. Transportar material desde el puerto a base.</p>
-            </div>
-            <div class="bg-slate-950 p-2 rounded border border-slate-800">
-              <h5 class="font-bold text-amber-400"><i class="fa-solid fa-shield-cat mr-1"></i> Pacificaciones</h5>
-              <p class="text-slate-300">Sábados (21:00 a 22:00). Domingos y Lunes (21:00 a 00:00) junto a Policía Federal.</p>
-            </div>
-            <div class="bg-slate-950 p-2 rounded border border-slate-800">
-              <h5 class="font-bold text-purple-400"><i class="fa-solid fa-skull-crossbones mr-1"></i> Invasiones del EB</h5>
-              <p class="text-slate-300">Martes (Facciones Morada/Verde 17:00 a 24:00) y Jueves (Mafias 19:00 a 23:00).</p>
-            </div>
-          </div>
-        </div>
-
+        <!-- PESTAÑAS PRINCIPALES -->
         <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
           <button id="navNewsBtn" onclick="switchMainTab('news')" class="py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-bullhorn"></i> Novedades
@@ -270,6 +220,7 @@
           </button>
         </div>
 
+        <!-- SECCIÓN NOVEDADES -->
         <div id="sectionNews" class="military-card p-3 rounded-xl space-y-2">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <div class="flex items-center gap-2">
@@ -283,6 +234,7 @@
           </div>
         </div>
 
+        <!-- SECCIÓN DOCTRINA -->
         <div id="sectionDoctrina" class="military-card p-3 rounded-xl space-y-2.5 hidden">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <div class="flex items-center gap-2">
@@ -298,14 +250,121 @@
           </div>
         </div>
 
+        <!-- CENTRO DE ENTRENAMIENTO Y MAPA TÁCTICO (ACORDEÓN) -->
+        <div id="offDutySimulatorCard" class="military-card rounded-xl border border-amber-500/40 overflow-hidden shadow-md">
+          <button onclick="toggleTrainingAccordion()" class="w-full p-3 bg-slate-900/90 hover:bg-slate-900 flex items-center justify-between text-left transition">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-crosshairs text-amber-400 text-sm animate-pulse"></i>
+              <div>
+                <h4 class="text-xs font-bold text-amber-300">Mapa Interactivo y Entrenamiento Táctico</h4>
+                <p class="text-[10px] text-slate-400">Zonas de base, examen RP y operaciones</p>
+              </div>
+            </div>
+            <i id="trainingChevron" class="fa-solid fa-chevron-down text-amber-400 text-xs transition-transform"></i>
+          </button>
+
+          <div id="trainingBodyContainer" class="hidden p-3 space-y-3 bg-slate-950/60 border-t border-slate-800">
+            <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
+              <button id="tabTriviaBtn" onclick="switchTrainTab('trivia')" class="py-1 font-bold rounded text-white bg-amber-600 shadow">🧠 Trivia RP</button>
+              <button id="tabMapBtn" onclick="switchTrainTab('map')" class="py-1 font-bold rounded text-slate-400 hover:text-white">🗺️ Mapa Base</button>
+              <button id="tabOpsBtn" onclick="switchTrainTab('ops')" class="py-1 font-bold rounded text-slate-400 hover:text-white">📅 Operaciones</button>
+            </div>
+
+            <!-- TRIVIA -->
+            <div id="trainTriviaView" class="space-y-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <div class="flex justify-between items-center text-[10px]">
+                <span class="text-slate-400 font-semibold">Examen de Conocimiento Táctico</span>
+                <span class="text-amber-300 font-mono font-bold">Honor: <span id="honorPoints">0</span> pts</span>
+              </div>
+              <p id="triviaQuestion" class="text-xs font-bold text-white min-h-[32px]">Cargando pregunta...</p>
+              <div id="triviaOptions" class="space-y-1.5"></div>
+              <p id="triviaFeedback" class="text-[10px] font-bold hidden"></p>
+            </div>
+
+            <!-- MAPA TÁCTICO INTERACTIVO MEJORADO -->
+            <div id="trainMapView" class="hidden space-y-2.5 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+              <p class="text-[10px] text-slate-300 text-center font-semibold">Toca un sector estratégico de la Base Militar Rio Rise para inspeccionarlo:</p>
+              
+              <!-- MINI RADAR / MAPA VISUAL ESTILIZADO -->
+              <div class="relative bg-slate-950 rounded-lg p-3 border border-slate-800 h-32 flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                
+                <div class="absolute top-2 left-2">
+                  <button onclick="inspectSector('Torre de Control Aéreo', 'Punto de vigilancia antiaérea principal. Cobertura de 360 grados frente a intrusos aéreos.')" class="bg-amber-600/90 hover:bg-amber-500 text-white text-[9px] px-2 py-1 rounded shadow border border-amber-400 animate-pulse">
+                    <i class="fa-solid fa-tower-observation mr-0.5"></i> Control Aéreo
+                  </button>
+                </div>
+                
+                <div class="absolute top-2 right-2">
+                  <button onclick="inspectSector('Puntos Tango (Torres 1 a 8)', 'Línea de defensa perimetral exterior. Requerido estado de alerta permanente QAP.')" class="bg-emerald-600/90 hover:bg-emerald-500 text-white text-[9px] px-2 py-1 rounded shadow border border-emerald-400">
+                    <i class="fa-solid fa-eye mr-0.5"></i> Torretas Tango
+                  </button>
+                </div>
+
+                <div class="absolute bottom-2 left-2">
+                  <button onclick="inspectSector('Helipuerto & Garajes', 'Área de despliegue táctico rápido. Estacionamiento de vehículos blindados y aéreos del EB.')" class="bg-cyan-600/90 hover:bg-cyan-500 text-white text-[9px] px-2 py-1 rounded shadow border border-cyan-400">
+                    <i class="fa-solid fa-helicopter mr-0.5"></i> Helipuerto
+                  </button>
+                </div>
+
+                <div class="absolute bottom-2 right-2">
+                  <button onclick="inspectSector('Cuartel General (CG)', 'Núcleo de mando supremo del General y Coroneles. Máxima prioridad de resguardo base.')" class="bg-blue-600/90 hover:bg-blue-500 text-white text-[9px] px-2 py-1 rounded shadow border border-blue-400">
+                    <i class="fa-solid fa-building-shield mr-0.5"></i> Cuartel General
+                  </button>
+                </div>
+
+                <div class="w-8 h-8 rounded-full border border-blue-500/40 flex items-center justify-center bg-blue-500/10">
+                  <i class="fa-solid fa-crosshairs text-blue-400 text-xs animate-spin" style="animation-duration: 8s;"></i>
+                </div>
+              </div>
+
+              <div id="sectorInfoBox" class="hidden bg-slate-950 p-2.5 rounded border border-amber-500/40 text-[10px] space-y-1">
+                <h5 id="sectorTitle" class="font-bold text-amber-300"></h5>
+                <p id="sectorDesc" class="text-slate-300"></p>
+              </div>
+            </div>
+
+            <!-- OPERACIONES -->
+            <div id="trainOpsView" class="hidden space-y-1.5 text-[10px]">
+              <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                <h5 class="font-bold text-emerald-400"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Cargamento CRM</h5>
+                <p class="text-slate-300">Todos los días a las <strong>17:00</strong> y <strong>19:00 /time</strong>.</p>
+              </div>
+              <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                <h5 class="font-bold text-amber-400"><i class="fa-solid fa-shield-cat mr-1"></i> Pacificaciones</h5>
+                <p class="text-slate-300">Sábados (21:00) y Domingos/Lunes (21:00 a 00:00).</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </main>
+  </div>
+
+  <!-- MODAL DE EXAMEN OBLIGATORIO PARA NUEVOS PRIVADOS -->
+  <div id="privateExamModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex items-center justify-center p-3">
+    <div class="military-card w-full max-w-sm p-4 rounded-xl border border-red-500/50 shadow-2xl space-y-3">
+      <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
+        <h4 class="text-xs font-bold text-red-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-triangle-exclamation"></i> Examen de Admisión Obligatorio (Privados)
+        </h4>
+      </div>
+      <p class="text-[11px] text-slate-300">
+        Como Soldado Raso / Privado nuevo, debes aprobar el test de doctrina de la Biblia RP para operar en la base militar.
+      </p>
+      <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
+        <p id="examQuestion" class="text-xs font-bold text-white"></p>
+        <div id="examOptions" class="space-y-1.5"></div>
+      </div>
+      <p id="examFeedback" class="text-[10px] font-bold hidden text-center"></p>
+    </div>
   </div>
 
   <!-- PANEL DE CONTROL -->
   <div id="controlPanelModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-md h-[85vh] flex flex-col p-4 rounded-xl border border-blue-500/40 shadow-2xl">
-      
       <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-sliders text-blue-400 text-base"></i>
@@ -320,75 +379,70 @@
 
       <div class="flex-1 overflow-y-auto pr-1 space-y-2">
         <div id="viewPending" class="space-y-2">
-          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-clock-rotate-left"></i> Solicitudes de Ingreso Pendientes:</h4>
+          <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-clock-rotate-left"></i> Solicitudes Pendientes:</h4>
           <div id="pendingList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
-
         <div id="viewActive" class="space-y-2 hidden">
-          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Personal Activo:</h4>
+          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa:</h4>
           <div id="activeList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
-
         <div id="viewDaily" class="space-y-2 hidden">
-          <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-trophy"></i> Ranking Diario de Servicio (Hoy):</h4>
-          <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando ranking...</p></div>
+          <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-trophy"></i> Ranking Diario (Hoy):</h4>
+          <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando...</p></div>
         </div>
-
         <div id="viewFilters" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Ranking de Rendimiento:</h4>
+            <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Rendimiento:</h4>
             <button onclick="exportVisualRankingCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
-              <i class="fa-solid fa-file-excel"></i> Descargar este Excel
+              <i class="fa-solid fa-file-excel"></i> Descargar Excel
             </button>
           </div>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
             <div>
-              <label class="block text-[10px] text-slate-400 mb-1">Rango de Filtro:</label>
+              <label class="block text-[10px] text-slate-400 mb-1">Filtro:</label>
               <select id="filterType" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
-                <option value="day">Días (Fecha Exacta)</option>
+                <option value="day">Días</option>
                 <option value="month">Mes Actual</option>
-                <option value="all">Todo el Historial</option>
+                <option value="all">Todo</option>
               </select>
             </div>
-            <div id="dateSelectorContainer">
-              <label class="block text-[10px] text-slate-400 mb-1">Seleccionar Fecha:</label>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">Fecha:</label>
               <input type="date" id="filterDateInput" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1 focus:outline-none">
             </div>
           </div>
           <div id="filteredHistoryList" class="space-y-1.5"></div>
         </div>
-
         <div id="viewNewsAdmin" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
-            <h4 id="newsFormTitle" class="text-xs font-bold text-amber-400 flex items-center gap-1"><i class="fa-solid fa-bullhorn"></i> Redactar / Publicar Orden del Día:</h4>
-            <button id="cancelEditBtn" onclick="cancelEditNews()" class="hidden text-[10px] bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded">Cancelar Edición</button>
+            <h4 id="newsFormTitle" class="text-xs font-bold text-amber-400 flex items-center gap-1"><i class="fa-solid fa-bullhorn"></i> Redactar Orden:</h4>
+            <button id="cancelEditBtn" onclick="cancelEditNews()" class="hidden text-[10px] bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded">Cancelar</button>
           </div>
           <form onsubmit="handlePublishNews(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800">
             <div>
-              <label class="block text-[10px] text-slate-300 mb-1">Título del Comunicado</label>
-              <input type="text" id="newsTitle" required placeholder="Ej: Directiva No. 04" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+              <label class="block text-[10px] text-slate-300 mb-1">Título</label>
+              <input type="text" id="newsTitle" required placeholder="Ej: Directiva" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <div>
-              <label class="block text-[10px] text-slate-300 mb-1">Mensaje / Orden Oficial</label>
-              <textarea id="newsMessage" required rows="4" placeholder="Escribe aquí los detalles..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
+              <label class="block text-[10px] text-slate-300 mb-1">Mensaje</label>
+              <textarea id="newsMessage" required rows="4" placeholder="Detalles..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
             </div>
             <div>
-              <label class="block text-[10px] text-slate-300 mb-1">URL de Imagen (Opcional)</label>
+              <label class="block text-[10px] text-slate-300 mb-1">Imagen URL</label>
               <input type="url" id="newsImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
-              <span id="newsBtnText">Publicar Comunicado</span>
+              <span id="newsBtnText">Publicar</span>
             </button>
           </form>
         </div>
-
         <div id="viewApproveNews" class="space-y-3 hidden">
           <div>
             <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-bullhorn"></i> Comunicados Pendientes:</h4>
             <div id="pendingNewsList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
           </div>
           <div class="pt-2 border-t border-slate-800">
-            <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-graduation-cap"></i> Doctrinas y Normas Pendientes:</h4>
+            <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-graduation-cap"></i> Doctrinas Pendientes:</h4>
             <div id="pendingDoctrinaList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
           </div>
         </div>
@@ -396,45 +450,21 @@
     </div>
   </div>
 
-  <!-- MODAL DE INFORMACIÓN DE RANGOS -->
+  <!-- MODAL RANGOS -->
   <div id="rankInfoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-amber-500/40 shadow-2xl space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-ranking-star"></i> Escala de Niveles Semanales
-        </h4>
-        <button onclick="closeRankInfoModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-ranking-star"></i> Niveles Semanales</h4>
+        <button onclick="closeRankInfoModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <p class="text-[11px] text-slate-300">
-        Tu nivel se calcula basado en las horas acumuladas <strong>durante la semana actual (Lunes a Domingo)</strong>.
-      </p>
       <div class="space-y-2 text-xs">
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
-          <span class="font-bold text-amber-300">🔥 Leyenda Élite</span>
-          <span class="text-slate-400 font-mono">28 Horas / semana</span>
-        </div>
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
-          <span class="font-bold text-purple-300">⭐ Veterano Táctico</span>
-          <span class="text-slate-400 font-mono">20 a 27 Horas</span>
-        </div>
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
-          <span class="font-bold text-blue-300">🎖️ Soldado Destacado</span>
-          <span class="text-slate-400 font-mono">12 a 19 Horas</span>
-        </div>
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
-          <span class="font-bold text-emerald-300">🛡️ Operativo Activo</span>
-          <span class="text-slate-400 font-mono">5 a 11 Horas</span>
-        </div>
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800">
-          <span class="font-bold text-slate-300">🔰 Soldado Raso</span>
-          <span class="text-slate-400 font-mono">Menos de 5 Horas</span>
-        </div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-amber-300">🔥 Leyenda Élite</span><span class="text-slate-400 font-mono">28 Horas</span></div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-purple-300">⭐ Veterano Táctico</span><span class="text-slate-400 font-mono">20 - 27 Horas</span></div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-blue-300">🎖️ Soldado Destacado</span><span class="text-slate-400 font-mono">12 - 19 Horas</span></div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-emerald-300">🛡️ Operativo Activo</span><span class="text-slate-400 font-mono">5 - 11 Horas</span></div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-slate-300">🔰 Soldado Raso</span><span class="text-slate-400 font-mono">&lt; 5 Horas</span></div>
       </div>
-      <button onclick="closeRankInfoModal()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
-        ¡Entendido!
-      </button>
+      <button onclick="closeRankInfoModal()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">¡Entendido!</button>
     </div>
   </div>
 
@@ -442,29 +472,25 @@
   <div id="doctrinaModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-md p-4 rounded-xl border border-blue-500/40 shadow-2xl space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <h4 id="doctrinaModalTitle" class="text-xs font-bold text-blue-400 flex items-center gap-1">
-          <i class="fa-solid fa-book-bookmark"></i> Publicar Tema de Estudio / Norma
-        </h4>
-        <button onclick="closeDoctrinaModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <h4 id="doctrinaModalTitle" class="text-xs font-bold text-blue-400 flex items-center gap-1"><i class="fa-solid fa-book-bookmark"></i> Publicar Doctrina</h4>
+        <button onclick="closeDoctrinaModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form onsubmit="handlePublishDoctrina(event)" class="space-y-2.5">
         <input type="hidden" id="doctrinaOldTitle">
         <div>
-          <label class="block text-[10px] text-slate-300 mb-1">Título del Tema / Norma</label>
-          <input type="text" id="doctrinaTitle" required placeholder="Ej: Manual de Tácticas" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+          <label class="block text-[10px] text-slate-300 mb-1">Título</label>
+          <input type="text" id="doctrinaTitle" required placeholder="Título..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
         </div>
         <div>
-          <label class="block text-[10px] text-slate-300 mb-1">Contenido / Guía</label>
-          <textarea id="doctrinaMessage" required rows="5" placeholder="Escribe la doctrina..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
+          <label class="block text-[10px] text-slate-300 mb-1">Contenido</label>
+          <textarea id="doctrinaMessage" required rows="5" placeholder="Contenido..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
         </div>
         <div>
-          <label class="block text-[10px] text-slate-300 mb-1">URL de Imagen (Opcional)</label>
+          <label class="block text-[10px] text-slate-300 mb-1">Imagen URL</label>
           <input type="url" id="doctrinaImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
         </div>
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
-          <span id="doctrinaBtnText">Publicar Norma</span>
+          <span id="doctrinaBtnText">Publicar</span>
         </button>
       </form>
     </div>
@@ -473,15 +499,13 @@
   <!-- MODAL ZOOM IMAGEN -->
   <div id="imageModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-center p-4">
     <div class="relative max-w-4xl w-full flex flex-col items-center">
-      <button onclick="closeImageModal()" class="absolute -top-10 right-0 bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1 rounded-lg text-xs shadow-lg flex items-center gap-1.5 transition">
-        <i class="fa-solid fa-xmark"></i> Cerrar
-      </button>
-      <img id="modalImageFull" src="" alt="Imagen Ampliada" class="max-h-[85vh] max-w-full object-contain rounded-lg border border-slate-700 shadow-2xl">
+      <button onclick="closeImageModal()" class="absolute -top-10 right-0 bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1 rounded-lg text-xs shadow-lg flex items-center gap-1.5 transition"><i class="fa-solid fa-xmark"></i> Cerrar</button>
+      <img id="modalImageFull" src="" alt="Ampliada" class="max-h-[85vh] max-w-full object-contain rounded-lg border border-slate-700 shadow-2xl">
     </div>
   </div>
 
   <footer class="text-center py-3 text-[10px] text-slate-500 border-t border-slate-900 mt-2 bg-slate-950/40">
-    <p>Desarrollado y diseñado por <span class="font-bold text-blue-400">Mike_Covid</span> • Intranet EB</p>
+    <p>Desarrollado por <span class="font-bold text-blue-400">Mike_Covid</span> • Intranet EB</p>
   </footer>
 
   <script>
@@ -499,41 +523,15 @@
     let doctrinaStorageMap = {};
     let practiceHonorPoints = 0;
     let currentTriviaIndex = 0;
+    let currentExamIndex = 0;
 
     const triviaQuestions = [
       { q: "¿Qué significa VDM en las normas del servidor?", options: ["A) Vehículo de Milicia", "B) Atropellar a otros jugadores sin motivo", "C) Vender armas de la base"], a: 1 },
-      { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos militares", "C) Retirarse de la base"], a: 0 },
-      { q: "¿Qué significa el Código Q: QAP?", options: ["A) ¿Dónde te encuentras?", "B) ¿Estás escuchando / en frecuencia?", "C) Solicito refuerzos urgente"], a: 1 },
-      { q: "¿Cuál es el significado de QTH?", options: ["A) Ubicación / Dirección", "B) Hora exacta del servidor", "C) Conductor designado"], a: 0 },
-      { q: "En la Biblia RP, ¿Qué significa SAAV?", options: ["A) Sistema Aéreo de Alta Velocidad", "B) Sin Amor a la Vida (no valorar la vida)", "C) Soldado Autorizado a Vigilar"], a: 1 },
-      { q: "¿Qué código Q se utiliza para solicitar REFUERZOS?", options: ["A) QTI", "B) QRR", "C) QSL"], a: 1 },
-      { q: "Según el Reglamento, ¿Qué función principal tiene el Rango 1 / PRIVADO?", options: ["A) Dirigir la base militar", "B) Obedecer a superiores y vigilar / cuidar la base", "C) Autorizar licencias"], a: 1 }
+      { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos", "C) Retirarse de base"], a: 0 },
+      { q: "¿Qué significa el Código Q: QAP?", options: ["A) ¿Dónde te encuentras?", "B) ¿Estás escuchando / en frecuencia?", "C) Solicito refuerzos"], a: 1 },
+      { q: "¿Cuál es el significado de QTH?", options: ["A) Ubicación / Dirección", "B) Hora del servidor", "C) Conductor"], a: 0 },
+      { q: "En la Biblia RP, ¿Qué significa SAAV?", options: ["A) Sistema Aéreo", "B) Sin Amor a la Vida (no valorar la vida)", "C) Soldado Vigilante"], a: 1 }
     ];
-
-    function playTacticalSound(type) {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        if (type === 'start') {
-          osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
-          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.15);
-        } else if (type === 'end') {
-          osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
-          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.15);
-        }
-      } catch (e) {}
-    }
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('rioRiseTheme') || 'noche';
@@ -546,7 +544,16 @@
       document.body.className = "min-h-screen flex flex-col justify-between";
       if (themeName === 'selva') document.body.classList.add('theme-selva');
       else if (themeName === 'desierto') document.body.classList.add('theme-desierto');
+      else if (themeName === 'chicas') document.body.classList.add('theme-chicas');
       if (save) localStorage.setItem('rioRiseTheme', themeName);
+    }
+
+    function toggleTrainingAccordion() {
+      const body = document.getElementById('trainingBodyContainer');
+      const chevron = document.getElementById('trainingChevron');
+      const isHidden = body.classList.contains('hidden');
+      body.classList.toggle('hidden', !isHidden);
+      chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
     }
 
     function openRankInfoModal() { document.getElementById('rankInfoModal').classList.remove('hidden'); }
@@ -571,7 +578,7 @@
 
       qObj.options.forEach((optText, i) => {
         const btn = document.createElement('button');
-        btn.className = "w-full text-left bg-slate-900 hover:bg-slate-800 p-2 rounded text-[11px] text-slate-200 border border-slate-800 transition font-semibold";
+        btn.className = "w-full text-left bg-slate-950 hover:bg-slate-900 p-2 rounded text-[11px] text-slate-200 border border-slate-800 transition font-semibold";
         btn.innerText = optText;
         btn.onclick = () => answerTrivia(i);
         optsContainer.appendChild(btn);
@@ -587,10 +594,10 @@
         practiceHonorPoints += 15;
         document.getElementById('honorPoints').innerText = practiceHonorPoints;
         feedbackEl.className = "text-[10px] font-bold text-emerald-400";
-        feedbackEl.innerText = "🎯 ¡Correcto! +15 Puntos de Honor Táctico.";
+        feedbackEl.innerText = "🎯 ¡Correcto! +15 Puntos.";
       } else {
         feedbackEl.className = "text-[10px] font-bold text-red-400";
-        feedbackEl.innerText = "❌ Incorrecto. Repasa la doctrina en la Intranet.";
+        feedbackEl.innerText = "❌ Incorrecto.";
       }
 
       setTimeout(() => {
@@ -604,6 +611,61 @@
       document.getElementById('sectorTitle').innerText = title;
       document.getElementById('sectorDesc').innerText = desc;
       box.classList.remove('hidden');
+    }
+
+    function checkPrivateExamRequirement(user) {
+      const rank = (user.rank || '').trim().toLowerCase();
+      if (rank === 'privado') {
+        const examPassedKey = `examPassed_${user.username}`;
+        if (!localStorage.getItem(examPassedKey)) {
+          document.getElementById('privateExamModal').classList.remove('hidden');
+          loadExamQuestion();
+        }
+      }
+    }
+
+    function loadExamQuestion() {
+      const qObj = triviaQuestions[currentExamIndex];
+      document.getElementById('examQuestion').innerText = `[Pregunta ${currentExamIndex + 1}/3]: ${qObj.q}`;
+      const container = document.getElementById('examOptions');
+      container.innerHTML = '';
+      document.getElementById('examFeedback').classList.add('hidden');
+
+      qObj.options.forEach((optText, i) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left bg-slate-900 hover:bg-slate-800 p-2 rounded text-[11px] text-slate-200 border border-slate-800 font-semibold";
+        btn.innerText = optText;
+        btn.onclick = () => answerExam(i);
+        container.appendChild(btn);
+      });
+    }
+
+    function answerExam(selectedIndex) {
+      const qObj = triviaQuestions[currentExamIndex];
+      const feedbackEl = document.getElementById('examFeedback');
+      feedbackEl.classList.remove('hidden');
+
+      if (selectedIndex === qObj.a) {
+        currentExamIndex++;
+        feedbackEl.className = "text-[10px] font-bold text-emerald-400";
+        feedbackEl.innerText = "✔ ¡Correcto!";
+        setTimeout(() => {
+          if (currentExamIndex >= 3) {
+            localStorage.setItem(`examPassed_${currentUser.username}`, 'true');
+            document.getElementById('privateExamModal').classList.add('hidden');
+            alert("🎯 ¡Examen de Privado aprobado con éxito! Bienvenido a la Intranet.");
+          } else {
+            loadExamQuestion();
+          }
+        }, 1200);
+      } else {
+        feedbackEl.className = "text-[10px] font-bold text-red-400";
+        feedbackEl.innerText = "❌ Incorrecto. Reiniciando test de examen...";
+        setTimeout(() => {
+          currentExamIndex = 0;
+          loadExamQuestion();
+        }, 1500);
+      }
     }
 
     if ('serviceWorker' in navigator) {
@@ -644,6 +706,25 @@
       d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
       var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
       return `${d.getUTCFullYear()}-W${Math.ceil((((d - yearStart) / 86400000) + 1)/7)}`;
+    }
+
+    function getWeeklyBadgeLevel(weeklyHours) {
+      if (weeklyHours >= 28) return "🔥 Leyenda Élite";
+      if (weeklyHours >= 20) return "⭐ Veterano Táctico";
+      if (weeklyHours >= 12) return "🎖️ Soldado Destacado";
+      if (weeklyHours >= 5)  return "🛡️ Operativo Activo";
+      return "🔰 Soldado Raso";
+    }
+
+    function getCachedOrCurrentBadgeLevel(username, currentWeeklyHours) {
+      const now = new Date();
+      const currentWeekKey = getWeekNumber(now);
+      const storageKey = `frozenBadge_${username}_${currentWeekKey}`;
+      let frozen = localStorage.getItem(storageKey);
+      if (frozen) return frozen;
+      let currentLevel = getWeeklyBadgeLevel(currentWeeklyHours);
+      localStorage.setItem(storageKey, currentLevel);
+      return currentLevel;
     }
 
     function isDateInCurrentWeek(dateStr) {
@@ -695,60 +776,30 @@
 
     function updateScheduleIndicator() {
       const indicator = document.getElementById('scheduleStatusIndicator');
-      const simulatorCard = document.getElementById('offDutySimulatorCard');
       if (!indicator) return;
-
-      const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
-      const currentHour = new Date(colombiaTimeStr).getHours();
+      const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
       const isAllowedHour = (currentHour >= 18 || currentHour < 3);
-
       if (isAllowedHour) {
         indicator.innerText = "🟢 Servicio Habilitado";
         indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
-        if (simulatorCard) simulatorCard.classList.add('hidden');
       } else {
         indicator.innerText = "🔴 Fuera de Horario";
         indicator.className = "text-[9px] bg-red-950 text-red-400 border border-red-900 px-2 py-0.5 rounded font-bold";
-        if (simulatorCard) simulatorCard.classList.remove('hidden');
       }
     }
 
     function showAuthTab(tab) {
-      const loginForm = document.getElementById('loginForm');
-      const registerForm = document.getElementById('registerForm');
-      const tabLoginBtn = document.getElementById('tabLoginBtn');
-      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
-
-      if (tab === 'login') {
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-        tabLoginBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
-        tabRegisterBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent";
-      } else {
-        loginForm.classList.add('hidden');
-        registerForm.classList.remove('hidden');
-        tabRegisterBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow";
-        tabLoginBtn.className = "py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent";
-      }
+      document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+      document.getElementById('tabLoginBtn').className = tab === 'login' ? "py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow" : "py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent";
+      document.getElementById('tabRegisterBtn').className = tab === 'register' ? "py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow" : "py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent";
     }
 
     function switchMainTab(tab) {
-      const navNewsBtn = document.getElementById('navNewsBtn');
-      const navDoctrinaBtn = document.getElementById('navDoctrinaBtn');
-      const sectionNews = document.getElementById('sectionNews');
-      const sectionDoctrina = document.getElementById('sectionDoctrina');
-
-      if (tab === 'news') {
-        sectionNews.classList.remove('hidden');
-        sectionDoctrina.classList.add('hidden');
-        navNewsBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5";
-        navDoctrinaBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent flex items-center justify-center gap-1.5";
-      } else {
-        sectionNews.classList.add('hidden');
-        sectionDoctrina.classList.remove('hidden');
-        navDoctrinaBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5";
-        navNewsBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent flex items-center justify-center gap-1.5";
-      }
+      document.getElementById('sectionNews').classList.toggle('hidden', tab !== 'news');
+      document.getElementById('sectionDoctrina').classList.toggle('hidden', tab !== 'doctrina');
+      document.getElementById('navNewsBtn').className = tab === 'news' ? "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5" : "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent flex items-center justify-center gap-1.5";
+      document.getElementById('navDoctrinaBtn').className = tab === 'doctrina' ? "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5" : "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent flex items-center justify-center gap-1.5";
     }
 
     function toggleControlPanel(show) {
@@ -785,24 +836,6 @@
           }
         });
       }
-
-      if (doctrina) {
-        doctrina.forEach(item => {
-          if (item.autor && item.autor.toLowerCase().includes(usernameLower)) {
-            const notifKey = `notif_doc_${item.titulo}`;
-            if (!localStorage.getItem(notifKey)) {
-              if (item.estado && item.estado.toLowerCase() === 'approved') {
-                alert(`🎯 Su tema de doctrina "${item.titulo}" fue APROBADO.`);
-                localStorage.setItem(notifKey, 'notified');
-              } else if (item.estado && item.estado.toLowerCase().startsWith('rejected')) {
-                const razon = item.estado.includes(':') ? item.estado.split(':')[1] : 'No especificada';
-                alert(`⚠ Aviso: Su tema de doctrina "${item.titulo}" fue RECHAZADO.\nMotivo: ${razon}`);
-                localStorage.setItem(notifKey, 'notified');
-              }
-            }
-          }
-        });
-      }
     }
 
     function updateCommandAlertBadges(users, news, doctrina) {
@@ -818,8 +851,8 @@
       const globalDot = document.getElementById('globalPanelAlertDot');
       const globalBadge = document.getElementById('globalPanelAlertBadge');
       if (globalDot && globalBadge) {
-        if (totalPending > 0) { globalDot.classList.remove('hidden'); globalBadge.classList.remove('hidden'); }
-        else { globalDot.classList.add('hidden'); globalBadge.classList.add('hidden'); }
+        globalDot.classList.toggle('hidden', totalPending === 0);
+        globalBadge.classList.toggle('hidden', totalPending === 0);
       }
     }
 
@@ -896,7 +929,7 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
-          alert('✔ Solicitud enviada. Queda en espera de aprobación del General.');
+          alert('✔ Solicitud enviada con éxito. Queda en espera de aprobación del General.');
           document.getElementById('registerForm').reset();
           showAuthTab('login');
         } else {
@@ -936,6 +969,7 @@
           return;
         }
 
+        // CORRECCIÓN: Alerta de aprobación exclusiva para NUEVOS aprobados por primera vez
         const approvedNotifKey = `approvedAlertShowed_${found.username}`;
         if (!localStorage.getItem(approvedNotifKey)) {
           alert("🎯 ¡Atención Soldado! Su cuenta ha sido APROBADA por el Alto Mando. ¡Bienvenido al servicio!");
@@ -977,6 +1011,7 @@
           if (freshUser) {
             currentUser.hours = parseFloat(freshUser.hours || 0);
             currentUser.activeShiftStart = freshUser.activeShiftStart;
+            currentUser.rank = freshUser.rank;
           }
           updateTodayHoursLive();
         } catch (e) { globalHistoryCache = []; }
@@ -984,6 +1019,7 @@
         applyPermissions(currentUser);
         checkActiveShiftOnLoad();
         updateScheduleIndicator();
+        checkPrivateExamRequirement(currentUser);
         startRealtimeSync();
       }
     }
@@ -1005,6 +1041,7 @@
       applyPermissions(currentUser);
       checkActiveShiftOnLoad();
       updateScheduleIndicator();
+      checkPrivateExamRequirement(currentUser);
       startRealtimeSync();
     }
 
@@ -1048,15 +1085,7 @@
       }
 
       document.getElementById('profileTodayHours').innerText = `Hoy: ${decimalToHM(todayTotalHours)}`;
-      document.getElementById('profileBadgeLevel').innerText = getWeeklyBadgeLevel(weeklyTotalHours);
-    }
-
-    function getWeeklyBadgeLevel(weeklyHours) {
-      if (weeklyHours >= 28) return "🔥 Leyenda Élite";
-      if (weeklyHours >= 20) return "⭐ Veterano Táctico";
-      if (weeklyHours >= 12) return "🎖️ Soldado Destacado";
-      if (weeklyHours >= 5)  return "🛡️ Operativo Activo";
-      return "🔰 Soldado Raso";
+      document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyTotalHours);
     }
 
     function renderNewsFeed(news) {
@@ -1067,14 +1096,16 @@
         return;
       }
 
-      const canManage = ['general', 'coronel'].includes((currentUser.rank || '').toLowerCase()) || currentUser.username.toLowerCase() === 'mike_covid';
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const canManageNews = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
+
       let htmlContent = '';
       newsStorageMap = {};
 
       [...approvedNews].reverse().forEach((item, index) => {
         newsStorageMap[index] = item;
         let imageHtml = item.imagen ? `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer" onclick="openImageModal('${fixImageUrl(item.imagen)}')"><img src="${fixImageUrl(item.imagen)}" class="w-full h-auto object-cover max-h-60" loading="lazy"></div>` : '';
-        let adminActions = canManage ? `<div class="flex gap-1.5"><button onclick="triggerEdit(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-pen"></i></button><button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
+        let adminActions = canManageNews ? `<div class="flex gap-1.5"><button onclick="triggerEdit(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-pen"></i></button><button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
 
         htmlContent += `
           <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
@@ -1099,14 +1130,16 @@
         return;
       }
 
-      const canManage = ['general', 'coronel'].includes((currentUser.rank || '').toLowerCase()) || currentUser.username.toLowerCase() === 'mike_covid';
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const canManageDoctrina = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
+
       let htmlContent = '';
       doctrinaStorageMap = {};
 
       [...approvedDoctrina].reverse().forEach((item, index) => {
         doctrinaStorageMap[index] = item;
         let imageHtml = item.imagen ? `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer" onclick="openImageModal('${fixImageUrl(item.imagen)}')"><img src="${fixImageUrl(item.imagen)}" class="w-full h-auto object-cover max-h-60" loading="lazy"></div>` : '';
-        let adminActions = canManage ? `<div class="flex gap-1.5"><button onclick="triggerEditDoctrina(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-pen"></i></button><button onclick="deleteDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
+        let adminActions = canManageDoctrina ? `<div class="flex gap-1.5"><button onclick="triggerEditDoctrina(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-pen"></i></button><button onclick="deleteDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
 
         htmlContent += `
           <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
@@ -1128,7 +1161,7 @@
       document.getElementById('doctrinaTitle').value = '';
       document.getElementById('doctrinaMessage').value = '';
       document.getElementById('doctrinaImage').value = '';
-      document.getElementById('doctrinaModalTitle').innerHTML = `<i class="fa-solid fa-book-bookmark"></i> Publicar Tema de Estudio`;
+      document.getElementById('doctrinaModalTitle').innerHTML = `<i class="fa-solid fa-book-bookmark"></i> Publicar Doctrina`;
       document.getElementById('doctrinaModal').classList.remove('hidden');
     }
     function closeDoctrinaModal() { document.getElementById('doctrinaModal').classList.add('hidden'); }
@@ -1156,7 +1189,7 @@
           })
         });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert(isMayor ? '✔ Enviado al Alto Mando.' : '✔ Publicado con éxito.');
+        alert(isMayor ? '✔ Enviado a revisión.' : '✔ Publicado con éxito.');
         closeDoctrinaModal();
         loadSession();
       } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error.'); }
@@ -1206,7 +1239,7 @@
           })
         });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert(isMayor ? '✔ Comunicado enviado a revisión.' : '✔ Comunicado publicado.');
+        alert(isMayor ? '✔ Enviado a revisión.' : '✔ Comunicado publicado.');
         cancelEditNews();
         toggleControlPanel(false);
         loadSession();
@@ -1241,7 +1274,7 @@
     }
 
     async function rejectNews(title) {
-      const motivo = prompt(`Motivo del rechazo para "${title}":`, "Falta ajustar formato o contenido.");
+      const motivo = prompt(`Motivo del rechazo para "${title}":`, "Falta ajustar formato.");
       if (motivo === null) return;
       await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectNews', titulo: title, motivo: motivo }) });
       loadControlPanelData();
@@ -1254,7 +1287,7 @@
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteNews', titulo: title }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Comunicado eliminado con éxito.');
+        alert('✔ Comunicado eliminado.');
         loadControlPanelData();
         loadSession();
       } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error al eliminar.'); }
@@ -1301,11 +1334,9 @@
         const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colombiaDate = new Date(colombiaTimeStr);
         
-        // CORTE AUTOMÁTICO RIGUROSO A LAS 03:00 A.M. COLOMBIA
         if (colombiaDate.getHours() >= 3 && colombiaDate.getHours() < 18) {
           if (localStorage.getItem(`shiftStart_${currentUser.username}`)) {
-            alert('El Ejército no se encuentra habilitado en este horario. Por favor ingrese en el horario asignado');
-            
+            alert('El Ejército no se encuentra habilitado en este horario.');
             const cutTime = new Date(colombiaDate);
             cutTime.setHours(3, 0, 0, 0);
             const forcedEndTime = cutTime.getTime();
@@ -1332,14 +1363,12 @@
       const savedStart = localStorage.getItem(activeShiftKey);
 
       if (!savedStart) {
-        const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
-        const currentHour = new Date(colombiaTimeStr).getHours();
+        const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
         if (!(currentHour >= 18 || currentHour < 3)) {
-          alert('El Ejército no se encuentra habilitado en este horario. Por favor ingrese en el horario asignado');
+          alert('El Ejército no se encuentra habilitado en este horario.');
           return;
         }
 
-        playTacticalSound('start');
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
         currentUser.activeShiftStart = startTime;
@@ -1347,7 +1376,6 @@
         
         fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'setShiftState', username: currentUser.username, active: true, startTime: startTime }) }).catch(e => {});
       } else {
-        playTacticalSound('end');
         clearInterval(shiftInterval);
         shiftInterval = null;
 
@@ -1450,7 +1478,22 @@
           users.filter(u => u.status && u.status.toLowerCase() === 'approved').forEach(u => {
             const div = document.createElement('div');
             div.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs';
-            div.innerHTML = `<div><span class="font-bold text-white">${u.username}</span> <span class="text-[9px] badge-${u.rank.toLowerCase()} px-1 rounded uppercase">${u.rank}</span></div>${isSuperAdmin ? `<button onclick="deleteUser('${u.username}')" class="text-red-400"><i class="fa-solid fa-trash-can"></i></button>` : ''}`;
+            let adminActionsHtml = isSuperAdmin ? `<button onclick="deleteUser('${u.username}')" class="text-red-400 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50"><i class="fa-solid fa-trash-can"></i></button>` : '';
+            let rankSelectorHtml = isSuperAdmin ? `
+              <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60 mt-1">
+                <span class="text-[10px] text-slate-400">Rango:</span>
+                <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none w-full">
+                  <option value="" disabled selected>Cambiar rango...</option>
+                  <option value="Privado">Privado</option>
+                  <option value="Sargento">Sargento</option>
+                  <option value="Teniente">Teniente</option>
+                  <option value="Mayor">Mayor</option>
+                  <option value="Coronel">Coronel</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+            ` : '';
+            div.innerHTML = `<div class="w-full"><div class="flex items-center justify-between"><div><span class="font-bold text-white">${u.username}</span> <span class="text-[9px] badge-${u.rank.toLowerCase()} px-1 rounded uppercase">${u.rank}</span></div>${adminActionsHtml}</div>${rankSelectorHtml}</div>`;
             activeList.appendChild(div);
           });
         }
@@ -1466,10 +1509,21 @@
     }
 
     async function rejectUserModal(username) {
-      const motivo = prompt(`Motivo del rechazo para la cuenta de ${username}:`, "Falta cumplir con requisitos del perfil.");
+      const motivo = prompt(`Motivo del rechazo para ${username}:`, "Requisitos incompletos.");
       if (motivo === null) return;
       await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectUser', username: username, motivo: motivo }) });
-      alert(`✔ Cuenta de ${username} rechazada.`);
+      loadControlPanelData();
+    }
+
+    async function changeUserRank(username, newRank) {
+      if (!confirm(`¿Cambiar rango de ${username} a "${newRank}"?`)) return;
+      await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'updateRank', username: username, newRank: newRank }) });
+      loadControlPanelData();
+    }
+
+    async function deleteUser(username) {
+      if (!confirm(`⚠ ¿Eliminar a ${username}?`)) return;
+      await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteUser', username: username }) });
       loadControlPanelData();
     }
 
@@ -1478,17 +1532,15 @@
       if (!dailyReportList) return;
       const todayStr = getColombiaDateString();
       let dailyTotals = {};
-
-      activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; });
+      activeUsers.forEach(u => { dailyTotals[u.username.toLowerCase()] = { username: u.username, hours: 0 }; });
       if (history) {
         history.forEach(h => {
           if (normalizeDate(h.fecha) === todayStr && h.username) {
-            const uKey = h.username.toLowerCase();
+            let uKey = h.username.toLowerCase();
             if (dailyTotals[uKey]) dailyTotals[uKey].hours += parseFloat(h.horas || 0);
           }
         });
       }
-
       const dailyArray = Object.values(dailyTotals).sort((a, b) => b.hours - a.hours);
       dailyReportList.innerHTML = dailyArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros hoy.</p>' : '';
       dailyArray.forEach((u, index) => {
