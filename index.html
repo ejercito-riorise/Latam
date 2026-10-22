@@ -75,7 +75,7 @@
           <button id="btnInstallApp" onclick="installPWA()" class="hidden bg-emerald-600/85 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded-lg border border-emerald-500 shadow transition flex items-center gap-1 font-bold animate-pulse">
             <i class="fa-solid fa-download"></i> Instalar
           </button>
-          <button id="btnOpenControlPanel" onclick="toggleControlPanel(true)" class="hidden relative bg-purple-600 hover:bg-purple-500 text-white text-xs px-2.5 py-1 rounded-lg border border-purple-400 shadow-lg transition flex items-center gap-1 font-bold">
+          <button id="btnOpenControlPanel" onclick="toggleControlPanel(true)" class="hidden relative bg-blue-600 hover:bg-blue-500 text-white text-xs px-2.5 py-1 rounded-lg border border-blue-400 shadow-lg transition flex items-center gap-1 font-bold">
             <i class="fa-solid fa-sliders"></i> Panel
             <span id="globalPanelAlertBadge" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900 animate-ping"></span>
             <span id="globalPanelAlertDot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900"></span>
@@ -99,7 +99,7 @@
           <button id="tabLoginBtn" type="button" onclick="showAuthTab('login')" class="py-1.5 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow">
             <i class="fa-solid fa-right-to-bracket mr-1"></i> Ingresar
           </button>
-          <button id="tabRegisterBtn" type="button" onclick="showAuthTab('register')" class="py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white">
+          <button id="tabRegisterBtn" type="button" onclick="showAuthTab('register')" class="py-1.5 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent">
             <i class="fa-solid fa-user-plus mr-1"></i> Registrarse
           </button>
         </div>
@@ -169,7 +169,7 @@
         <!-- PERFIL DE USUARIO CON MEDALLA / NIVEL Y BOTÓN PRO DE INFO -->
         <div class="military-card p-3 rounded-xl flex items-center justify-between">
           <div class="flex items-center gap-2.5">
-            <i class="fa-solid fa-user-shield text-xl text-purple-400"></i>
+            <i class="fa-solid fa-user-shield text-xl text-blue-400"></i>
             <div>
               <h3 id="profileName" class="font-bold text-white text-xs"></h3>
               <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
@@ -213,10 +213,10 @@
 
         <!-- PESTAÑAS DE NAVEGACIÓN PRINCIPAL -->
         <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
-          <button id="navNewsBtn" onclick="switchMainTab('news')" class="py-2 text-xs font-bold rounded-md transition text-white bg-purple-600 shadow flex items-center justify-center gap-1.5">
+          <button id="navNewsBtn" onclick="switchMainTab('news')" class="py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-bullhorn"></i> Novedades
           </button>
-          <button id="navDoctrinaBtn" onclick="switchMainTab('doctrina')" class="py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white flex items-center justify-center gap-1.5">
+          <button id="navDoctrinaBtn" onclick="switchMainTab('doctrina')" class="py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-book-open"></i> Doctrina y Normas
           </button>
         </div>
@@ -242,7 +242,7 @@
               <i class="fa-solid fa-book-open text-blue-400 text-sm"></i>
               <h3 class="font-bold text-white text-xs">Temas de Estudio y Normas Oficiales</h3>
             </div>
-            <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-purple-600 hover:bg-purple-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
+            <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
               <i class="fa-solid fa-plus"></i> Publicar / Proponer
             </button>
           </div>
@@ -257,11 +257,11 @@
 
   <!-- PANEL DE CONTROL -->
   <div id="controlPanelModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
-    <div class="military-card w-full max-w-md h-[85vh] flex flex-col p-4 rounded-xl border border-purple-500/40 shadow-2xl">
+    <div class="military-card w-full max-w-md h-[85vh] flex flex-col p-4 rounded-xl border border-blue-500/40 shadow-2xl">
       
       <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
         <div class="flex items-center gap-2">
-          <i class="fa-solid fa-sliders text-purple-400 text-base"></i>
+          <i class="fa-solid fa-sliders text-blue-400 text-base"></i>
           <h3 class="font-bold text-white text-sm">Panel de Control (Comandancia)</h3>
         </div>
         <button onclick="toggleControlPanel(false)" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700">
@@ -319,17 +319,17 @@
           <form onsubmit="handlePublishNews(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800">
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">Título del Comunicado</label>
-              <input type="text" id="newsTitle" required placeholder="Ej: Directiva No. 04" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+              <input type="text" id="newsTitle" required placeholder="Ej: Directiva No. 04" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">Mensaje / Orden Oficial</label>
-              <textarea id="newsMessage" required rows="4" placeholder="Escribe aquí los detalles..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-purple-500 resize-none"></textarea>
+              <textarea id="newsMessage" required rows="4" placeholder="Escribe aquí los detalles..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
             </div>
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">URL de Imagen (Opcional)</label>
-              <input type="url" id="newsImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+              <input type="url" id="newsImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
-            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
               <span id="newsBtnText">Publicar Comunicado</span>
             </button>
           </form>
@@ -396,9 +396,9 @@
 
   <!-- MODAL DOCTRINA -->
   <div id="doctrinaModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
-    <div class="military-card w-full max-w-md p-4 rounded-xl border border-purple-500/40 shadow-2xl space-y-3">
+    <div class="military-card w-full max-w-md p-4 rounded-xl border border-blue-500/40 shadow-2xl space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <h4 id="doctrinaModalTitle" class="text-xs font-bold text-purple-400 flex items-center gap-1">
+        <h4 id="doctrinaModalTitle" class="text-xs font-bold text-blue-400 flex items-center gap-1">
           <i class="fa-solid fa-book-bookmark"></i> Publicar Tema de Estudio / Norma
         </h4>
         <button onclick="closeDoctrinaModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700">
@@ -409,17 +409,17 @@
         <input type="hidden" id="doctrinaOldTitle">
         <div>
           <label class="block text-[10px] text-slate-300 mb-1">Título del Tema / Norma</label>
-          <input type="text" id="doctrinaTitle" required placeholder="Ej: Manual de Tácticas" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+          <input type="text" id="doctrinaTitle" required placeholder="Ej: Manual de Tácticas" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
         </div>
         <div>
           <label class="block text-[10px] text-slate-300 mb-1">Contenido / Guía</label>
-          <textarea id="doctrinaMessage" required rows="5" placeholder="Escribe la doctrina o normas..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-purple-500 resize-none"></textarea>
+          <textarea id="doctrinaMessage" required rows="5" placeholder="Escribe la doctrina o normas..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
         </div>
         <div>
           <label class="block text-[10px] text-slate-300 mb-1">URL de Imagen (Opcional)</label>
-          <input type="url" id="doctrinaImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+          <input type="url" id="doctrinaImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
         </div>
-        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
           <span id="doctrinaBtnText">Publicar Norma</span>
         </button>
       </form>
@@ -438,7 +438,7 @@
 
   <!-- PIE DE PÁGINA -->
   <footer class="text-center py-3 text-[10px] text-slate-500 border-t border-slate-900 mt-2 bg-slate-950/40">
-    <p>Desarrollado y diseñado por <span class="font-bold text-purple-400">Mike_Covid</span> • Intranet EB</p>
+    <p>Desarrollado y diseñado por <span class="font-bold text-blue-400">Mike_Covid</span> • Intranet EB</p>
   </footer>
 
   <script>
@@ -682,7 +682,7 @@
         indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
       } else {
         indicator.innerText = "🔴 Fuera de Horario";
-        indicator.className = "text-[9px] bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold";
+        indicator.className = "text-[9px] bg-red-950 text-red-400 border border-red-900 px-2 py-0.5 rounded font-bold";
       }
     }
 
@@ -714,12 +714,12 @@
       if (tab === 'news') {
         sectionNews.classList.remove('hidden');
         sectionDoctrina.classList.add('hidden');
-        navNewsBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-purple-600 shadow flex items-center justify-center gap-1.5";
+        navNewsBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5";
         navDoctrinaBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent flex items-center justify-center gap-1.5";
       } else {
         sectionNews.classList.add('hidden');
         sectionDoctrina.classList.remove('hidden');
-        navDoctrinaBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-purple-600 shadow flex items-center justify-center gap-1.5";
+        navDoctrinaBtn.className = "py-2 text-xs font-bold rounded-md transition text-white bg-blue-600 shadow flex items-center justify-center gap-1.5";
         navNewsBtn.className = "py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent flex items-center justify-center gap-1.5";
       }
     }
@@ -752,8 +752,9 @@
               if (item.estado && item.estado.toLowerCase() === 'approved') {
                 alert(`🎯 ¡Atención Mayor! Su comunicado "${item.titulo}" fue APROBADO y publicado con éxito.`);
                 localStorage.setItem(notifKey, 'notified');
-              } else if (item.estado && item.estado.toLowerCase() === 'rejected') {
-                alert(`⚠ Aviso: Su comunicado "${item.titulo}" fue rechazado por el Alto Mando.`);
+              } else if (item.estado && item.estado.toLowerCase().startsWith('rejected')) {
+                const razon = item.estado.includes(':') ? item.estado.split(':')[1] : 'No especificada';
+                alert(`⚠ Aviso: Su comunicado "${item.titulo}" fue RECHAZADO.\nMotivo: ${razon}`);
                 localStorage.setItem(notifKey, 'notified');
               }
             }
@@ -769,8 +770,9 @@
               if (item.estado && item.estado.toLowerCase() === 'approved') {
                 alert(`🎯 ¡Atención Mayor! Su tema de doctrina "${item.titulo}" fue APROBADO y publicado con éxito.`);
                 localStorage.setItem(notifKey, 'notified');
-              } else if (item.estado && item.estado.toLowerCase() === 'rejected') {
-                alert(`⚠ Aviso: Su tema de doctrina "${item.titulo}" fue rechazado por el Alto Mando.`);
+              } else if (item.estado && item.estado.toLowerCase().startsWith('rejected')) {
+                const razon = item.estado.includes(':') ? item.estado.split(':')[1] : 'No especificada';
+                alert(`⚠ Aviso: Su tema de doctrina "${item.titulo}" fue RECHAZADO.\nMotivo: ${razon}`);
                 localStorage.setItem(notifKey, 'notified');
               }
             }
@@ -898,7 +900,7 @@
       const targetTab = document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       if (targetView) targetView.classList.remove('hidden');
       if (targetTab) {
-        targetTab.className = "py-1.5 text-[9px] font-bold rounded bg-purple-600 text-white shadow transition";
+        targetTab.className = "py-1.5 text-[9px] font-bold rounded bg-blue-600 text-white shadow transition";
       }
     }
 
@@ -1208,7 +1210,7 @@
         htmlContent += `
           <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
             <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
-              <span class="font-bold text-purple-400"><i class="fa-solid fa-graduation-cap mr-1"></i>${item.autor || 'Mando'}</span>
+              <span class="font-bold text-blue-400"><i class="fa-solid fa-graduation-cap mr-1"></i>${item.autor || 'Mando'}</span>
               <div class="flex items-center gap-2">
                 <span>${cleanDate}${timeStr}</span>
                 ${adminActions}
@@ -1460,29 +1462,31 @@
       }
     }
 
-    async function deleteNews(title) {
-      if (!confirm(`⚠ ¿Estás seguro de rechazar/eliminar este comunicado?`)) return;
+    async function rejectNews(title) {
+      const motivo = prompt(`Escribe el motivo del rechazo para el comunicado "${title}":`, "Falta ajustar detalles o formato.");
+      if (motivo === null) return; // Si cancela
+
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         const response = await fetch(WEB_APP_URL, {
           method: 'POST',
-          body: JSON.stringify({ action: 'deleteNews', titulo: title })
+          body: JSON.stringify({ action: 'rejectNews', titulo: title, motivo: motivo })
         });
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
           if (cachedData && cachedData.news) {
-            cachedData.news = cachedData.news.map(n => n.titulo === title ? {...n, estado: 'rejected'} : n).filter(n => n.titulo !== title);
+            cachedData.news = cachedData.news.map(n => n.titulo === title ? {...n, estado: 'rejected:' + motivo} : n).filter(n => n.titulo !== title);
             renderNewsFeed(cachedData.news);
             updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina);
           }
-          alert('✔ Comunicado rechazado/eliminado.');
+          alert('✔ Comunicado rechazado con motivo.');
           loadControlPanelData();
           loadSession();
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al eliminar.');
+        alert('Error al rechazar.');
       }
     }
 
@@ -1514,23 +1518,25 @@
       }
     }
 
-    async function deleteDoctrinaPending(title) {
-      if (!confirm(`⚠ ¿Estás seguro de rechazar/eliminar esta doctrina o norma?`)) return;
+    async function rejectDoctrina(title) {
+      const motivo = prompt(`Escribe el motivo del rechazo para la doctrina "${title}":`, "Requiere corrección en las directrices.");
+      if (motivo === null) return; // Si cancela
+
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         const response = await fetch(WEB_APP_URL, {
           method: 'POST',
-          body: JSON.stringify({ action: 'deleteDoctrina', titulo: title })
+          body: JSON.stringify({ action: 'rejectDoctrina', titulo: title, motivo: motivo })
         });
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
           if (cachedData && cachedData.doctrina) {
-            cachedData.doctrina = cachedData.doctrina.map(d => d.titulo === title ? {...d, estado: 'rejected'} : d).filter(d => d.titulo !== title);
+            cachedData.doctrina = cachedData.doctrina.map(d => d.titulo === title ? {...d, estado: 'rejected:' + motivo} : d).filter(d => d.titulo !== title);
             renderDoctrinaFeed(cachedData.doctrina);
             updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina);
           }
-          alert('✔ Doctrina rechazada/eliminada.');
+          alert('✔ Doctrina rechazada con motivo.');
           loadControlPanelData();
           loadSession();
         }
@@ -1771,7 +1777,7 @@
                 <p class="text-[11px] text-slate-300">${item.mensaje}</p>
                 <div class="flex gap-2 pt-1">
                   <button onclick="approveNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-check"></i> Aprobar</button>
-                  <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Rechazar</button>
+                  <button onclick="rejectNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Rechazar</button>
                 </div>
               `;
               pendingNewsList.appendChild(newsItem);
@@ -1790,14 +1796,14 @@
               docItem.className = 'bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1.5';
               docItem.innerHTML = `
                 <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-800 pb-1">
-                  <span class="font-bold text-purple-400">Autor: ${item.autor}</span>
+                  <span class="font-bold text-blue-400">Autor: ${item.autor}</span>
                   <span>${normalizeDate(item.fecha)}</span>
                 </div>
                 <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
                 <p class="text-[11px] text-slate-300">${item.mensaje}</p>
                 <div class="flex gap-2 pt-1">
                   <button onclick="approveDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-check"></i> Aprobar</button>
-                  <button onclick="deleteDoctrinaPending('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Rechazar</button>
+                  <button onclick="rejectDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded text-[10px] flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Rechazar</button>
                 </div>
               `;
               pendingDoctrinaList.appendChild(docItem);
