@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ejército RioRise - Intranet</title>
   
-  <!-- FAVICON E ICONO PWA -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
+  <!-- FAVICON E ICONOS OFICIALES -->
+  <link rel="icon" type="image/png" href="https://img.icons8.com/color/512/shield.png">
+  <link rel="apple-touch-icon" href="https://img.icons8.com/color/512/shield.png">
 
-  <!-- ETIQUETAS PARA WHATSAPP -->
+  <!-- ETIQUETAS PARA WHATSAPP (PREVISUALIZACIÓN Y LOGO) -->
   <meta property="og:title" content="Ejército RioRise - Portal Interno">
   <meta property="og:description" content="Intranet oficial del Ejército RioRise. Control de turnos y órdenes del día.">
   <meta property="og:image" content="https://img.icons8.com/color/512/shield.png">
+  <meta property="og:url" content="">
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
@@ -364,7 +365,6 @@
     let newsStorageMap = {};
     let doctrinaStorageMap = {};
 
-    // Forzar actualización y registro limpio del Service Worker para evitar errores de carga en PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
