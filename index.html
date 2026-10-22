@@ -164,14 +164,15 @@
       <!-- PANEL PRINCIPAL (POST-LOGIN) -->
       <div id="mainDashboard" class="hidden space-y-3">
         
-        <!-- PERFIL DE USUARIO -->
+        <!-- PERFIL DE USUARIO CON MEDALLA / NIVEL -->
         <div class="military-card p-3 rounded-xl flex items-center justify-between">
           <div class="flex items-center gap-2.5">
             <i class="fa-solid fa-user-shield text-xl text-blue-400"></i>
             <div>
               <h3 id="profileName" class="font-bold text-white text-xs"></h3>
-              <div class="flex items-center gap-2 mt-0.5">
+              <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                 <span id="profileRank" class="text-[9px] px-2 py-0.5 rounded font-bold uppercase"></span>
+                <span id="profileBadgeLevel" class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded font-bold">🎖️ Soldado Raso</span>
                 <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Horas de servicio hoy">Hoy: 00:00</span>
               </div>
             </div>
@@ -284,8 +285,8 @@
         <div id="viewFilters" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
             <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Ranking de Rendimiento:</h4>
-            <button onclick="exportHistoryBitacoraCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
-              <i class="fa-solid fa-file-excel"></i> Descargar Bitácora
+            <button onclick="exportVisualRankingCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
+              <i class="fa-solid fa-file-excel"></i> Descargar este Excel
             </button>
           </div>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
@@ -392,6 +393,7 @@
     let cachedData = null;
     let deferredPrompt = null;
     let globalHistoryCache = [];
+    let currentRankedExportArray = [];
     let editingOldTitle = null;
     let editingDoctrinaOldTitle = null;
     let newsStorageMap = {};
@@ -438,23 +440,33 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // EXPORTAR BITÁCORA COMPLETA A CSV (EXCEL)
-    function exportHistoryBitacoraCSV() {
-      if (!cachedData || !cachedData.history || cachedData.history.length === 0) {
-        alert('No hay registros en la bitácora para exportar.');
+    // EXPORTAR EXACTAMENTE LO QUE SE VE EN EL RANKING FILTRADO A EXCEL (TEXTO PURO)
+    function exportVisualRankingCSV() {
+      if (!currentRankedExportArray || currentRankedExportArray.length === 0) {
+        alert('No hay datos visibles en el ranking para exportar.');
         return;
       }
-      let csvContent = "data:text/csv;charset=utf-8,Usuario,Fecha,Duracion,Horas\n";
-      cachedData.history.forEach(h => {
-        csvContent += `"${h.username || 'N/A'}","${h.fecha || 'N/A'}","${h.duracion || 'N/A'}","${h.horas || 0}"\n`;
+      let csvContent = "data:text/csv;charset=utf-8,Posicion,Usuario,Horas y Minutos,Horas Decimales\n";
+      currentRankedExportArray.forEach((item, index) => {
+        const hmText = decimalToHM(item.totalHours);
+        csvContent += `"${index + 1}","${item.name}","${hmText}","${item.totalHours.toFixed(2)}"\n`;
       });
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `bitacora_completa_riorise_${getColombiaDateString().replace(/\//g, '-')}.csv`);
+      link.setAttribute("download", `ranking_filtrado_riorise_${getColombiaDateString().replace(/\//g, '-')}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
+
+    // ASIGNAR MEDALLA / NIVEL SEGÚN LAS HORAS ACUMULADAS
+    function getUserBadgeLevel(totalHours) {
+      if (totalHours >= 50) return "🔥 Leyenda Élite";
+      if (totalHours >= 30) return "⭐ Veterano Táctico";
+      if (totalHours >= 15) return "🎖️ Soldado Destacado";
+      if (totalHours >= 5)  return "🛡️ Operativo Activo";
+      return "🔰 Soldado Raso";
     }
 
     if ('serviceWorker' in navigator) {
@@ -831,11 +843,15 @@
     function updateTodayHoursLive() {
       const todayStr = getColombiaDateString();
       let todayTotalHours = 0;
+      let totalLifetimeHours = 0;
 
       if (globalHistoryCache && globalHistoryCache.length > 0) {
         globalHistoryCache.forEach(h => {
-          if (h.username.toLowerCase() === currentUser.username.toLowerCase() && normalizeDate(h.fecha) === todayStr) {
-            todayTotalHours += parseFloat(h.horas || 0);
+          if (h.username.toLowerCase() === currentUser.username.toLowerCase()) {
+            totalLifetimeHours += parseFloat(h.horas || 0);
+            if (normalizeDate(h.fecha) === todayStr) {
+              todayTotalHours += parseFloat(h.horas || 0);
+            }
           }
         });
       }
@@ -843,10 +859,13 @@
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
         const activeSeconds = Math.floor((Date.now() - parseInt(activeShiftStart)) / 1000);
-        todayTotalHours += (activeSeconds / 3600);
+        const activeHours = activeSeconds / 3600;
+        todayTotalHours += activeHours;
+        totalLifetimeHours += activeHours;
       }
 
       document.getElementById('profileTodayHours').innerText = `Hoy: ${decimalToHM(todayTotalHours)}`;
+      document.getElementById('profileBadgeLevel').innerText = getUserBadgeLevel(totalLifetimeHours);
     }
 
     function renderNewsFeed(news) {
@@ -1618,18 +1637,18 @@
         });
       }
 
-      const rankedArray = Object.keys(userSummary).map(name => ({
+      currentRankedExportArray = Object.keys(userSummary).map(name => ({
         name: name,
         totalHours: userSummary[name]
       })).sort((a, b) => b.totalHours - a.totalHours);
 
       historyList.innerHTML = '';
-      if (rankedArray.length === 0) {
+      if (currentRankedExportArray.length === 0) {
         historyList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay registros para este filtro.</p>';
         return;
       }
 
-      rankedArray.forEach((itemObj, index) => {
+      currentRankedExportArray.forEach((itemObj, index) => {
         const totalHM = decimalToHM(itemObj.totalHours);
         let medalIcon = `<span class="text-[10px] text-slate-500 font-bold w-5 text-center">#${index + 1}</span>`;
         if (index === 0) medalIcon = `<i class="fa-solid fa-trophy text-amber-400 text-xs w-5 text-center"></i>`;
