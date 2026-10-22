@@ -249,13 +249,11 @@
           <div id="activeList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
-        <!-- AQUÍ SE MUESTRAN LOS TIEMPOS EN VIVO EN LA SECCIÓN "HOY" -->
         <div id="viewDaily" class="space-y-2 hidden">
           <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-trophy"></i> Ranking Diario de Servicio (Hoy):</h4>
           <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando ranking...</p></div>
         </div>
 
-        <!-- AQUÍ TAMBIÉN SE MUESTRAN LOS TIEMPOS EN TIEMPO REAL EN LOS FILTROS -->
         <div id="viewFilters" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Ranking de Rendimiento:</h4>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
@@ -339,6 +337,16 @@
     </div>
   </div>
 
+  <!-- MODAL PARA VER IMAGEN EN GRANDE (ZOOM) -->
+  <div id="imageModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-center p-4">
+    <div class="relative max-w-4xl w-full flex flex-col items-center">
+      <button onclick="closeImageModal()" class="absolute -top-10 right-0 bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1 rounded-lg text-xs shadow-lg flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-xmark"></i> Cerrar
+      </button>
+      <img id="modalImageFull" src="" alt="Imagen Ampliada" class="max-h-[85vh] max-w-full object-contain rounded-lg border border-slate-700 shadow-2xl">
+    </div>
+  </div>
+
   <!-- PIE DE PÁGINA -->
   <footer class="text-center py-3 text-[10px] text-slate-500 border-t border-slate-900 mt-2 bg-slate-950/40">
     <p>Desarrollado y diseñado por <span class="font-bold text-blue-400">Mike_Covid</span> • Ejército RioRise</p>
@@ -379,6 +387,18 @@
           deferredPrompt = null;
         });
       }
+    }
+
+    function openImageModal(imgUrl) {
+      const modal = document.getElementById('imageModal');
+      const imgFull = document.getElementById('modalImageFull');
+      imgFull.src = imgUrl;
+      modal.classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+      const modal = document.getElementById('imageModal');
+      modal.classList.add('hidden');
     }
 
     function decimalToHM(decimalHours) {
@@ -735,7 +755,7 @@
         let imageHtml = '';
         if (item.imagen && item.imagen.toString().trim() !== '') {
           const directImgUrl = fixImageUrl(item.imagen);
-          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center"><img src="${directImgUrl}" alt="Imagen Comunicado" class="w-full h-auto object-cover max-h-60" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"></div>`;
+          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer group relative" onclick="openImageModal('${directImgUrl}')" title="Haz clic para ver la imagen en grande"><img src="${directImgUrl}" alt="Imagen Comunicado" class="w-full h-auto object-cover max-h-60 transition group-hover:scale-102" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"><div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1"><i class="fa-solid fa-magnifying-glass-plus"></i> Ver en grande</div></div>`;
         }
 
         let adminActions = '';
@@ -743,7 +763,7 @@
           adminActions = `
             <div class="flex gap-1.5">
               <button onclick="triggerEdit(${index})" class="text-blue-400 hover:text-blue-300 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-blue-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+              <button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           `;
         }
@@ -791,7 +811,7 @@
         let imageHtml = '';
         if (item.imagen && item.imagen.toString().trim() !== '') {
           const directImgUrl = fixImageUrl(item.imagen);
-          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center"><img src="${directImgUrl}" alt="Documento Doctrina" class="w-full h-auto object-cover max-h-60" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"></div>`;
+          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer group relative" onclick="openImageModal('${directImgUrl}')" title="Haz clic para ver la imagen en grande"><img src="${directImgUrl}" alt="Documento Doctrina" class="w-full h-auto object-cover max-h-60 transition group-hover:scale-102" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"><div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1"><i class="fa-solid fa-magnifying-glass-plus"></i> Ver en grande</div></div>`;
         }
 
         let adminActions = '';
@@ -1140,7 +1160,6 @@
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
         
-        // Sincronizamos el inicio del turno guardándolo de forma visible en localStorage global para que otros lo detecten en el ranking
         let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
         activeShifts[currentUser.username.toLowerCase()] = startTime;
         localStorage.setItem('rioRiseActiveShifts', JSON.stringify(activeShifts));
@@ -1355,11 +1374,9 @@
         });
       }
 
-      // Sumamos también en tiempo real el turno activo de los que están conectados ahora mismo
       let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
       const now = Date.now();
       
-      // Si el usuario actual tiene su propio shift activo en este navegador, aseguramos agregarlo
       const myActiveStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
       if (myActiveStart) {
         activeShifts[currentUser.username.toLowerCase()] = parseInt(myActiveStart);
@@ -1373,7 +1390,6 @@
         if (dailyTotals[uKey]) {
           dailyTotals[uKey].hours += activeHours;
         } else {
-          // Si por alguna razón no estaba en activeUsers pero está activo
           dailyTotals[uKey] = { username: uKey, rank: 'Soldado', hours: activeHours };
         }
       });
@@ -1430,9 +1446,6 @@
       else dateContainer.classList.add('hidden');
 
       let filtered = [...cachedData.history];
-
-      // Si el filtro es de hoy, incluimos también los turnos activos en vivo
-      const todayStr = new Date().toLocaleDateString();
       const isFilterToday = (filterType === 'day' && (dateInput === new Date().toISOString().split('T')[0] || dateInput === ''));
 
       if (filterType === 'day' && dateInput) {
@@ -1549,7 +1562,10 @@
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al eliminar usuario.');
+        async function deleteUser(username) {
+          document.getElementById('loadingOverlay').classList.add('hidden');
+          alert('Error al eliminar usuario.');
+        }
       }
     }
 
