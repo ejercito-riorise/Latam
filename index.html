@@ -47,10 +47,10 @@
           </div>
         </div>
         <div class="flex items-center gap-1.5">
-          <button id="btnInstallApp" onclick="installPWA()" class="hidden bg-emerald-600/80 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded-lg border border-emerald-500 shadow transition flex items-center gap-1 font-bold animate-pulse">
-            <i class="fa-solid fa-download"></i> Instalar App
+          <button id="btnInstallApp" onclick="installPWA()" class="hidden bg-emerald-600/85 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded-lg border border-emerald-500 shadow transition flex items-center gap-1 font-bold animate-pulse">
+            <i class="fa-solid fa-download"></i> Instalar
           </button>
-          <button id="btnOpenControlPanel" onclick="toggleControlPanel(true)" class="hidden bg-purple-600/80 hover:bg-purple-500 text-white text-xs px-2.5 py-1 rounded-lg border border-purple-500 shadow transition flex items-center gap-1 font-bold">
+          <button id="btnOpenControlPanel" onclick="toggleControlPanel(true)" class="hidden bg-purple-600/85 hover:bg-purple-500 text-white text-xs px-2.5 py-1 rounded-lg border border-purple-500 shadow transition flex items-center gap-1 font-bold">
             <i class="fa-solid fa-sliders"></i> Panel
           </button>
         </div>
@@ -59,10 +59,10 @@
 
     <main class="max-w-md mx-auto p-3 space-y-3">
 
-      <!-- OVERLAY CARGANDO -->
-      <div id="loadingOverlay" class="hidden text-center py-2 bg-slate-900/80 border border-blue-500/30 rounded-lg p-2">
+      <!-- OVERLAY CARGANDO RÁPIDO -->
+      <div id="loadingOverlay" class="hidden text-center py-2 bg-slate-900/90 border border-blue-500/30 rounded-lg p-2">
         <i class="fa-solid fa-spinner fa-spin text-blue-400 text-xl"></i>
-        <p class="text-[11px] text-slate-300 font-semibold mt-1">Sincronizando con Base de Datos...</p>
+        <p class="text-[11px] text-slate-300 font-semibold mt-1">Conectando con base de datos...</p>
       </div>
 
       <!-- SECCIÓN DE AUTENTICACIÓN -->
@@ -176,7 +176,7 @@
             <span class="text-[9px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px] animate-pulse"></i> En vivo</span>
           </div>
           <div id="newsFeedContainer" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-            <p class="text-[11px] text-slate-400 italic">Cargando boletines oficiales...</p>
+            <p class="text-[11px] text-slate-400 italic">Cargando boletines...</p>
           </div>
         </div>
 
@@ -192,7 +192,7 @@
             </button>
           </div>
           <div id="doctrinaFeedContainer" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-            <p class="text-[11px] text-slate-400 italic">Cargando manuales y normas...</p>
+            <p class="text-[11px] text-slate-400 italic">Cargando manuales...</p>
           </div>
         </div>
 
@@ -367,7 +367,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
+        navigator.serviceWorker.register('./sw.js').catch(err => {});
       });
     }
 
@@ -421,8 +421,6 @@
         let d = new Date(str);
         if (!isNaN(d.getTime())) return d.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
       }
-      let d2 = new Date(str);
-      if (!isNaN(d2.getTime()) && str.length > 8) return d2.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
       return str;
     }
 
@@ -603,12 +601,12 @@
           if (isCommander) {
             alert(`✔ Cuenta de Mando (${user}) registrada y aprobada automáticamente.`);
           } else {
-            alert('✔ Solicitud de registro enviada con éxito.\nTu cuenta se encuentra en espera de aprobación por parte de los superiores.');
+            alert('✔ Solicitud de registro enviada con éxito.\nTu cuenta se encuentra en espera de aprobación.');
           }
           document.getElementById('registerForm').reset();
           showAuthTab('login');
         } else {
-          alert('⚠ Error: ' + (result.message || 'El usuario ya existe en la base de datos.'));
+          alert('⚠ Error: ' + (result.message || 'El usuario ya existe.'));
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -628,24 +626,24 @@
         const resData = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
 
-        const found = resData.users.find(u => u.username.toString().trim().toLowerCase() === user.toLowerCase() && u.password.toString().trim() === pass.toString());
+        const found = resData.users.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass);
 
         if (!found) {
           alert('Usuario o contraseña incorrectos.');
           return;
         }
 
-        if (found.status.toString().trim().toLowerCase() !== 'approved') {
+        if (found.status.toLowerCase() !== 'approved') {
           alert('⛔ Tu cuenta aún no ha sido autorizada por los superiores.');
           return;
         }
 
-        currentUser = { username: found.username, rank: found.rank, hours: parseFloat(found.hours || 0) };
+        currentUser = { username: found.username, rank: found.rank, hours: parseFloat(found.hours || 0), activeShiftStart: found.activeShiftStart };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
         loadSession(resData.history, resData.news, resData.doctrina);
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al verificar las credenciales con la base de datos.');
+        alert('Error al verificar las credenciales.');
       }
     }
 
@@ -670,7 +668,10 @@
             newsData = resData.news;
             doctrinaData = resData.doctrina;
             const freshUser = resData.users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
-            if (freshUser) currentUser.hours = parseFloat(freshUser.hours || 0);
+            if (freshUser) {
+              currentUser.hours = parseFloat(freshUser.hours || 0);
+              currentUser.activeShiftStart = freshUser.activeShiftStart;
+            }
           } catch (e) { 
             historyData = historyData || []; 
             newsData = newsData || []; 
@@ -688,6 +689,7 @@
       }
     }
 
+    // SINCRONIZACIÓN LIGERA Y RÁPIDA CADA 15 SEGUNDOS (SIN BLOQUEAR LA WEB)
     function startRealtimeSync() {
       if (syncInterval) clearInterval(syncInterval);
       syncInterval = setInterval(async () => {
@@ -708,7 +710,7 @@
             }
           }
         } catch (e) {}
-      }, 10000);
+      }, 15000);
     }
 
     function updateTodayHoursLive() {
@@ -717,13 +719,13 @@
 
       if (globalHistoryCache && globalHistoryCache.length > 0) {
         globalHistoryCache.forEach(h => {
-          if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase() && normalizeDate(h.fecha) === todayStr) {
+          if (h.username.toLowerCase() === currentUser.username.toLowerCase() && normalizeDate(h.fecha) === todayStr) {
             todayTotalHours += parseFloat(h.horas || 0);
           }
         });
       }
 
-      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
+      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
         const activeSeconds = Math.floor((Date.now() - parseInt(activeShiftStart)) / 1000);
         todayTotalHours += (activeSeconds / 3600);
@@ -734,7 +736,7 @@
 
     function renderNewsFeed(news) {
       const feed = document.getElementById('newsFeedContainer');
-      const approvedNews = news ? news.filter(item => !item.estado || item.estado.toString().trim() === 'approved') : [];
+      const approvedNews = news ? news.filter(item => !item.estado || item.estado.toLowerCase() === 'approved') : [];
 
       if (approvedNews.length === 0) {
         feed.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay órdenes del día publicadas.</p>';
@@ -757,9 +759,9 @@
         const timeStr = cleanTime ? ` • ${cleanTime}` : '';
         
         let imageHtml = '';
-        if (item.imagen && item.imagen.toString().trim() !== '') {
+        if (item.imagen && item.imagen.trim() !== '') {
           const directImgUrl = fixImageUrl(item.imagen);
-          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer group relative" onclick="openImageModal('${directImgUrl}')" title="Haz clic para ver la imagen en grande"><img src="${directImgUrl}" alt="Imagen Comunicado" class="w-full h-auto object-cover max-h-60 transition group-hover:scale-102" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"><div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1"><i class="fa-solid fa-magnifying-glass-plus"></i> Ver en grande</div></div>`;
+          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer group relative" onclick="openImageModal('${directImgUrl}')" title="Haz clic para ver la imagen en grande"><img src="${directImgUrl}" alt="Imagen Comunicado" class="w-full h-auto object-cover max-h-60 transition group-hover:scale-102" loading="lazy" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"><div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1"><i class="fa-solid fa-magnifying-glass-plus"></i> Ver en grande</div></div>`;
         }
 
         let adminActions = '';
@@ -792,7 +794,7 @@
 
     function renderDoctrinaFeed(doctrina) {
       const feed = document.getElementById('doctrinaFeedContainer');
-      const approvedDoctrina = doctrina ? doctrina.filter(item => !item.estado || item.estado.toString().trim() === 'approved') : [];
+      const approvedDoctrina = doctrina ? doctrina.filter(item => !item.estado || item.estado.toLowerCase() === 'approved') : [];
 
       if (approvedDoctrina.length === 0) {
         feed.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay temas de estudio ni normas publicadas.</p>';
@@ -813,9 +815,9 @@
         const cleanDate = normalizeDate(item.fecha);
         
         let imageHtml = '';
-        if (item.imagen && item.imagen.toString().trim() !== '') {
+        if (item.imagen && item.imagen.trim() !== '') {
           const directImgUrl = fixImageUrl(item.imagen);
-          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer group relative" onclick="openImageModal('${directImgUrl}')" title="Haz clic para ver la imagen en grande"><img src="${directImgUrl}" alt="Documento Doctrina" class="w-full h-auto object-cover max-h-60 transition group-hover:scale-102" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"><div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1"><i class="fa-solid fa-magnifying-glass-plus"></i> Ver en grande</div></div>`;
+          imageHtml = `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer group relative" onclick="openImageModal('${directImgUrl}')" title="Haz clic para ver la imagen en grande"><img src="${directImgUrl}" alt="Documento Doctrina" class="w-full h-auto object-cover max-h-60 transition group-hover:scale-102" loading="lazy" onerror="this.onerror=null; this.parentElement.innerHTML='<p class=\'text-[10px] text-red-400 p-2 italic\'>⚠ Error al cargar la imagen</p>';"><div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1"><i class="fa-solid fa-magnifying-glass-plus"></i> Ver en grande</div></div>`;
         }
 
         let adminActions = '';
@@ -874,7 +876,7 @@
       const isMayor = rankLower === 'mayor';
 
       if (!isSuperAdmin && !isCoronel && !isMayor) {
-        alert('⛔ Acceso denegado. Solo coroneles y mayores con autorización pueden publicar.');
+        alert('⛔ Acceso denegado.');
         return;
       }
 
@@ -913,18 +915,18 @@
           if (editingDoctrinaOldTitle) {
             alert('✔ Doctrina modificada con éxito.');
           } else if (isMayor) {
-            alert('✔ Tema enviado al Alto Mando para su revisión y aprobación.');
+            alert('✔ Tema enviado al Alto Mando para revisión.');
           } else {
-            alert('✔ Norma o tema de estudio publicado con éxito.');
+            alert('✔ Norma o tema publicado con éxito.');
           }
           closeDoctrinaModal();
           loadSession();
         } else {
-          alert('⚠ Error al procesar la doctrina.');
+          alert('⚠ Error al procesar.');
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error de conexión con la base de datos.');
+        alert('Error de conexión.');
       }
     }
 
@@ -1011,7 +1013,7 @@
           if (editingOldTitle) {
             alert('✔ Comunicado modificado con éxito.');
           } else if (isMayor) {
-            alert('✔ Comunicado enviado al Alto Mando para su revisión y aprobación.');
+            alert('✔ Comunicado enviado al Alto Mando para su revisión.');
           } else {
             alert('✔ Orden del día publicada con éxito.');
           }
@@ -1019,11 +1021,11 @@
           toggleControlPanel(false);
           loadSession();
         } else {
-          alert('⚠ Error al procesar el comunicado.');
+          alert('⚠ Error al procesar.');
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error de conexión con la base de datos.');
+        alert('Error de conexión.');
       }
     }
 
@@ -1064,7 +1066,7 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
-          alert('✔ Comunicado aprobado y publicado en el tablón.');
+          alert('✔ Comunicado aprobado y publicado.');
           loadControlPanelData();
           loadSession();
         }
@@ -1111,8 +1113,11 @@
     }
 
     function checkActiveShiftOnLoad() {
-      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
+      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
+        if (!localStorage.getItem(`shiftStart_${currentUser.username}`)) {
+          localStorage.setItem(`shiftStart_${currentUser.username}`, activeShiftStart);
+        }
         activateShiftUI(parseInt(activeShiftStart));
       }
     }
@@ -1124,7 +1129,7 @@
 
       timerDisplay.classList.remove('hidden');
       badge.innerText = 'EN SERVICIO';
-      badge.className = 'text-[9px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold';
+      badge.className = 'text-[9px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold animate-pulse';
       
       btn.innerHTML = '<i class="fa-solid fa-square mr-1"></i> Finalizar Turno';
       btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded text-xs transition';
@@ -1143,7 +1148,7 @@
       }, 1000);
     }
 
-    function toggleShift() {
+    async function toggleShift() {
       const activeShiftKey = `shiftStart_${currentUser.username}`;
       const savedStart = localStorage.getItem(activeShiftKey);
 
@@ -1161,12 +1166,16 @@
 
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
-        
-        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
-        activeShifts[currentUser.username.toLowerCase()] = startTime;
-        localStorage.setItem('rioRiseActiveShifts', JSON.stringify(activeShifts));
+        currentUser.activeShiftStart = startTime;
 
         activateShiftUI(startTime);
+        
+        // SINCRONIZA EL ESTADO ACTIVO AL SERVIDOR EN SEGUNDO PLANO (COLUMNA H)
+        fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'setShiftState', username: currentUser.username, active: true, startTime: startTime })
+        }).catch(e => {});
+
       } else {
         clearInterval(shiftInterval);
         shiftInterval = null;
@@ -1177,10 +1186,7 @@
         const hoursWorked = totalSeconds / 3600;
 
         localStorage.removeItem(activeShiftKey);
-        
-        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
-        delete activeShifts[currentUser.username.toLowerCase()];
-        localStorage.setItem('rioRiseActiveShifts', JSON.stringify(activeShifts));
+        currentUser.activeShiftStart = null;
 
         const btn = document.getElementById('btnToggleShift');
         const badge = document.getElementById('shiftStatusBadge');
@@ -1255,7 +1261,7 @@
         const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
         const isCoronel = rankLower === 'coronel';
 
-        const pendingUsers = users.filter(u => u.status && u.status.toString().trim() === 'pending');
+        const pendingUsers = users.filter(u => u.status && u.status.toLowerCase() === 'pending');
         pendingList.innerHTML = '';
         if (!isSuperAdmin) {
           pendingList.innerHTML = '<p class="text-[11px] text-amber-500/80 italic">⛔ Sección restringida para el General.</p>';
@@ -1281,7 +1287,7 @@
         }
 
         if (pendingNewsList && (isSuperAdmin || isCoronel)) {
-          const pendingNews = news ? news.filter(item => item.estado && item.estado.toString().trim() === 'pending') : [];
+          const pendingNews = news ? news.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
           pendingNewsList.innerHTML = '';
           if (pendingNews.length === 0) {
             pendingNewsList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay publicaciones pendientes de aprobación.</p>';
@@ -1306,7 +1312,7 @@
           }
         }
 
-        const activeUsers = users.filter(u => u.status && u.status.toString().trim() === 'approved');
+        const activeUsers = users.filter(u => u.status && u.status.toLowerCase() === 'approved');
         activeList.innerHTML = '';
         if (activeUsers.length === 0) {
           activeList.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay personal activo.</p>';
@@ -1362,7 +1368,12 @@
       let dailyTotals = {};
 
       activeUsers.forEach(u => { 
-        dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; 
+        dailyTotals[u.username.toLowerCase()] = { 
+          username: u.username, 
+          rank: u.rank, 
+          hours: 0, 
+          activeShiftStart: u.activeShiftStart || null 
+        }; 
       });
 
       if (history) {
@@ -1376,23 +1387,17 @@
         });
       }
 
-      let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
       const now = Date.now();
-      
       const myActiveStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
-      if (myActiveStart) {
-        activeShifts[currentUser.username.toLowerCase()] = parseInt(myActiveStart);
+      if (myActiveStart && dailyTotals[currentUser.username.toLowerCase()]) {
+        dailyTotals[currentUser.username.toLowerCase()].activeShiftStart = parseInt(myActiveStart);
       }
 
-      Object.keys(activeShifts).forEach(uKey => {
-        const startTime = activeShifts[uKey];
-        const activeSeconds = Math.floor((now - startTime) / 1000);
-        const activeHours = activeSeconds / 3600;
-        
-        if (dailyTotals[uKey]) {
-          dailyTotals[uKey].hours += activeHours;
-        } else {
-          dailyTotals[uKey] = { username: uKey, rank: 'Soldado', hours: activeHours };
+      Object.keys(dailyTotals).forEach(uKey => {
+        const uObj = dailyTotals[uKey];
+        if (uObj.activeShiftStart) {
+          const activeSeconds = Math.floor((now - parseInt(uObj.activeShiftStart)) / 1000);
+          uObj.hours += (activeSeconds / 3600);
         }
       });
 
@@ -1411,7 +1416,7 @@
         else if (index === 1 && u.hours > 0) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center"></i>`;
         else if (index === 2 && u.hours > 0) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center"></i>`;
 
-        const isCurrentlyActive = activeShifts[u.username.toLowerCase()] || (u.username.toLowerCase() === currentUser.username.toLowerCase() && localStorage.getItem(`shiftStart_${currentUser.username}`));
+        const isCurrentlyActive = !!u.activeShiftStart;
         
         let statusBadge = isCurrentlyActive 
           ? `<span class="text-[8px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-1.5 py-0.5 rounded font-bold animate-pulse ml-1">EN SERVICIO</span>`
@@ -1472,7 +1477,7 @@
       });
 
       if (isFilterToday || filterType === 'all') {
-        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
+        let activeShifts = {};
         const myActiveStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
         if (myActiveStart) activeShifts[currentUser.username.toLowerCase()] = parseInt(myActiveStart);
         
@@ -1539,7 +1544,7 @@
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (result.status === 'success') {
-          alert(`✔ Rango de ${username} actualizado a ${newRank}.`);
+          alert(`✔ Rango de ${username} actualizado.`);
           loadControlPanelData();
         }
       } catch (err) {
@@ -1549,7 +1554,7 @@
     }
 
     async function deleteUser(username) {
-      if (!confirm(`⚠ ¿Estás seguro de eliminar/rechazar a ${username}?`)) return;
+      if (!confirm(`⚠ ¿Estás seguro de eliminar a ${username}?`)) return;
       document.getElementById('loadingOverlay').classList.add('hidden');
       try {
         const response = await fetch(WEB_APP_URL, {
@@ -1559,7 +1564,7 @@
         const resultJson = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (resultJson.status === 'success') {
-          alert(`✔ Usuario ${username} eliminado.`);
+          alert(`✔ Usuario eliminado.`);
           loadControlPanelData();
         }
       } catch (err) {
