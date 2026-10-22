@@ -214,7 +214,6 @@
             <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
               <i class="fa-solid fa-play mr-1"></i> Iniciar Turno
             </button>
-            <p class="text-[10px] text-slate-400 text-center italic"><i class="fa-solid fa-circle-info mr-1"></i> Horario habilitado: 18:00 a 03:00 (Hora Colombia)</p>
           </div>
         </div>
 
@@ -337,7 +336,7 @@
     </div>
   </div>
 
-  <!-- MODAL PARA VER IMAGEN EN GRANDE (ZOOM) -->
+  <!-- MODAL ZOOM IMAGEN -->
   <div id="imageModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-center p-4">
     <div class="relative max-w-4xl w-full flex flex-col items-center">
       <button onclick="closeImageModal()" class="absolute -top-10 right-0 bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1 rounded-lg text-xs shadow-lg flex items-center gap-1.5 transition">
@@ -410,15 +409,19 @@
       return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
     }
 
+    function getColombiaDateString(dateObj = new Date()) {
+      return dateObj.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+    }
+
     function normalizeDate(dateStr) {
       if (!dateStr) return "";
       let str = dateStr.toString().trim();
       if (str.includes('T')) {
         let d = new Date(str);
-        if (!isNaN(d.getTime())) return d.toLocaleDateString();
+        if (!isNaN(d.getTime())) return d.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
       }
       let d2 = new Date(str);
-      if (!isNaN(d2.getTime()) && str.length > 8) return d2.toLocaleDateString();
+      if (!isNaN(d2.getTime()) && str.length > 8) return d2.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
       return str;
     }
 
@@ -427,7 +430,7 @@
       let str = timeStr.toString().trim();
       if (str.includes('T') || str.includes('1899')) {
         let d = new Date(str);
-        if (!isNaN(d.getTime())) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        if (!isNaN(d.getTime())) return d.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
       }
       return str;
     }
@@ -665,6 +668,7 @@
             historyData = resData.history;
             newsData = resData.news;
             doctrinaData = resData.doctrina;
+            cachedData = resData;
             const freshUser = resData.users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
             if (freshUser) currentUser.hours = parseFloat(freshUser.hours || 0);
           } catch (e) { 
@@ -680,6 +684,7 @@
         renderDoctrinaFeed(doctrinaData);
         applyPermissions(currentUser);
         checkActiveShiftOnLoad();
+        checkAutoCloseAt3AM();
         startRealtimeSync();
       }
     }
@@ -690,25 +695,44 @@
         try {
           const response = await fetch(WEB_APP_URL);
           const resData = await response.json();
+          cachedData = resData;
           globalHistoryCache = resData.history || [];
           renderNewsFeed(resData.news);
           renderDoctrinaFeed(resData.doctrina);
           updateTodayHoursLive();
+          checkAutoCloseAt3AM();
 
           const modal = document.getElementById('controlPanelModal');
           if (modal && !modal.classList.contains('hidden')) {
-            cachedData = resData;
             const dailyView = document.getElementById('viewDaily');
             if (dailyView && !dailyView.classList.contains('hidden')) {
               renderDailyRanking(resData.users, resData.history);
             }
           }
         } catch (e) {}
-      }, 10000);
+      }, 8000);
+    }
+
+    // FUNCIÓN CLAVE: Cierre Automático a las 03:00 a.m. (Hora Colombia)
+    function checkAutoCloseAt3AM() {
+      const activeShiftKey = `shiftStart_${currentUser.username}`;
+      const savedStart = localStorage.getItem(activeShiftKey);
+
+      if (savedStart) {
+        const colStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
+        const colDate = new Date(colStr);
+        const hrs = colDate.getHours();
+        const mins = colDate.getMinutes();
+
+        // Si son las 03:00 a.m. (entre 03:00 y 03:05), fuerza el cierre automático
+        if (hrs === 3 && mins <= 5) {
+          toggleShift(true); // Forzar finalización automática
+        }
+      }
     }
 
     function updateTodayHoursLive() {
-      const todayStr = new Date().toLocaleDateString();
+      const todayStr = getColombiaDateString();
       let todayTotalHours = 0;
 
       if (globalHistoryCache && globalHistoryCache.length > 0) {
@@ -878,9 +902,8 @@
       const message = document.getElementById('doctrinaMessage').value.trim();
       const imageUrl = document.getElementById('doctrinaImage').value.trim();
       
-      const now = new Date();
-      const dateStr = now.toLocaleDateString();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const dateStr = getColombiaDateString();
+      const timeStr = new Date().toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
       const author = `${currentUser.username} (${currentUser.rank})`;
 
       const actionType = editingDoctrinaOldTitle ? "editDoctrina" : "publishDoctrina";
@@ -977,9 +1000,8 @@
       const message = document.getElementById('newsMessage').value.trim();
       const imageUrl = document.getElementById('newsImage').value.trim();
       
-      const now = new Date();
-      const dateStr = now.toLocaleDateString();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const dateStr = getColombiaDateString();
+      const timeStr = new Date().toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
       const author = `${currentUser.username} (${currentUser.rank})`;
 
       const actionType = editingOldTitle ? "editNews" : "publishNews";
@@ -1141,7 +1163,7 @@
       }, 1000);
     }
 
-    function toggleShift() {
+    async function toggleShift(isAutoClose = false) {
       const activeShiftKey = `shiftStart_${currentUser.username}`;
       const savedStart = localStorage.getItem(activeShiftKey);
 
@@ -1153,16 +1175,18 @@
         const isAllowedHour = (currentHour >= 18 || currentHour < 3);
 
         if (!isAllowedHour) {
-          alert('⛔ Fuera de horario de servicio.\n\nLos turnos solo pueden iniciarse entre las 18:00 y las 03:00 (Hora Colombia).');
+          alert('Aún no esta en horario de servicio');
           return;
         }
 
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
-        
-        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
-        activeShifts[currentUser.username.toLowerCase()] = startTime;
-        localStorage.setItem('rioRiseActiveShifts', JSON.stringify(activeShifts));
+
+        // Notificar al servidor el inicio de turno en tiempo real
+        fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'setShiftState', username: currentUser.username, active: true, startTime: startTime })
+        }).catch(e => {});
 
         activateShiftUI(startTime);
       } else {
@@ -1175,10 +1199,12 @@
         const hoursWorked = totalSeconds / 3600;
 
         localStorage.removeItem(activeShiftKey);
-        
-        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
-        delete activeShifts[currentUser.username.toLowerCase()];
-        localStorage.setItem('rioRiseActiveShifts', JSON.stringify(activeShifts));
+
+        // Notificar al servidor la finalización de turno en tiempo real
+        fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'setShiftState', username: currentUser.username, active: false })
+        }).catch(e => {});
 
         const btn = document.getElementById('btnToggleShift');
         const badge = document.getElementById('shiftStatusBadge');
@@ -1194,13 +1220,13 @@
         const finalMins = Math.floor((totalSeconds % 3600) / 60);
         const finalSecs = totalSeconds % 60;
         const timeSpentMsg = `${finalHrs}h ${finalMins}m ${finalSecs}s`;
-        const currentDate = new Date().toLocaleDateString();
+        const currentDate = getColombiaDateString();
 
-        saveShiftLog(hoursWorked, timeSpentMsg, currentDate);
+        saveShiftLog(hoursWorked, timeSpentMsg, currentDate, isAutoClose);
       }
     }
 
-    async function saveShiftLog(hoursWorked, timeSpentMsg, currentDate) {
+    async function saveShiftLog(hoursWorked, timeSpentMsg, currentDate, isAutoClose = false) {
       document.getElementById('loadingOverlay').classList.remove('hidden');
 
       try {
@@ -1220,7 +1246,11 @@
         if (result.status === 'success') {
           currentUser.hours = result.total;
           localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-          alert(`✔ Turno finalizado con éxito.\n📅 Fecha: ${currentDate}\n⏱ Duración: ${timeSpentMsg}`);
+          if (isAutoClose) {
+            alert(`⏰ Turno finalizado automáticamente (Límite 03:00 a.m.).\n⏱ Tiempo registrado: ${timeSpentMsg}`);
+          } else {
+            alert(`✔ Turno finalizado con éxito.\n📅 Fecha: ${currentDate}\n⏱ Duración: ${timeSpentMsg}`);
+          }
           loadSession();
         } else {
           alert('⚠ Error al sincronizar el turno.');
@@ -1356,11 +1386,11 @@
 
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
-      const todayStr = new Date().toLocaleDateString();
+      const todayStr = getColombiaDateString();
       let dailyTotals = {};
 
       activeUsers.forEach(u => { 
-        dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0 }; 
+        dailyTotals[u.username.toLowerCase()] = { username: u.username, rank: u.rank, hours: 0, activeShiftStart: u.activeShiftStart || null }; 
       });
 
       if (history) {
@@ -1374,23 +1404,18 @@
         });
       }
 
-      let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
       const now = Date.now();
-      
       const myActiveStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
-      if (myActiveStart) {
-        activeShifts[currentUser.username.toLowerCase()] = parseInt(myActiveStart);
+      if (myActiveStart && dailyTotals[currentUser.username.toLowerCase()]) {
+        dailyTotals[currentUser.username.toLowerCase()].activeShiftStart = parseInt(myActiveStart);
       }
 
-      Object.keys(activeShifts).forEach(uKey => {
-        const startTime = activeShifts[uKey];
-        const activeSeconds = Math.floor((now - startTime) / 1000);
-        const activeHours = activeSeconds / 3600;
-        
-        if (dailyTotals[uKey]) {
-          dailyTotals[uKey].hours += activeHours;
-        } else {
-          dailyTotals[uKey] = { username: uKey, rank: 'Soldado', hours: activeHours };
+      Object.keys(dailyTotals).forEach(uKey => {
+        const uObj = dailyTotals[uKey];
+        if (uObj.activeShiftStart) {
+          const startTime = parseInt(uObj.activeShiftStart);
+          const activeSeconds = Math.floor((now - startTime) / 1000);
+          uObj.hours += (activeSeconds / 3600);
         }
       });
 
@@ -1409,7 +1434,7 @@
         else if (index === 1 && u.hours > 0) medalIcon = `<i class="fa-solid fa-medal text-slate-300 text-xs w-5 text-center"></i>`;
         else if (index === 2 && u.hours > 0) medalIcon = `<i class="fa-solid fa-award text-amber-600 text-xs w-5 text-center"></i>`;
 
-        const isCurrentlyActive = activeShifts[u.username.toLowerCase()] || (u.username.toLowerCase() === currentUser.username.toLowerCase() && localStorage.getItem(`shiftStart_${currentUser.username}`));
+        const isCurrentlyActive = !!u.activeShiftStart;
         
         let statusBadge = isCurrentlyActive 
           ? `<span class="text-[8px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-1.5 py-0.5 rounded font-bold animate-pulse ml-1">EN SERVICIO</span>`
@@ -1469,15 +1494,14 @@
         userSummary[name] = (userSummary[name] || 0) + parseFloat(h.horas || 0);
       });
 
-      if (isFilterToday || filterType === 'all') {
-        let activeShifts = JSON.parse(localStorage.getItem('rioRiseActiveShifts') || '{}');
-        const myActiveStart = localStorage.getItem(`shiftStart_${currentUser.username}`);
-        if (myActiveStart) activeShifts[currentUser.username.toLowerCase()] = parseInt(myActiveStart);
-        
+      if ((isFilterToday || filterType === 'all') && cachedData.users) {
         const now = Date.now();
-        Object.keys(activeShifts).forEach(uKey => {
-          const activeHours = (now - activeShifts[uKey]) / 3600000;
-          userSummary[uKey] = (userSummary[uKey] || 0) + activeHours;
+        cachedData.users.forEach(u => {
+          if (u.activeShiftStart) {
+            const uKey = u.username;
+            const activeHours = (now - parseInt(u.activeShiftStart)) / 3600000;
+            userSummary[uKey] = (userSummary[uKey] || 0) + activeHours;
+          }
         });
       }
 
@@ -1562,10 +1586,7 @@
         }
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        async function deleteUser(username) {
-          document.getElementById('loadingOverlay').classList.add('hidden');
-          alert('Error al eliminar usuario.');
-        }
+        alert('Error al eliminar usuario.');
       }
     }
 
