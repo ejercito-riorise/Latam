@@ -281,7 +281,7 @@
               <p id="triviaFeedback" class="text-[10px] font-bold hidden"></p>
             </div>
 
-            <!-- MAPA REAL DE LA BASE (CON ENLACE DIRECTO DE DRIVE CORREGIDO) -->
+            <!-- MAPA REAL DE LA BASE -->
             <div id="trainMapView" class="hidden space-y-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-center">
               <p class="text-[10px] text-slate-300 font-semibold mb-1">Mapa Oficial de la Base Militar Rio Rise:</p>
               <div class="rounded overflow-hidden border border-slate-700 bg-slate-950 cursor-pointer group relative" onclick="openImageModal('https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9')">
@@ -293,7 +293,7 @@
               <p class="text-[9px] text-slate-400 italic mt-1">Estudia los accesos, torres de vigilancia y sectores perimetrales.</p>
             </div>
 
-            <!-- OPERACIONES (INCLUYENDO INVASIONES, PACIFICACIONES Y CRM) -->
+            <!-- OPERACIONES -->
             <div id="trainOpsView" class="hidden space-y-2 text-[10px]">
               <div class="bg-slate-900 p-2 rounded border border-slate-800">
                 <h5 class="font-bold text-purple-400"><i class="fa-solid fa-skull-crossbones mr-1"></i> Invasiones del EB</h5>
@@ -1313,7 +1313,31 @@
 
     function checkActiveShiftOnLoad() {
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
-      if (activeShiftStart) activateShiftUI(parseInt(activeShiftStart));
+      if (activeShiftStart) {
+        // Criterio de corte forzoso automático a las 03:00
+        const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
+        const colombiaDate = new Date(colombiaTimeStr);
+        const currentHour = colombiaDate.getHours();
+
+        if (currentHour >= 3 && currentHour < 18) {
+          // Si son más de las 03:00 y hay un turno colgado, cortar forzoso a las 03:00 exactas
+          const cutTime = new Date(colombiaDate);
+          cutTime.setHours(3, 0, 0, 0);
+          const forcedEndTime = cutTime.getTime();
+          const startTime = parseInt(activeShiftStart);
+          const totalSeconds = Math.max(0, Math.floor((forcedEndTime - startTime) / 1000));
+          const hoursWorked = totalSeconds / 3600;
+
+          localStorage.removeItem(`shiftStart_${currentUser.username}`);
+          currentUser.activeShiftStart = null;
+          
+          if (hoursWorked > 0) {
+            saveShiftLog(hoursWorked, `${Math.floor(totalSeconds / 3600)}h ${Math.floor((totalSeconds % 3600) / 60)}m`, getColombiaDateString());
+          }
+          return;
+        }
+        activateShiftUI(parseInt(activeShiftStart));
+      }
     }
 
     function activateShiftUI(startTime) {
@@ -1332,7 +1356,7 @@
         
         if (colombiaDate.getHours() >= 3 && colombiaDate.getHours() < 18) {
           if (localStorage.getItem(`shiftStart_${currentUser.username}`)) {
-            alert('El Ejército no se encuentra habilitado en este horario.');
+            alert('El servicio se ha cerrado automáticamente por horario (03:00 am).');
             const cutTime = new Date(colombiaDate);
             cutTime.setHours(3, 0, 0, 0);
             const forcedEndTime = cutTime.getTime();
@@ -1527,14 +1551,21 @@
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
       const todayStr = getColombiaDateString();
+      const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
+      const isNightTimeAllowed = (currentHour >= 18 || currentHour < 3);
+
       let dailyTotals = {};
 
       activeUsers.forEach(u => { 
+        let rawActive = u.activeShiftStart || localStorage.getItem(`shiftStart_${u.username}`);
+        // Si ya pasó de las 03:00 am, forzamos que no aparezca en servicio en el monitor
+        if (!isNightTimeAllowed) rawActive = null;
+
         dailyTotals[u.username.toLowerCase()] = { 
           username: u.username, 
           rank: u.rank, 
           hours: 0, 
-          activeShiftStart: u.activeShiftStart || localStorage.getItem(`shiftStart_${u.username}`)
+          activeShiftStart: rawActive
         }; 
       });
 
@@ -1560,7 +1591,7 @@
         let liveHours = u.hours;
         let isOnline = false;
 
-        if (u.activeShiftStart) {
+        if (u.activeShiftStart && isNightTimeAllowed) {
           isOnline = true;
           const activeHours = (Date.now() - parseInt(u.activeShiftStart)) / 3600000;
           liveHours += activeHours;
