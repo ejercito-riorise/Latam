@@ -337,6 +337,24 @@
     </div>
   </div>
 
+  <!-- MODAL DE ENCUESTA OBLIGATORIA (BLOQUEANTE) -->
+  <div id="mandatoryPollModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[110] hidden flex items-center justify-center p-3">
+    <div class="military-card w-full max-w-sm p-4 rounded-xl border border-amber-500/80 shadow-2xl space-y-3">
+      <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
+        <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-square-poll-vertical animate-pulse"></i> Encuesta Oficial Obligatoria
+        </h4>
+      </div>
+      <p class="text-[11px] text-slate-300">
+        El Alto Mando requiere tu voto en la siguiente encuesta oficial para continuar operando en la intranet:
+      </p>
+      <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
+        <p id="pollModalQuestion" class="text-xs font-bold text-white"></p>
+        <div id="pollModalOptions" class="space-y-1.5"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- PANEL DE CONTROL -->
   <div id="controlPanelModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-md h-[85vh] flex flex-col p-4 rounded-xl border border-blue-500/40 shadow-2xl">
@@ -388,12 +406,20 @@
           </div>
           <div id="filteredHistoryList" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
         </div>
+        
+        <!-- VISTA PUBLICAR (COMUNICADO / ENCUESTA CON BOTÓN PUBLICAR / PROPONER) -->
         <div id="viewNewsAdmin" class="space-y-3 hidden">
-          <div class="flex items-center justify-between">
-            <h4 id="newsFormTitle" class="text-xs font-bold text-amber-400 flex items-center gap-1"><i class="fa-solid fa-bullhorn"></i> Redactar Orden:</h4>
-            <button id="cancelEditBtn" onclick="cancelEditNews()" class="hidden text-[10px] bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded">Cancelar</button>
+          <div class="grid grid-cols-2 bg-slate-950 p-1 rounded border border-slate-800 mb-2">
+            <button type="button" onclick="switchPublishSubTab('comunicado')" id="pubSubNewsBtn" class="py-1 text-[10px] font-bold rounded bg-blue-600 text-white">📢 Comunicado</button>
+            <button type="button" onclick="switchPublishSubTab('encuesta')" id="pubSubPollBtn" class="py-1 text-[10px] font-bold rounded text-slate-400">📊 Encuesta</button>
           </div>
-          <form onsubmit="handlePublishNews(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800">
+
+          <!-- FORMULARIO COMUNICADO -->
+          <form id="formPublishNews" onsubmit="handlePublishNews(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800">
+            <div class="flex items-center justify-between">
+              <h4 id="newsFormTitle" class="text-xs font-bold text-amber-400"><i class="fa-solid fa-bullhorn"></i> Redactar Orden / Comunicado</h4>
+              <button type="button" id="cancelEditBtn" onclick="cancelEditNews()" class="hidden text-[10px] bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded">Cancelar</button>
+            </div>
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">Título</label>
               <input type="text" id="newsTitle" required placeholder="Ej: Directiva" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
@@ -407,10 +433,27 @@
               <input type="url" id="newsImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
-              <span id="newsBtnText">Publicar</span>
+              <span id="newsBtnText">Publicar / Proponer</span>
+            </button>
+          </form>
+
+          <!-- FORMULARIO ENCUESTA (SOLO CORONEL, GENERAL Y MIKE) -->
+          <form id="formPublishPoll" onsubmit="handlePublishPoll(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800 hidden">
+            <h4 class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-square-poll-vertical"></i> Crear Encuesta Obligatoria</h4>
+            <div>
+              <label class="block text-[10px] text-slate-300 mb-1">Pregunta de la Encuesta</label>
+              <input type="text" id="pollTitle" required placeholder="Ej: ¿Apoyan la nueva patrulla nocturna?" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-300 mb-1">Opciones (Separadas por coma)</label>
+              <input type="text" id="pollOptions" required placeholder="Ej: Sí, No, Abstenerse" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
+              Publicar Encuesta
             </button>
           </form>
         </div>
+
         <div id="viewApproveNews" class="space-y-3 hidden">
           <div>
             <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-bullhorn"></i> Comunicados Pendientes:</h4>
@@ -448,7 +491,7 @@
   <div id="doctrinaModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-md p-4 rounded-xl border border-blue-500/40 shadow-2xl space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <h4 id="doctrinaModalTitle" class="text-xs font-bold text-blue-400 flex items-center gap-1"><i class="fa-solid fa-book-bookmark"></i> Publicar Doctrina</h4>
+        <h4 id="doctrinaModalTitle" class="text-xs font-bold text-blue-400 flex items-center gap-1"><i class="fa-solid fa-book-bookmark"></i> Publicar / Proponer Doctrina</h4>
         <button onclick="closeDoctrinaModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form onsubmit="handlePublishDoctrina(event)" class="space-y-2.5">
@@ -466,7 +509,7 @@
           <input type="url" id="doctrinaImage" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
         </div>
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
-          <span id="doctrinaBtnText">Publicar</span>
+          <span id="doctrinaBtnText">Publicar / Proponer</span>
         </button>
       </form>
     </div>
@@ -645,6 +688,88 @@
       }
     }
 
+    function checkMandatoryPoll(polls) {
+      if (!currentUser || !polls || polls.length === 0) return;
+      const activePoll = polls[polls.length - 1];
+      const votedKey = `votedPoll_${currentUser.username}_${activePoll.titulo}`;
+      
+      if (!localStorage.getItem(votedKey)) {
+        showMandatoryPollModal(activePoll);
+      }
+    }
+
+    function showMandatoryPollModal(poll) {
+      document.getElementById('pollModalQuestion').innerText = poll.titulo;
+      const container = document.getElementById('pollModalOptions');
+      container.innerHTML = '';
+
+      let options = poll.options || [];
+      if (typeof options === 'string') options = options.split(',');
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left bg-slate-900 hover:bg-slate-800 p-2 rounded text-[11px] text-slate-200 border border-slate-800 font-semibold transition";
+        btn.innerText = opt.trim();
+        btn.onclick = () => submitPollVote(poll.titulo, opt.trim());
+        container.appendChild(btn);
+      });
+
+      document.getElementById('mandatoryPollModal').classList.remove('hidden');
+    }
+
+    function submitPollVote(pollTitle, selectedOption) {
+      const votedKey = `votedPoll_${currentUser.username}_${pollTitle}`;
+      localStorage.setItem(votedKey, selectedOption);
+      document.getElementById('mandatoryPollModal').classList.add('hidden');
+      alert("✔ ¡Voto registrado con éxito! Gracias por participar.");
+    }
+
+    function switchPublishSubTab(sub) {
+      document.getElementById('formPublishNews').classList.toggle('hidden', sub !== 'comunicado');
+      document.getElementById('formPublishPoll').classList.toggle('hidden', sub !== 'encuesta');
+      document.getElementById('pubSubNewsBtn').className = sub === 'comunicado' ? "py-1 text-[10px] font-bold rounded bg-blue-600 text-white" : "py-1 text-[10px] font-bold rounded text-slate-400";
+      document.getElementById('pubSubPollBtn').className = sub === 'encuesta' ? "py-1 text-[10px] font-bold rounded bg-emerald-600 text-white" : "py-1 text-[10px] font-bold rounded text-slate-400";
+    }
+
+    async function handlePublishPoll(e) {
+      e.preventDefault();
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const isHigherRank = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
+      if (!isHigherRank) {
+        alert("⚠ Solo Coroneles, General y Superadmin pueden crear encuestas.");
+        return;
+      }
+
+      const title = document.getElementById('pollTitle').value.trim();
+      const optionsStr = document.getElementById('pollOptions').value.trim();
+      if (!title || !optionsStr) return;
+
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: "publishPoll",
+            fecha: getColombiaDateString(),
+            hora: new Date().toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' }),
+            autor: `${currentUser.username} (${currentUser.rank})`,
+            titulo: title,
+            options: optionsStr,
+            estado: 'approved'
+          })
+        });
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert("✔ Encuesta publicada con éxito.");
+        document.getElementById('pollTitle').value = '';
+        document.getElementById('pollOptions').value = '';
+        toggleControlPanel(false);
+        loadSession();
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert("Error al publicar encuesta.");
+      }
+    }
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => {}); });
     }
@@ -725,6 +850,10 @@
       if (str.includes('T')) {
         let d = new Date(str);
         if (!isNaN(d.getTime())) return d.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+      }
+      if (str.includes('-') && str.split('-')[0].length === 4) {
+        let p = str.split('-');
+        return `${p[2]}/${p[1]}/${p[0]}`;
       }
       return str;
     }
@@ -873,11 +1002,13 @@
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isMayor) {
-        tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        // Los Mayores mantienen su pestaña Publicar/Proponer Comunicado habitual, pero la pestaña Encuestas estará oculta o restringida
+        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[10px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
-          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[10px] font-bold rounded text-slate-300 transition bg-transparent">Proponer</button>
+          <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
+          <button onclick="switchAdminTab('daily')" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
+          <button onclick="switchAdminTab('filters')" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
+          <button onclick="switchAdminTab('newsAdmin')" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else {
@@ -898,6 +1029,24 @@
       const targetTab = document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       if (targetView) targetView.classList.remove('hidden');
       if (targetTab) targetTab.className = "py-1.5 text-[9px] font-bold rounded bg-blue-600 text-white shadow transition";
+
+      // Si es Mayor y abre la pestaña Publicar, ocultamos la opción de Encuestas y dejamos solo el Comunicado
+      const rankLower = (currentUser.rank || '').toLowerCase();
+      const isHigherRankForPolls = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
+      if (tab === 'newsAdmin') {
+        const pollSubBtn = document.getElementById('pubSubPollBtn');
+        const pollForm = document.getElementById('formPublishPoll');
+        const subTabsGrid = pollSubBtn ? pollSubBtn.parentElement : null;
+        if (pollSubBtn && pollForm && subTabsGrid) {
+          if (!isHigherRankForPolls) {
+            subTabsGrid.classList.add('hidden');
+            pollForm.classList.add('hidden');
+            document.getElementById('formPublishNews').classList.remove('hidden');
+          } else {
+            subTabsGrid.classList.remove('hidden');
+          }
+        }
+      }
 
       if (tab === 'filters') applyHistoryFilter();
     }
@@ -995,6 +1144,7 @@
           renderDoctrinaFeed(cachedData.doctrina);
           checkAuthorNotifications(cachedData.news, cachedData.doctrina);
           updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina);
+          checkMandatoryPoll(cachedData.polls || []);
           
           const freshUser = cachedData.users.find(u => String(u.username).trim().toLowerCase() === currentUser.username.toLowerCase());
           if (freshUser) {
@@ -1026,6 +1176,7 @@
       renderDoctrinaFeed(resData.doctrina);
       checkAuthorNotifications(resData.news, resData.doctrina);
       updateCommandAlertBadges(resData.users, resData.news, resData.doctrina);
+      checkMandatoryPoll(resData.polls || []);
       updateTodayHoursLive();
       applyPermissions(currentUser);
       checkActiveShiftOnLoad();
@@ -1047,6 +1198,7 @@
           renderDoctrinaFeed(resData.doctrina);
           checkAuthorNotifications(resData.news, resData.doctrina);
           updateCommandAlertBadges(resData.users, resData.news, resData.doctrina);
+          checkMandatoryPoll(resData.polls || []);
           updateTodayHoursLive();
           if (!document.getElementById('viewDaily').classList.contains('hidden')) {
             renderDailyRanking(resData.users.filter(u => u.status && u.status.toLowerCase() === 'approved'), resData.history);
@@ -1085,7 +1237,6 @@
       const now = new Date(colombiaTimeStr);
       let endTimeMs = now.getTime();
 
-      // Si sobrepasa las 03:00 AM congelar conteo hasta las 03:00 AM de esa madrugada
       if (now.getHours() >= 3 && now.getHours() < 18) {
         const cutTime = new Date(now);
         cutTime.setHours(3, 0, 0, 0);
@@ -1248,7 +1399,7 @@
       document.getElementById('doctrinaTitle').value = '';
       document.getElementById('doctrinaMessage').value = '';
       document.getElementById('doctrinaImage').value = '';
-      document.getElementById('doctrinaModalTitle').innerHTML = `<i class="fa-solid fa-book-bookmark"></i> Publicar Doctrina`;
+      document.getElementById('doctrinaModalTitle').innerHTML = `<i class="fa-solid fa-book-bookmark"></i> Publicar / Proponer Doctrina`;
       document.getElementById('doctrinaModal').classList.remove('hidden');
     }
     function closeDoctrinaModal() { document.getElementById('doctrinaModal').classList.add('hidden'); }
@@ -1256,11 +1407,12 @@
     async function handlePublishDoctrina(e) {
       e.preventDefault();
       const rankLower = (currentUser.rank || '').toLowerCase();
-      const isMayor = rankLower === 'mayor';
+      const isHigherRank = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
+      const status = isHigherRank ? 'approved' : 'pending';
+
       const title = document.getElementById('doctrinaTitle').value.trim();
       const message = document.getElementById('doctrinaMessage').value.trim();
       const imageUrl = document.getElementById('doctrinaImage').value.trim();
-      const status = (isMayor && !editingDoctrinaOldTitle) ? 'pending' : 'approved';
 
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
@@ -1276,7 +1428,7 @@
           })
         });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert(isMayor ? '✔ Enviado a revisión.' : '✔ Publicado con éxito.');
+        alert(isHigherRank ? '✔ Publicado con éxito.' : '✔ Propuesta enviada a revisión.');
         closeDoctrinaModal();
         loadSession();
       } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error.'); }
@@ -1306,11 +1458,12 @@
     async function handlePublishNews(e) {
       e.preventDefault();
       const rankLower = (currentUser.rank || '').toLowerCase();
-      const isMayor = rankLower === 'mayor';
+      const isHigherRank = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
+      const status = isHigherRank ? 'approved' : 'pending';
+
       const title = document.getElementById('newsTitle').value.trim();
       const message = document.getElementById('newsMessage').value.trim();
       const imageUrl = document.getElementById('newsImage').value.trim();
-      const status = (isMayor && !editingOldTitle) ? 'pending' : 'approved';
 
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
@@ -1326,7 +1479,7 @@
           })
         });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert(isMayor ? '✔ Enviado a revisión.' : '✔ Comunicado publicado.');
+        alert(isHigherRank ? '✔ Comunicado publicado.' : '✔ Propuesta enviada a revisión.');
         cancelEditNews();
         toggleControlPanel(false);
         loadSession();
@@ -1663,7 +1816,6 @@
         });
       }
 
-      // ORDENAR STRICTAMENTE DE MAYOR A MENOR TIEMPO ACUMULADO
       const dailyArray = Object.values(dailyTotals).map(u => {
         let liveHours = u.hours;
         if (u.activeShiftStart) {
@@ -1686,7 +1838,6 @@
           statusBadge = `<span class="flex items-center gap-1 text-[9px] text-slate-400 font-bold bg-slate-950 border border-slate-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-circle text-[6px] text-slate-600"></i> DESCONECTADO</span>`;
         }
 
-        // RANKING ICONOS TOP 3
         let rankBadgeIcon = `<span class="font-mono font-bold text-slate-500 text-xs w-4 text-center">#${index + 1}</span>`;
         if (index === 0) rankBadgeIcon = `<i class="fa-solid fa-trophy text-amber-400 text-sm" title="1° Lugar"></i>`;
         else if (index === 1) rankBadgeIcon = `<i class="fa-solid fa-medal text-slate-300 text-sm" title="2° Lugar"></i>`;
@@ -1728,12 +1879,11 @@
         const currentMonth = now.getMonth();
         const currentYear = now.getFullYear();
         filtered = filtered.filter(h => {
-          let d = new Date(h.fecha);
+          let d = new Date(normalizeDate(h.fecha).split('/').reverse().join('-'));
           return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
         });
       }
 
-      // AGRUPAR POR USUARIO Y ORDENAR MAYOR A MENOR
       let userMap = {};
       filtered.forEach(h => {
         if (!h.username) return;
