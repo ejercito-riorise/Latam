@@ -281,7 +281,7 @@
               <p id="triviaFeedback" class="text-[10px] font-bold hidden"></p>
             </div>
 
-            <!-- MAPA REAL DE LA BASE -->
+            <!-- MAPA REAL DE LA BASE DE GOOGLE DRIVE -->
             <div id="trainMapView" class="hidden space-y-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-center">
               <p class="text-[10px] text-slate-300 font-semibold mb-1">Mapa Oficial de la Base Militar Rio Rise:</p>
               <div class="rounded overflow-hidden border border-slate-700 bg-slate-950 cursor-pointer group relative" onclick="openImageModal('https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9')">
@@ -318,16 +318,16 @@
     </main>
   </div>
 
-  <!-- MODAL DE EXAMEN OBLIGATORIO PARA NUEVOS PRIVADOS -->
-  <div id="privateExamModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex items-center justify-center p-3">
-    <div class="military-card w-full max-w-sm p-4 rounded-xl border border-red-500/50 shadow-2xl space-y-3">
+  <!-- MODAL DE EXAMEN OBLIGATORIO PARA NUEVOS PRIVADOS (BLOQUEANTE) -->
+  <div id="privateExamModal" class="fixed inset-0 bg-slate-950/98 backdrop-blur-lg z-[100] hidden flex items-center justify-center p-3">
+    <div class="military-card w-full max-w-sm p-4 rounded-xl border border-red-500/80 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
         <h4 class="text-xs font-bold text-red-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-triangle-exclamation"></i> Examen de Admisión Obligatorio (Privados)
+          <i class="fa-solid fa-triangle-exclamation animate-bounce"></i> Examen Obligatorio de Privados
         </h4>
       </div>
       <p class="text-[11px] text-slate-300">
-        Como Soldado Raso / Privado nuevo, debes aprobar el test de doctrina de la Biblia RP para operar en la base militar.
+        Debes aprobar obligatoriamente la evaluación táctica de la Biblia RP para poder desbloquear tu acceso al sistema.
       </p>
       <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
         <p id="examQuestion" class="text-xs font-bold text-white"></p>
@@ -367,7 +367,7 @@
         </div>
         <div id="viewFilters" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Rendimiento:</h4>
+            <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Rendimiento e Historial:</h4>
             <button onclick="exportVisualRankingCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
               <i class="fa-solid fa-file-excel"></i> Descargar Excel
             </button>
@@ -376,9 +376,9 @@
             <div>
               <label class="block text-[10px] text-slate-400 mb-1">Filtro:</label>
               <select id="filterType" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
-                <option value="day">Días</option>
+                <option value="day">Por Día</option>
                 <option value="month">Mes Actual</option>
-                <option value="all">Todo</option>
+                <option value="all">Histórico Total</option>
               </select>
             </div>
             <div>
@@ -386,7 +386,7 @@
               <input type="date" id="filterDateInput" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1 focus:outline-none">
             </div>
           </div>
-          <div id="filteredHistoryList" class="space-y-1.5"></div>
+          <div id="filteredHistoryList" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
         </div>
         <div id="viewNewsAdmin" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
@@ -425,19 +425,20 @@
     </div>
   </div>
 
-  <!-- MODAL RANGOS -->
+  <!-- MODAL EXPLICATIVO DE RANGOS Y NIVELES -->
   <div id="rankInfoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-amber-500/40 shadow-2xl space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-ranking-star"></i> Niveles Semanales</h4>
+        <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-ranking-star"></i> Niveles Semanales por Servicio</h4>
         <button onclick="closeRankInfoModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
+      <p class="text-[10px] text-slate-300">Los niveles se asignan automáticamente según las horas acumuladas en la semana actual:</p>
       <div class="space-y-2 text-xs">
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-amber-300">🔥 Leyenda Élite</span><span class="text-slate-400 font-mono">28 Horas</span></div>
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-purple-300">⭐ Veterano Táctico</span><span class="text-slate-400 font-mono">20 - 27 Horas</span></div>
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-blue-300">🎖️ Soldado Destacado</span><span class="text-slate-400 font-mono">12 - 19 Horas</span></div>
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-emerald-300">🛡️ Operativo Activo</span><span class="text-slate-400 font-mono">5 - 11 Horas</span></div>
-        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-slate-300">🔰 Soldado Raso</span><span class="text-slate-400 font-mono">&lt; 5 Horas</span></div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-amber-300">🔥 Leyenda Élite</span><span class="text-slate-400 font-mono font-bold">≥ 28 Horas</span></div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-purple-300">⭐ Veterano Táctico</span><span class="text-slate-400 font-mono font-bold">20 - 27 Horas</span></div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-blue-300">🎖️ Soldado Destacado</span><span class="text-slate-400 font-mono font-bold">12 - 19 Horas</span></div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-emerald-300">🛡️ Operativo Activo</span><span class="text-slate-400 font-mono font-bold">5 - 11 Horas</span></div>
+        <div class="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-800"><span class="font-bold text-slate-300">🔰 Soldado Raso</span><span class="text-slate-400 font-mono font-bold">&lt; 5 Horas</span></div>
       </div>
       <button onclick="closeRankInfoModal()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">¡Entendido!</button>
     </div>
@@ -586,6 +587,7 @@
     }
 
     function checkPrivateExamRequirement(user) {
+      if (!user) return;
       const rank = (user.rank || '').trim().toLowerCase();
       if (rank === 'privado') {
         const examPassedKey = `examPassed_${user.username}`;
@@ -896,6 +898,8 @@
       const targetTab = document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       if (targetView) targetView.classList.remove('hidden');
       if (targetTab) targetTab.className = "py-1.5 text-[9px] font-bold rounded bg-blue-600 text-white shadow transition";
+
+      if (tab === 'filters') applyHistoryFilter();
     }
 
     async function handleRegister(e) {
@@ -932,7 +936,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         const response = await fetch(WEB_APP_URL);
         const resData = await response.json();
@@ -1067,13 +1071,28 @@
 
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
-        const activeHours = (Date.now() - parseInt(activeShiftStart)) / 3600000;
+        const activeHours = getEffectiveActiveHours(parseInt(activeShiftStart));
         todayTotalHours += activeHours;
         weeklyTotalHours += activeHours;
       }
 
       document.getElementById('profileTodayHours').innerText = `Hoy: ${decimalToHM(todayTotalHours)}`;
       document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyTotalHours);
+    }
+
+    function getEffectiveActiveHours(startTime) {
+      const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
+      const now = new Date(colombiaTimeStr);
+      let endTimeMs = now.getTime();
+
+      // Si sobrepasa las 03:00 AM congelar conteo hasta las 03:00 AM de esa madrugada
+      if (now.getHours() >= 3 && now.getHours() < 18) {
+        const cutTime = new Date(now);
+        cutTime.setHours(3, 0, 0, 0);
+        endTimeMs = cutTime.getTime();
+      }
+      const diffMs = Math.max(0, endTimeMs - startTime);
+      return diffMs / 3600000;
     }
 
     function renderNewsFeed(news) {
@@ -1099,8 +1118,11 @@
         let imageHtml = item.imagen ? `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer" onclick="openImageModal('${fixImageUrl(item.imagen)}')"><img src="${fixImageUrl(item.imagen)}" class="w-full h-auto object-cover max-h-60" loading="lazy"></div>` : '';
         let adminActions = canManageNews ? `<div class="flex gap-1.5"><button onclick="triggerEdit(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-pen"></i></button><button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
 
+        const reactKey = `news_react_${item.titulo}`;
+        const countReact = localStorage.getItem(reactKey) || 0;
+
         htmlContent += `
-          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
             <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
               <span class="font-bold text-amber-400"><i class="fa-solid fa-shield-halved mr-1"></i>${item.autor}</span>
               <div class="flex items-center gap-2"><span>${cleanDate}${timeStr}</span>${adminActions}</div>
@@ -1108,10 +1130,79 @@
             <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
             <p class="text-[11px] text-slate-300 whitespace-pre-wrap">${item.mensaje}</p>
             ${imageHtml}
+            
+            <!-- REACCIONES Y COMENTARIOS -->
+            <div class="pt-2 border-t border-slate-900 flex items-center justify-between text-[10px]">
+              <button onclick="toggleReaction('${item.titulo.replace(/'/g, "\\'")}')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-800 flex items-center gap-1 font-bold">
+                🫡 Salud! <span id="reactCount_${item.titulo}" class="text-amber-400 font-mono">${countReact}</span>
+              </button>
+              <button onclick="toggleCommentsSection('${index}')" class="text-blue-400 hover:underline flex items-center gap-1">
+                <i class="fa-solid fa-comments"></i> Comentarios
+              </button>
+            </div>
+
+            <!-- CAJA DE COMENTARIOS DESPLEGABLE -->
+            <div id="commentsBox_${index}" class="hidden pt-2 border-t border-slate-900 space-y-2">
+              <div id="commentsList_${index}" class="space-y-1 max-h-32 overflow-y-auto pr-1 text-[10px]">
+                <p class="text-slate-500 italic">No hay comentarios aún.</p>
+              </div>
+              <div class="flex gap-1">
+                <input type="text" id="commentInput_${index}" placeholder="Escribe un comentario..." class="flex-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[10px] text-white focus:outline-none">
+                <button onclick="addComment('${index}')" class="bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold">Enviar</button>
+              </div>
+            </div>
           </div>
         `;
       });
       feed.innerHTML = htmlContent;
+    }
+
+    function toggleReaction(title) {
+      const reactKey = `news_react_${title}`;
+      let count = parseInt(localStorage.getItem(reactKey) || 0) + 1;
+      localStorage.setItem(reactKey, count);
+      const el = document.getElementById(`reactCount_${title}`);
+      if (el) el.innerText = count;
+    }
+
+    function toggleCommentsSection(index) {
+      const box = document.getElementById(`commentsBox_${index}`);
+      if (box) box.classList.toggle('hidden');
+      loadComments(index);
+    }
+
+    function loadComments(index) {
+      const item = newsStorageMap[index];
+      if (!item) return;
+      const commentsKey = `comments_${item.titulo}`;
+      const comments = JSON.parse(localStorage.getItem(commentsKey) || "[]");
+      const listEl = document.getElementById(`commentsList_${index}`);
+      
+      if (comments.length === 0) {
+        listEl.innerHTML = '<p class="text-slate-500 italic">No hay comentarios aún.</p>';
+        return;
+      }
+
+      listEl.innerHTML = '';
+      comments.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'bg-slate-900 p-1.5 rounded border border-slate-800 text-[10px]';
+        div.innerHTML = `<span class="font-bold text-amber-400">${c.user}:</span> <span class="text-slate-200">${c.text}</span>`;
+        listEl.appendChild(div);
+      });
+    }
+
+    function addComment(index) {
+      const item = newsStorageMap[index];
+      const input = document.getElementById(`commentInput_${index}`);
+      if (!item || !input || !input.value.trim()) return;
+
+      const commentsKey = `comments_${item.titulo}`;
+      const comments = JSON.parse(localStorage.getItem(commentsKey) || "[]");
+      comments.push({ user: currentUser.username, text: input.value.trim() });
+      localStorage.setItem(commentsKey, JSON.stringify(comments));
+      input.value = '';
+      loadComments(index);
     }
 
     function renderDoctrinaFeed(doctrina) {
@@ -1314,13 +1405,11 @@
     function checkActiveShiftOnLoad() {
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
-        // Criterio de corte forzoso automático a las 03:00
         const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colombiaDate = new Date(colombiaTimeStr);
         const currentHour = colombiaDate.getHours();
 
         if (currentHour >= 3 && currentHour < 18) {
-          // Si son más de las 03:00 y hay un turno colgado, cortar forzoso a las 03:00 exactas
           const cutTime = new Date(colombiaDate);
           cutTime.setHours(3, 0, 0, 0);
           const forcedEndTime = cutTime.getTime();
@@ -1552,20 +1641,16 @@
       if (!dailyReportList) return;
       const todayStr = getColombiaDateString();
       const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-      const isNightTimeAllowed = (currentHour >= 18 || currentHour < 3);
+      const isAllowedNight = (currentHour >= 18 || currentHour < 3);
 
       let dailyTotals = {};
 
       activeUsers.forEach(u => { 
-        let rawActive = u.activeShiftStart || localStorage.getItem(`shiftStart_${u.username}`);
-        // Si ya pasó de las 03:00 am, forzamos que no aparezca en servicio en el monitor
-        if (!isNightTimeAllowed) rawActive = null;
-
         dailyTotals[u.username.toLowerCase()] = { 
           username: u.username, 
           rank: u.rank, 
           hours: 0, 
-          activeShiftStart: rawActive
+          activeShiftStart: u.activeShiftStart || localStorage.getItem(`shiftStart_${u.username}`)
         }; 
       });
 
@@ -1578,34 +1663,40 @@
         });
       }
 
-      const dailyArray = Object.values(dailyTotals).sort((a, b) => {
-        const aActive = a.activeShiftStart ? 1 : 0;
-        const bActive = b.activeShiftStart ? 1 : 0;
-        if (aActive !== bActive) return bActive - aActive;
-        return b.hours - a.hours;
-      });
+      // ORDENAR STRICTAMENTE DE MAYOR A MENOR TIEMPO ACUMULADO
+      const dailyArray = Object.values(dailyTotals).map(u => {
+        let liveHours = u.hours;
+        if (u.activeShiftStart) {
+          liveHours += getEffectiveActiveHours(parseInt(u.activeShiftStart));
+        }
+        return { ...u, liveHours };
+      }).sort((a, b) => b.liveHours - a.liveHours);
 
       dailyReportList.innerHTML = dailyArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros hoy.</p>' : '';
       
       dailyArray.forEach((u, index) => {
-        let liveHours = u.hours;
-        let isOnline = false;
-
-        if (u.activeShiftStart && isNightTimeAllowed) {
-          isOnline = true;
-          const activeHours = (Date.now() - parseInt(u.activeShiftStart)) / 3600000;
-          liveHours += activeHours;
+        let statusBadge = '';
+        if (u.activeShiftStart) {
+          if (isAllowedNight) {
+            statusBadge = `<span class="flex items-center gap-1 text-[9px] text-emerald-400 font-bold bg-emerald-950/80 border border-emerald-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-circle text-[6px] animate-ping"></i> EN SERVICIO</span>`;
+          } else {
+            statusBadge = `<span class="flex items-center gap-1 text-[9px] text-amber-300 font-bold bg-amber-950/80 border border-amber-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-triangle-exclamation text-[8px]"></i> FUERA DE TURNO</span>`;
+          }
+        } else {
+          statusBadge = `<span class="flex items-center gap-1 text-[9px] text-slate-400 font-bold bg-slate-950 border border-slate-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-circle text-[6px] text-slate-600"></i> DESCONECTADO</span>`;
         }
 
-        const statusBadge = isOnline 
-          ? `<span class="flex items-center gap-1 text-[9px] text-emerald-400 font-bold bg-emerald-950/80 border border-emerald-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-circle text-[6px] animate-ping"></i> EN SERVICIO</span>`
-          : `<span class="flex items-center gap-1 text-[9px] text-slate-400 font-bold bg-slate-950 border border-slate-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-circle text-[6px] text-slate-600"></i> DESCONECTADO</span>`;
+        // RANKING ICONOS TOP 3
+        let rankBadgeIcon = `<span class="font-mono font-bold text-slate-500 text-xs w-4 text-center">#${index + 1}</span>`;
+        if (index === 0) rankBadgeIcon = `<i class="fa-solid fa-trophy text-amber-400 text-sm" title="1° Lugar"></i>`;
+        else if (index === 1) rankBadgeIcon = `<i class="fa-solid fa-medal text-slate-300 text-sm" title="2° Lugar"></i>`;
+        else if (index === 2) rankBadgeIcon = `<i class="fa-solid fa-award text-amber-600 text-sm" title="3° Lugar"></i>`;
 
         const item = document.createElement('div');
         item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs';
         item.innerHTML = `
           <div class="flex items-center gap-2">
-            <span class="font-mono font-bold text-slate-500">#${index + 1}</span>
+            ${rankBadgeIcon}
             <div>
               <div class="flex items-center gap-1.5">
                 <span class="font-bold text-white text-[11px]">${u.username}</span>
@@ -1614,10 +1705,70 @@
               <div class="mt-0.5">${statusBadge}</div>
             </div>
           </div>
-          <span class="text-cyan-400 font-mono font-bold text-xs">${decimalToHM(liveHours)}</span>
+          <span class="text-cyan-400 font-mono font-bold text-xs">${decimalToHM(u.liveHours)}</span>
         `;
         dailyReportList.appendChild(item);
       });
+    }
+
+    function applyHistoryFilter() {
+      const type = document.getElementById('filterType').value;
+      const dateVal = document.getElementById('filterDateInput').value;
+      const container = document.getElementById('filteredHistoryList');
+      if (!container) return;
+
+      let filtered = globalHistoryCache || [];
+      const todayStr = getColombiaDateString();
+
+      if (type === 'day') {
+        let targetDateStr = dateVal ? normalizeDate(dateVal) : todayStr;
+        filtered = filtered.filter(h => normalizeDate(h.fecha) === targetDateStr);
+      } else if (type === 'month') {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        filtered = filtered.filter(h => {
+          let d = new Date(h.fecha);
+          return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+        });
+      }
+
+      // AGRUPAR POR USUARIO Y ORDENAR MAYOR A MENOR
+      let userMap = {};
+      filtered.forEach(h => {
+        if (!h.username) return;
+        let uKey = h.username.toLowerCase();
+        if (!userMap[uKey]) userMap[uKey] = { username: h.username, total: 0 };
+        userMap[uKey].total += parseFloat(h.horas || 0);
+      });
+
+      currentRankedExportArray = Object.values(userMap).sort((a, b) => b.total - a.total);
+
+      container.innerHTML = currentRankedExportArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay datos en este rango.</p>' : '';
+      currentRankedExportArray.forEach((u, i) => {
+        const div = document.createElement('div');
+        div.className = 'bg-slate-950 p-2 rounded border border-slate-800 flex justify-between items-center text-xs';
+        div.innerHTML = `<span><strong>#${i+1}</strong> ${u.username}</span> <span class="font-mono text-cyan-400 font-bold">${decimalToHM(u.total)}</span>`;
+        container.appendChild(div);
+      });
+    }
+
+    function exportVisualRankingCSV() {
+      if (!currentRankedExportArray || currentRankedExportArray.length === 0) {
+        alert("No hay datos para exportar.");
+        return;
+      }
+      let csvContent = "data:text/csv;charset=utf-8,Posicion,Usuario,Horas,Tiempo_Formateado\n";
+      currentRankedExportArray.forEach((u, i) => {
+        csvContent += `${i + 1},${u.username},${u.total.toFixed(2)},${decimalToHM(u.total)}\n`;
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Reporte_Ejercito_RioRise_${getColombiaDateString()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     function logout() { localStorage.removeItem('rioRiseCurrentSession'); location.reload(); }
