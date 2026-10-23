@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intranet EB - Ejército RioRise</title>
   
+  <!-- FAVICON -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3C/svg%3E">
 
+  <!-- METADATOS WHATSAPP / OPEN GRAPH CON TU ESCUDO AZUL Y FONDO OSCURO -->
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
   <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
-  <meta property="og:image" content="https://img.icons8.com/color/512/shield.png">
+  <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgMjUwIj4KICA8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iIzBmMTcyYSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMCwgMjUpIj4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNzUiIGZpbGw9IiMxZTI5M2IiIHN0cm9rPSIjM2I4MmY2IiBzdHJvamUtd2lkdGg9IjUiLz4KICAgIDxwYXRoIGQ9Ik0xMDAgNTkgTDEzMCA3MSBDMTMwIDEwMyAxMTQgMTI4IDEwMCAxMzkgQzg2IDEyOCA3MCAxMDMgNzAgNzEgWiIgZmlsbD0iIzNiODJmNiIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNMTAwIDU5IEwxMzAgNzEgQzEzMCAxMDMgMTE0IDEyOCAxMDAgMTM5IFoiIGZpbGw9IiM2MGE1ZmEiIG9wYWNpdHk9IjAuNSIvPgogIDwvZz4KICA8dGV4dCB4PSIyMTAiIHk9IjExMCIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9InN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZvbnQtc2l6ZT0iMzIiIHRyYWNrPSIxIj5JTlRSQU5FVCBFQjwvdGV4dD4KICA8dGV4dCB4PSIyMTAiIHk9IjE0OCIgZmlsbD0iIzk0YTNiOCIgZm9udC1mYW1pbHk9InN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMiI+RWpwxlicml0byBSaW9SaXNlPC90ZXh0Pgo8L3N2Zz4=">
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
@@ -1002,7 +1004,6 @@
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isMayor) {
-        // Los Mayores mantienen su pestaña Publicar/Proponer Comunicado habitual, pero la pestaña Encuestas estará oculta o restringida
         tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('active')" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
@@ -1030,7 +1031,6 @@
       if (targetView) targetView.classList.remove('hidden');
       if (targetTab) targetTab.className = "py-1.5 text-[9px] font-bold rounded bg-blue-600 text-white shadow transition";
 
-      // Si es Mayor y abre la pestaña Publicar, ocultamos la opción de Encuestas y dejamos solo el Comunicado
       const rankLower = (currentUser.rank || '').toLowerCase();
       const isHigherRankForPolls = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
       if (tab === 'newsAdmin') {
