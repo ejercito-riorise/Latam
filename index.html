@@ -7,7 +7,7 @@
   
   <!-- FAVICON -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3C/svg%3E">
 
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
   <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
@@ -463,7 +463,7 @@
           </form>
         </div>
 
-        <!-- BANDEJA UNIFICADA DE APROBACIÓN (SOLO PROPUESTAS NUEVAS) -->
+        <!-- BANDEJA UNIFICADA DE APROBACIÓN (SOLO CORONELES Y GENERAL) -->
         <div id="viewApproveNews" class="space-y-3 hidden">
           <div>
             <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-bullhorn"></i> Comunicados Pendientes:</h4>
@@ -1342,7 +1342,6 @@
         weeklyTotalHours += activeHours;
       }
 
-      // Muestra el total acumulado de la jornada
       const el = document.getElementById('profileTodayHours');
       if (el) {
         if (activeShiftStart) {
@@ -1433,7 +1432,7 @@
           htmlContent += `
             <div class="bg-slate-950 p-3 rounded-lg border border-amber-500/50 space-y-2 shadow-lg">
               <div class="flex items-center justify-between text-[10px] text-amber-400 border-b border-slate-900 pb-1 font-bold">
-                <span><i class="fa-solid fa-square-poll-vertical mr-1"></i>Encuesta Oficial (${poll.autor})</span>
+                <span><i class="fa-solid fa-square-poll-vertical mr-1"></i>Encuesta Oficial • <span class="text-slate-300">${poll.autor}</span></span>
                 <div class="flex items-center gap-2"><span>Total: ${totalVotes} votos</span>${pollDeleteAction}</div>
               </div>
               <h4 class="font-bold text-white text-xs">${poll.titulo}</h4>
@@ -1455,7 +1454,7 @@
         const timeStr = cleanTime !== "N/D" ? ` • ${cleanTime}` : '';
 
         let imageHtml = item.imagen ? `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer" onclick="openImageModal('${fixImageUrl(item.imagen)}')"><img src="${fixImageUrl(item.imagen)}" class="w-full h-auto object-cover max-h-60" loading="lazy"></div>` : '';
-        let adminActions = isCoronelOrAbove ? `<div class="flex gap-1.5"><button onclick="triggerEdit(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-pen"></i></button><button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
+        let adminActions = isCoronelOrAbove ? `<div class="flex gap-1.5"><button onclick="triggerEdit(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button><button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
 
         const reactKey = `news_react_${item.titulo}`;
         const countReact = localStorage.getItem(reactKey) || 0;
@@ -1463,7 +1462,7 @@
         htmlContent += `
           <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
             <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
-              <span class="font-bold text-amber-400"><i class="fa-solid fa-shield-halved mr-1"></i>${item.autor}</span>
+              <span class="font-bold text-amber-400"><i class="fa-solid fa-shield-halved mr-1"></i>Enviado por: <span class="text-white">${item.autor}</span></span>
               <div class="flex items-center gap-2"><span>${cleanDate}${timeStr}</span>${adminActions}</div>
             </div>
             <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
@@ -1563,12 +1562,12 @@
         const timeStr = cleanTime !== "N/D" ? ` • ${cleanTime}` : '';
 
         let imageHtml = item.imagen ? `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer" onclick="openImageModal('${fixImageUrl(item.imagen)}')"><img src="${fixImageUrl(item.imagen)}" class="w-full h-auto object-cover max-h-60" loading="lazy"></div>` : '';
-        let adminActions = isCoronelOrAbove ? `<div class="flex gap-1.5"><button onclick="triggerEditDoctrina(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-pen"></i></button><button onclick="deleteDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
+        let adminActions = isCoronelOrAbove ? `<div class="flex gap-1.5"><button onclick="triggerEditDoctrina(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button><button onclick="deleteDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
 
         htmlContent += `
           <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
             <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
-              <span class="font-bold text-blue-400"><i class="fa-solid fa-graduation-cap mr-1"></i>${item.autor}</span>
+              <span class="font-bold text-blue-400"><i class="fa-solid fa-graduation-cap mr-1"></i>Enviado por: <span class="text-white">${item.autor}</span></span>
               <div class="flex items-center gap-2"><span>${cleanDate}${timeStr}</span>${adminActions}</div>
             </div>
             <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
@@ -1614,7 +1613,7 @@
           })
         });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert(isHigherRank ? '✔ Publicado con éxito.' : '✔ Propuesta enviada a revisión.');
+        alert(isHigherRank ? '✔ Publicado con éxito.' : '✔ Propuesta enviada a revisión del Alto Mando.');
         closeDoctrinaModal();
         loadSession();
       } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error.'); }
@@ -1665,7 +1664,7 @@
           })
         });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert(isHigherRank ? '✔ Comunicado publicado.' : '✔ Propuesta enviada a revisión.');
+        alert(isHigherRank ? '✔ Comunicado publicado.' : '✔ Propuesta enviada a revisión del Alto Mando.');
         cancelEditNews();
         toggleControlPanel(false);
         loadSession();
@@ -1994,7 +1993,15 @@
           pendingNews.forEach(item => {
             const div = document.createElement('div');
             div.className = 'bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1';
-            div.innerHTML = `<h4 class="font-bold text-white text-xs">${item.titulo}</h4><p class="text-[11px] text-slate-300">${item.mensaje}</p><div class="flex gap-2 pt-1"><button onclick="approveNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-[10px]">Aprobar</button><button onclick="rejectNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">Rechazar</button></div>`;
+            div.innerHTML = `
+              <div class="text-[10px] text-amber-400 font-bold">Enviado por: ${item.autor}</div>
+              <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
+              <p class="text-[11px] text-slate-300">${item.mensaje}</p>
+              <div class="flex gap-2 pt-1">
+                <button onclick="approveNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-[10px]">Aprobar</button>
+                <button onclick="rejectNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">Rechazar</button>
+              </div>
+            `;
             pendingNewsList.appendChild(div);
           });
         }
@@ -2006,7 +2013,15 @@
           pendingDoctrina.forEach(item => {
             const div = document.createElement('div');
             div.className = 'bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1';
-            div.innerHTML = `<h4 class="font-bold text-white text-xs">${item.titulo}</h4><p class="text-[11px] text-slate-300">${item.mensaje}</p><div class="flex gap-2 pt-1"><button onclick="approveDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-[10px]">Aprobar</button><button onclick="rejectDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">Rechazar</button></div>`;
+            div.innerHTML = `
+              <div class="text-[10px] text-blue-400 font-bold">Enviado por: ${item.autor}</div>
+              <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
+              <p class="text-[11px] text-slate-300">${item.mensaje}</p>
+              <div class="flex gap-2 pt-1">
+                <button onclick="approveDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-[10px]">Aprobar</button>
+                <button onclick="rejectDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">Rechazar</button>
+              </div>
+            `;
             pendingDoctrinaList.appendChild(div);
           });
         }
@@ -2019,6 +2034,7 @@
             const div = document.createElement('div');
             div.className = 'bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1';
             div.innerHTML = `
+              <div class="text-[10px] text-emerald-400 font-bold">Enviado por: ${item.autor}</div>
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[10px] text-slate-400">Opciones: ${item.options}</p>
               <div class="flex gap-2 pt-1">
