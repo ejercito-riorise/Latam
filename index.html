@@ -565,7 +565,6 @@
       loadTriviaQuestion();
     });
 
-    // REVISAR Y ACTUALIZAR CRONÓMETRO AL VOLVER A LA PESTAÑA (SEGUNDO PLANO)
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && currentUser) {
         const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
@@ -1152,7 +1151,6 @@
       if (savedSession) {
         currentUser = JSON.parse(savedSession);
         
-        // CIERRE DE SESIÓN AUTOMÁTICO DE 4 HORAS (SIN AFECTAR TURNO ACTIVO)
         const loginTimeKey = `sessionLoginTime_${currentUser.username}`;
         let loginTime = localStorage.getItem(loginTimeKey);
         if (!loginTime) {
@@ -1168,7 +1166,6 @@
             logout();
             return;
           } else {
-            // Renovar tiempo de sesión porque está en servicio activo
             localStorage.setItem(loginTimeKey, Date.now());
           }
         }
@@ -1276,18 +1273,37 @@
       document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyTotalHours);
     }
 
+    // CORTE EXACTO DE HORAS A LAS 00:00 EN VIVO PARA EL RANKING DIARIO Y FILTROS
     function getEffectiveActiveHours(startTime) {
       const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
       const now = new Date(colombiaTimeStr);
-      let endTimeMs = now.getTime();
+      let startTimeObj = new Date(startTime);
+      
+      let todayMidnight = new Date(now);
+      todayMidnight.setHours(0, 0, 0, 0);
 
-      if (now.getHours() >= 3 && now.getHours() < 18) {
-        const cutTime = new Date(now);
-        cutTime.setHours(3, 0, 0, 0);
-        endTimeMs = cutTime.getTime();
+      if (startTimeObj.getTime() < todayMidnight.getTime()) {
+        let effectiveStart = Math.max(startTime, todayMidnight.getTime());
+        let endTimeMs = now.getTime();
+        
+        if (now.getHours() >= 3 && now.getHours() < 18) {
+          let cutTime = new Date(now);
+          cutTime.setHours(3, 0, 0, 0);
+          endTimeMs = Math.min(endTimeMs, cutTime.getTime());
+        }
+        
+        const diffMs = Math.max(0, endTimeMs - effectiveStart);
+        return diffMs / 3600000;
+      } else {
+        let endTimeMs = now.getTime();
+        if (now.getHours() >= 3 && now.getHours() < 18) {
+          let cutTime = new Date(now);
+          cutTime.setHours(3, 0, 0, 0);
+          endTimeMs = cutTime.getTime();
+        }
+        const diffMs = Math.max(0, endTimeMs - startTime);
+        return diffMs / 3600000;
       }
-      const diffMs = Math.max(0, endTimeMs - startTime);
-      return diffMs / 3600000;
     }
 
     function renderNewsFeed(news, polls) {
@@ -1925,7 +1941,6 @@
       loadControlPanelData();
     }
 
-    // RANKING DIARIO: ETIQUETAS COMPACTAS Y DE ANCHO FIJO (INDEPENDIENTES DEL LARGO DEL NICK)
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
