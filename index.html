@@ -11,7 +11,7 @@
 
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
   <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
-  <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgMjUwIj4KICA8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iIzBmMTcyYSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMCwgMjUpIj4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNzUiIGZpbGw9IiMxZTI5M2IiIHN0cm9rPSIjM2I4MmY2IiBzdHJvamUtd2lkdGg9IjUiLz4KICAgIDxwYXRoIGQ9Ik0xMDAgNTkgTDEzOCA3MSBDMTMwIDEwMyAxMTQgMTI4IDEwMCAxMzkgQzg2IDEyOCA3MCAxMDMgNzAgNzEgWiIgZmlsbD0iIzNiODJmNiIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNMTAwIDU5IEwxMzAgNzEgQzEzMCAxMDMgMTE4IDEyOCAgMTAwIDEzOSBaIiBmaWxsPSIjNjBhNWZhIiBvcGFjaXR5PSIwLjUiLz4KICA8L2c+CiAgPHRleHQgeD0iMjEwIiB5PSIxMTAiIGZpbGw9IiNmZmYiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LXNpemU9IjMyIiB0cmFjaz0iMSI+SU5UUkFORVQgRUI8L3RleHQ+CiAgPHRleHQgeD0iMjEwIiB5PSIxNDgiIGZpbGw9IiM5NGEzYjgiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiPkVqcMOpcml0byBSaW9SaXNlPC90ZXh0Pgo8L3N2Zz4=">
+  <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgMjUwIj4KICA8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iIzBmMTcyYSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMCwgMjUpIj4KICAg <ja>ja</ja>xjaHJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNzUiIGZpbGw9IiMxZTI5M2IiIHN0cm9rPSIjM2I4MmY2IiBzdHJvamUtd2lkdGg9IjUiLz4KICAgIDxwYXRo dD0iQzEwMCA1OSBBMzggMzggMCAxIDAgMTAwIDk5IiBmaWxsPSJub25lIiBzdHJva2U9IiMzYjgyZjYiIHN0cm9rLXdpZHRoPSI1Ii8+CiAgPC9nPgogIDx0ZXh0IHg9IjIxMCIgeT0iMTEwIiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0ic3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSIzMiI+SU5UUkFORVQgRUI8L3RleHQ+CiAgPHRleHQgeD0iMjEwIiB5PSIxNDgiIGZpbGw9IiM5NGEzYjgiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiPkVqcMOpcml0byBSaW9SaXNlPC90ZXh0Pgo8L3N2Zz4=">
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
@@ -890,11 +890,20 @@
     }
 
     function normalizeTime(timeStr) {
-      if (!timeStr) return "";
+      if (!timeStr) return "N/D";
       let str = timeStr.toString().trim();
       if (str.includes('T') || str.includes('1899')) {
         let d = new Date(str);
-        if (!isNaN(d.getTime())) return d.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
+        if (!isNaN(d.getTime())) {
+          // Si el año es 1899 o inválido, la fecha es un time-only serial o timestamp corrupto
+          let hours = d.getUTCHours();
+          let mins = d.getUTCMinutes();
+          if (str.includes('T')) {
+            // Extraer hora local colombiana directamente si viene en formato ISO
+            return d.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
+          }
+        }
+        return "N/D";
       }
       return str;
     }
@@ -1101,7 +1110,6 @@
       if (tab === 'filters') {
         const dateInput = document.getElementById('filterDateInput');
         if (dateInput && !dateInput.value) {
-          // Asignar fecha actual por defecto en formato YYYY-MM-DD
           const now = new Date();
           const year = now.getFullYear();
           const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -1421,7 +1429,7 @@
         newsStorageMap[index] = item;
         const cleanDate = normalizeDate(item.fecha);
         const cleanTime = normalizeTime(item.hora);
-        const timeStr = cleanTime ? ` • ${cleanTime}` : '';
+        const timeStr = cleanTime !== "N/D" ? ` • ${cleanTime}` : '';
 
         let imageHtml = item.imagen ? `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer" onclick="openImageModal('${fixImageUrl(item.imagen)}')"><img src="${fixImageUrl(item.imagen)}" class="w-full h-auto object-cover max-h-60" loading="lazy"></div>` : '';
         let adminActions = canManageNews ? `<div class="flex gap-1.5"><button onclick="triggerEdit(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-pen"></i></button><button onclick="deleteNews('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
@@ -1529,7 +1537,7 @@
         doctrinaStorageMap[index] = item;
         const cleanDate = normalizeDate(item.fecha);
         const cleanTime = normalizeTime(item.hora);
-        const timeStr = cleanTime ? ` • ${cleanTime}` : '';
+        const timeStr = cleanTime !== "N/D" ? ` • ${cleanTime}` : '';
 
         let imageHtml = item.imagen ? `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer" onclick="openImageModal('${fixImageUrl(item.imagen)}')"><img src="${fixImageUrl(item.imagen)}" class="w-full h-auto object-cover max-h-60" loading="lazy"></div>` : '';
         let adminActions = canManageDoctrina ? `<div class="flex gap-1.5"><button onclick="triggerEditDoctrina(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-pen"></i></button><button onclick="deleteDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-blue-800"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
@@ -2127,11 +2135,14 @@
         });
       }
 
+      // ORDENAR DE MAYOR A MENOR TIEMPO (Horas decimales)
+      filtered.sort((a, b) => parseFloat(b.horas || 0) - parseFloat(a.horas || 0));
+
       currentRankedExportArray = filtered;
 
       container.innerHTML = filtered.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros detallados en este rango.</p>' : '';
       
-      [...filtered].reverse().forEach((h) => {
+      filtered.forEach((h) => {
         const div = document.createElement('div');
         div.className = 'bg-slate-950 p-2.5 rounded border border-slate-800 text-xs space-y-1';
         div.innerHTML = `
@@ -2141,7 +2152,7 @@
           </div>
           <div class="flex justify-between items-center text-[10px] text-slate-400">
             <span>📅 ${normalizeDate(h.fecha)}</span>
-            <span>⏰ ${h.horaInicio || 'N/D'} ➔ ${h.horaFin || 'N/D'}</span>
+            <span>⏰ ${normalizeTime(h.horaInicio)} ➔ ${normalizeTime(h.horaFin)}</span>
           </div>
         `;
         container.appendChild(div);
@@ -2155,7 +2166,7 @@
       }
       let csvContent = "data:text/csv;charset=utf-8,Usuario,Fecha,Hora_Inicio,Hora_Fin,Duracion,Horas_Decimal\n";
       currentRankedExportArray.forEach((h) => {
-        csvContent += `${h.username},${normalizeDate(h.fecha)},${h.horaInicio || ''},${h.horaFin || ''},${h.duracion || ''},${h.horas}\n`;
+        csvContent += `${h.username},${normalizeDate(h.fecha)},${normalizeTime(h.horaInicio)},${normalizeTime(h.horaFin)},${h.duracion || ''},${h.horas}\n`;
       });
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
