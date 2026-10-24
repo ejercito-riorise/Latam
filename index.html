@@ -11,7 +11,6 @@
 
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
   <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
-  <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgMjUwIj4KICA8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iIzBmMTcyYSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMCwgMjUpIj4KICAg <ja>ja</ja>xjaHJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNzUiIGZpbGw9IiMxZTI5M2IiIHN0cm9rPSIjM2I4MmY2IiBzdHJvamUtd2lkdGg9IjUiLz4KICAgIDxwYXRo dD0iQzEwMCA1OSBBMzggMzggMCAxIDAgMTAwIDk5IiBmaWxsPSJub25lIiBzdHJva2U9IiMzYjgyZjYiIHN0cm9rLXdpZHRoPSI1Ii8+CiAgPC9nPgogIDx0ZXh0IHg9IjIxMCIgeT0iMTEwIiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0ic3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSIzMiI+SU5UUkFORVQgRUI8L3RleHQ+CiAgPHRleHQgeD0iMjEwIiB5PSIxNDgiIGZpbGw9IiM5NGEzYjgiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiPkVqcMOpcml0byBSaW9SaXNlPC90ZXh0Pgo8L3N2Zz4=">
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
@@ -178,7 +177,7 @@
                   <span id="profileBadgeLevel" class="text-[9px] text-amber-300 font-bold">🔰 Soldado Raso</span>
                   <button onclick="openRankInfoModal()" class="text-[10px] text-amber-400 hover:text-white transition" title="Ver tabla de rangos"><i class="fa-solid fa-circle-question"></i></button>
                 </div>
-                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Horas de servicio hoy">Hoy: 00:00</span>
+                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Tiempo activo de tu turno">Activo: 00:00</span>
               </div>
             </div>
           </div>
@@ -202,7 +201,7 @@
 
           <div id="shiftControls" class="space-y-2">
             <div id="timerDisplay" class="hidden text-center py-1.5 bg-slate-950 rounded border border-slate-800">
-              <p class="text-[10px] text-slate-400">Tiempo transcurrido en servicio:</p>
+              <p class="text-[10px] text-slate-400">Tiempo transcurrido en tu turno actual:</p>
               <p id="stopwatch" class="text-xl font-mono font-bold text-green-400">00:00:00</p>
             </div>
             <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
@@ -384,6 +383,8 @@
           <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-trophy"></i> Monitor de Tropa en Tiempo Real (Hoy):</h4>
           <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando...</p></div>
         </div>
+        
+        <!-- VISTA FILTROS CON RANGO DE FECHAS DESDE - HASTA -->
         <div id="viewFilters" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
             <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Rendimiento e Historial:</h4>
@@ -393,16 +394,12 @@
           </div>
           <div class="grid grid-cols-2 gap-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
             <div>
-              <label class="block text-[10px] text-slate-400 mb-1">Filtro:</label>
-              <select id="filterType" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
-                <option value="day">Por Día</option>
-                <option value="month">Mes Actual</option>
-                <option value="all">Histórico Total</option>
-              </select>
+              <label class="block text-[10px] text-slate-400 mb-1">Desde:</label>
+              <input type="date" id="filterDateStart" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
             </div>
             <div>
-              <label class="block text-[10px] text-slate-400 mb-1">Fecha:</label>
-              <input type="date" id="filterDateInput" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1 focus:outline-none">
+              <label class="block text-[10px] text-slate-400 mb-1">Hasta:</label>
+              <input type="date" id="filterDateEnd" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
             </div>
           </div>
           <div id="filteredHistoryList" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
@@ -574,7 +571,7 @@
         const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
         if (activeShiftStart) {
           updateTimerDisplayLive(parseInt(activeShiftStart));
-          updateTodayHoursLive();
+          updateActiveShiftVisualCounter(parseInt(activeShiftStart));
         }
       }
     });
@@ -711,9 +708,9 @@
       
       const activePoll = approvedPolls[approvedPolls.length - 1];
       if (!activePoll || !activePoll.titulo) return;
-      const votedKey = `votedPoll_${currentUser.username}_${activePoll.titulo}`;
       
-      if (!localStorage.getItem(votedKey)) {
+      const userVotedVersion = localStorage.getItem(`votedPoll_${currentUser.username}_${activePoll.titulo}`);
+      if (!userVotedVersion) {
         showMandatoryPollModal(activePoll);
       }
     }
@@ -737,19 +734,34 @@
       document.getElementById('mandatoryPollModal').classList.remove('hidden');
     }
 
-    function submitPollVote(pollTitle, selectedOption) {
+    async function submitPollVote(pollTitle, selectedOption) {
       const votedKey = `votedPoll_${currentUser.username}_${pollTitle}`;
       localStorage.setItem(votedKey, selectedOption);
-      
-      const votesKey = `pollVotes_${pollTitle}`;
-      let pollData = JSON.parse(localStorage.getItem(votesKey) || "{}");
-      pollData[selectedOption] = (pollData[selectedOption] || 0) + 1;
-      pollData._total = (pollData._total || 0) + 1;
-      localStorage.setItem(votesKey, JSON.stringify(pollData));
-
       document.getElementById('mandatoryPollModal').classList.add('hidden');
-      alert("✔ ¡Voto registrado con éxito! Gracias por participar.");
-      loadSession();
+
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'votePoll',
+            titulo: pollTitle,
+            username: currentUser.username,
+            option: selectedOption
+          })
+        });
+        const res = await response.json();
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        if (res.status === 'success') {
+          alert("✔ ¡Voto registrado con éxito en el servidor!");
+          loadSession();
+        } else {
+          alert("⚠ " + (res.message || "Error al registrar voto."));
+        }
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert("Error de conexión al enviar el voto.");
+      }
     }
 
     function switchPublishSubTab(sub) {
@@ -771,7 +783,7 @@
       const isAutoApproved = ['general', 'coronel'].includes(rankLower) || currentUser.username.toLowerCase() === 'mike_covid';
       const status = isAutoApproved ? 'approved' : 'pending';
 
-      const title = document.getElementById('pollTitle').value.trim();
+      const title = document.getElementById('pollTitle').value.trim() + " (V." + Date.now().toString().slice(-4) + ")";
       const optionsStr = document.getElementById('pollOptions').value.trim();
       if (!title || !optionsStr) return;
 
@@ -790,7 +802,7 @@
           })
         });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert(isAutoApproved ? '✔ Encuesta publicada con éxito.' : '✔ Propuesta de encuesta enviada a revisión del Alto Mando.');
+        alert(isAutoApproved ? '✔ Nueva encuesta relanzada con éxito para toda la tropa.' : '✔ Propuesta de encuesta enviada a revisión.');
         document.getElementById('pollTitle').value = '';
         document.getElementById('pollOptions').value = '';
         toggleControlPanel(false);
@@ -895,13 +907,7 @@
       if (str.includes('T') || str.includes('1899')) {
         let d = new Date(str);
         if (!isNaN(d.getTime())) {
-          // Si el año es 1899 o inválido, la fecha es un time-only serial o timestamp corrupto
-          let hours = d.getUTCHours();
-          let mins = d.getUTCMinutes();
-          if (str.includes('T')) {
-            // Extraer hora local colombiana directamente si viene en formato ISO
-            return d.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
-          }
+          return d.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
         }
         return "N/D";
       }
@@ -1108,13 +1114,15 @@
       }
 
       if (tab === 'filters') {
-        const dateInput = document.getElementById('filterDateInput');
-        if (dateInput && !dateInput.value) {
+        const startInput = document.getElementById('filterDateStart');
+        const endInput = document.getElementById('filterDateEnd');
+        if (startInput && !startInput.value) {
           const now = new Date();
           const year = now.getFullYear();
           const month = String(now.getMonth() + 1).padStart(2, '0');
           const day = String(now.getDate()).padStart(2, '0');
-          dateInput.value = `${year}-${month}-${day}`;
+          startInput.value = `${year}-${month}-${day}`;
+          endInput.value = `${year}-${month}-${day}`;
         }
         applyHistoryFilter();
       }
@@ -1154,7 +1162,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.remove('hidden');
+      document.getElementById('loadingOverlay').classList.add('hidden');
       try {
         const response = await fetch(WEB_APP_URL);
         const resData = await response.json();
@@ -1317,45 +1325,20 @@
 
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
-        const activeHours = getEffectiveActiveHours(parseInt(activeShiftStart));
-        todayTotalHours += activeHours;
+        const activeHours = (Date.now() - parseInt(activeShiftStart)) / 3600000;
         weeklyTotalHours += activeHours;
       }
 
-      document.getElementById('profileTodayHours').innerText = `Hoy: ${decimalToHM(todayTotalHours)}`;
       document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyTotalHours);
     }
 
-    function getEffectiveActiveHours(startTime) {
-      const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
-      const now = new Date(colombiaTimeStr);
-      let startTimeObj = new Date(startTime);
-      
-      let todayMidnight = new Date(now);
-      todayMidnight.setHours(0, 0, 0, 0);
-
-      if (startTimeObj.getTime() < todayMidnight.getTime()) {
-        let effectiveStart = Math.max(startTime, todayMidnight.getTime());
-        let endTimeMs = now.getTime();
-        
-        if (now.getHours() >= 3 && now.getHours() < 18) {
-          let cutTime = new Date(now);
-          cutTime.setHours(3, 0, 0, 0);
-          endTimeMs = Math.min(endTimeMs, cutTime.getTime());
-        }
-        
-        const diffMs = Math.max(0, endTimeMs - effectiveStart);
-        return diffMs / 3600000;
-      } else {
-        let endTimeMs = now.getTime();
-        if (now.getHours() >= 3 && now.getHours() < 18) {
-          let cutTime = new Date(now);
-          cutTime.setHours(3, 0, 0, 0);
-          endTimeMs = cutTime.getTime();
-        }
-        const diffMs = Math.max(0, endTimeMs - startTime);
-        return diffMs / 3600000;
-      }
+    function updateActiveShiftVisualCounter(startTime) {
+      const diffMs = Math.max(0, Date.now() - startTime);
+      const totalSecs = Math.floor(diffMs / 1000);
+      const hours = String(Math.floor(totalSecs / 3600)).padStart(2, '0');
+      const mins = String(Math.floor((totalSecs % 3600) / 60)).padStart(2, '0');
+      const el = document.getElementById('profileTodayHours');
+      if (el) el.innerText = `Activo: ${hours}:${mins}`;
     }
 
     function renderNewsFeed(news, polls) {
@@ -1368,18 +1351,31 @@
 
       if (approvedPolls.length > 0) {
         approvedPolls.forEach((poll) => {
-          const votesKey = `pollVotes_${poll.titulo}`;
-          const pollData = JSON.parse(localStorage.getItem(votesKey) || "{}");
-          const totalVotes = pollData._total || 0;
-          const userVotedOpt = localStorage.getItem(`votedPoll_${currentUser.username}_${poll.titulo}`);
-
-          let optionsHtml = '';
           let optionsList = poll.options || [];
           if (typeof optionsList === 'string') optionsList = optionsList.split(',');
 
+          let globalVotes = {};
+          try {
+            if (poll.votes) {
+              globalVotes = typeof poll.votes === 'string' ? JSON.parse(poll.votes) : poll.votes;
+            }
+          } catch (e) {}
+
+          let totalVotes = 0;
+          optionsList.forEach(opt => {
+            let cleanOpt = opt.trim();
+            totalVotes += (globalVotes[cleanOpt] || 0);
+          });
+
+          let userVotedOpt = null;
+          if (globalVotes._users && globalVotes._users[currentUser.username]) {
+            userVotedOpt = globalVotes._users[currentUser.username];
+          }
+
+          let optionsHtml = '';
           optionsList.forEach(opt => {
             const cleanOpt = opt.trim();
-            const optVotes = pollData[cleanOpt] || 0;
+            const optVotes = globalVotes[cleanOpt] || 0;
             const pct = totalVotes > 0 ? Math.round((optVotes / totalVotes) * 100) : 0;
             const isUserChoice = userVotedOpt === cleanOpt;
 
@@ -1774,6 +1770,7 @@
       btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded text-xs transition';
 
       updateTimerDisplayLive(startTime);
+      updateActiveShiftVisualCounter(startTime);
 
       if (shiftInterval) clearInterval(shiftInterval);
       shiftInterval = setInterval(() => {
@@ -1797,6 +1794,7 @@
         }
 
         updateTimerDisplayLive(startTime);
+        updateActiveShiftVisualCounter(startTime);
         updateTodayHoursLive();
       }, 1000);
     }
@@ -1832,6 +1830,7 @@
         document.getElementById('shiftStatusBadge').innerText = 'FUERA DE SERVICIO';
         document.getElementById('shiftStatusBadge').className = 'text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
         document.getElementById('timerDisplay').classList.add('hidden');
+        document.getElementById('profileTodayHours').innerText = `Activo: 00:00`;
 
         await processAndSaveSplitShift(startTime, endTime);
       }
@@ -2064,7 +2063,7 @@
       const dailyArray = Object.values(dailyTotals).map(u => {
         let liveHours = u.hours;
         if (u.activeShiftStart) {
-          liveHours += getEffectiveActiveHours(parseInt(u.activeShiftStart));
+          liveHours += (Date.now() - parseInt(u.activeShiftStart)) / 3600000;
         }
         return { ...u, liveHours, isConnected: !!u.activeShiftStart };
       });
@@ -2114,33 +2113,34 @@
     }
 
     function applyHistoryFilter() {
-      const type = document.getElementById('filterType').value;
-      const dateVal = document.getElementById('filterDateInput').value;
+      const startVal = document.getElementById('filterDateStart').value;
+      const endVal = document.getElementById('filterDateEnd').value;
       const container = document.getElementById('filteredHistoryList');
       if (!container) return;
 
       let filtered = globalHistoryCache || [];
-      const todayStr = getColombiaDateString();
 
-      if (type === 'day') {
-        let targetDateStr = dateVal ? normalizeDate(dateVal) : todayStr;
-        filtered = filtered.filter(h => normalizeDate(h.fecha) === targetDateStr);
-      } else if (type === 'month') {
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
+      if (startVal && endVal) {
+        // Convertir YYYY-MM-DD a objeto Date (medianoche UTC o local para comparar seguro)
+        let startDate = new Date(startVal + "T00:00:00");
+        let endDate = new Date(endVal + "T23:59:59");
+
         filtered = filtered.filter(h => {
-          let d = new Date(normalizeDate(h.fecha).split('/').reverse().join('-'));
-          return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+          let cleanDStr = normalizeDate(h.fecha); // formato DD/MM/YYYY
+          if (!cleanDStr) return false;
+          let parts = cleanDStr.split('/');
+          if (parts.length !== 3) return false;
+          let itemDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T00:00:00`);
+          return itemDate >= startDate && itemDate <= endDate;
         });
       }
 
-      // ORDENAR DE MAYOR A MENOR TIEMPO (Horas decimales)
+      // ORDENAR DE MAYOR A MENOR TIEMPO
       filtered.sort((a, b) => parseFloat(b.horas || 0) - parseFloat(a.horas || 0));
 
       currentRankedExportArray = filtered;
 
-      container.innerHTML = filtered.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros detallados en este rango.</p>' : '';
+      container.innerHTML = filtered.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros en este rango de fechas.</p>' : '';
       
       filtered.forEach((h) => {
         const div = document.createElement('div');
