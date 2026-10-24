@@ -1184,7 +1184,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         const response = await fetch(WEB_APP_URL);
         const resData = await response.json();
@@ -1438,11 +1438,14 @@
           });
 
           let pollDeleteAction = isCoronelOrAbove ? `<button onclick="deletePoll('${poll.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar Encuesta"><i class="fa-solid fa-trash-can"></i></button>` : '';
+          const cleanPollDate = normalizeDate(poll.fecha);
+          const cleanPollTime = normalizeTime(poll.hora);
+          const pollTimeStr = (cleanPollDate || cleanPollTime !== "N/D") ? ` • ${cleanPollDate} ${cleanPollTime}` : '';
 
           htmlContent += `
             <div class="bg-slate-950 p-3 rounded-lg border border-amber-500/50 space-y-2 shadow-lg">
               <div class="flex items-center justify-between text-[10px] text-amber-400 border-b border-slate-900 pb-1 font-bold">
-                <span><i class="fa-solid fa-square-poll-vertical mr-1"></i>Encuesta Oficial • <span class="text-slate-300">${poll.autor}</span></span>
+                <span><i class="fa-solid fa-square-poll-vertical mr-1"></i>Encuesta Oficial • <span class="text-slate-300">${poll.autor}</span> <span class="text-slate-500 font-normal">${pollTimeStr}</span></span>
                 <div class="flex items-center gap-2"><span>Total: ${totalVotes} votos</span>${pollDeleteAction}</div>
               </div>
               <h4 class="font-bold text-white text-xs">${poll.titulo}</h4>
