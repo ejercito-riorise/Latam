@@ -177,7 +177,7 @@
                   <span id="profileBadgeLevel" class="text-[9px] text-amber-300 font-bold">🔰 Soldado Raso</span>
                   <button onclick="openRankInfoModal()" class="text-[10px] text-amber-400 hover:text-white transition" title="Ver tabla de rangos"><i class="fa-solid fa-circle-question"></i></button>
                 </div>
-                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Tiempo activo de tu turno">Activo: 00:00</span>
+                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Total acumulado de la jornada de hoy">Total hoy: 00:00</span>
               </div>
             </div>
           </div>
@@ -1338,7 +1338,18 @@
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
         const activeHours = (Date.now() - parseInt(activeShiftStart)) / 3600000;
+        todayTotalHours += activeHours;
         weeklyTotalHours += activeHours;
+      }
+
+      // Muestra el total acumulado de la jornada
+      const el = document.getElementById('profileTodayHours');
+      if (el) {
+        if (activeShiftStart) {
+          el.innerText = `En servicio: ${decimalToHM(todayTotalHours)}`;
+        } else {
+          el.innerText = `Total hoy: ${decimalToHM(todayTotalHours)}`;
+        }
       }
 
       document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyTotalHours);
@@ -1349,8 +1360,8 @@
       const totalSecs = Math.floor(diffMs / 1000);
       const hours = String(Math.floor(totalSecs / 3600)).padStart(2, '0');
       const mins = String(Math.floor((totalSecs % 3600) / 60)).padStart(2, '0');
-      const el = document.getElementById('profileTodayHours');
-      if (el) el.innerText = `Activo: ${hours}:${mins}`;
+      const el = document.getElementById('stopwatch');
+      if (el) el.innerText = `${hours}:${mins}:${String(totalSecs % 60).padStart(2, '0')}`;
     }
 
     function renderNewsFeed(news, polls) {
@@ -1861,7 +1872,6 @@
         document.getElementById('shiftStatusBadge').innerText = 'FUERA DE SERVICIO';
         document.getElementById('shiftStatusBadge').className = 'text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
         document.getElementById('timerDisplay').classList.add('hidden');
-        document.getElementById('profileTodayHours').innerText = `Activo: 00:00`;
 
         await processAndSaveSplitShift(startTime, endTime);
       }
