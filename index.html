@@ -463,7 +463,7 @@
           </form>
         </div>
 
-        <!-- BANDEJA UNIFICADA DE APROBACIÓN (SOLO CORONELES Y GENERAL) -->
+        <!-- BANDEJA UNIFICADA DE APROBACIÓN -->
         <div id="viewApproveNews" class="space-y-3 hidden">
           <div>
             <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-bullhorn"></i> Comunicados Pendientes:</h4>
@@ -1152,7 +1152,17 @@
       try {
         const response = await fetch(WEB_APP_URL, {
           method: 'POST',
-          body: JSON.stringify({ action: 'register', username: user, password: pass, rank: rank, age: age, country: country, status: 'pending' })
+          body: JSON.stringify({ 
+            action: 'register', 
+            username: user, 
+            password: pass, 
+            rank: rank, 
+            age: age, 
+            country: country, 
+            status: 'pending',
+            fecha: getColombiaDateString(),
+            hora: new Date().toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' })
+          })
         });
         const result = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -1693,17 +1703,33 @@
 
     async function approveNews(title) {
       if (!confirm(`¿Aprobar comunicado "${title}"?`)) return;
-      await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approveNews', titulo: title }) });
-      loadControlPanelData();
-      loadSession();
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approveNews', titulo: title }) });
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('✔ Comunicado aprobado con éxito.');
+        loadControlPanelData();
+        loadSession();
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al aprobar comunicado.');
+      }
     }
 
     async function rejectNews(title) {
       const motivo = prompt(`Motivo del rechazo para "${title}":`, "Falta ajustar formato.");
       if (motivo === null) return;
-      await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectNews', titulo: title, motivo: motivo }) });
-      loadControlPanelData();
-      loadSession();
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectNews', titulo: title, motivo: motivo }) });
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('✔ Comunicado rechazado.');
+        loadControlPanelData();
+        loadSession();
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al rechazar comunicado.');
+      }
     }
 
     async function deleteNews(title) {
@@ -1720,32 +1746,64 @@
 
     async function approveDoctrina(title) {
       if (!confirm(`¿Aprobar doctrina "${title}"?`)) return;
-      await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approveDoctrina', titulo: title }) });
-      loadControlPanelData();
-      loadSession();
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approveDoctrina', titulo: title }) });
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('✔ Doctrina aprobada con éxito.');
+        loadControlPanelData();
+        loadSession();
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al aprobar doctrina.');
+      }
     }
 
     async function rejectDoctrina(title) {
       const motivo = prompt(`Motivo del rechazo para la doctrina "${title}":`, "Requiere corrección.");
       if (motivo === null) return;
-      await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectDoctrina', titulo: title, motivo: motivo }) });
-      loadControlPanelData();
-      loadSession();
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectDoctrina', titulo: title, motivo: motivo }) });
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('✔ Doctrina rechazada.');
+        loadControlPanelData();
+        loadSession();
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al rechazar doctrina.');
+      }
     }
 
     async function approvePoll(title) {
       if (!confirm(`¿Aprobar encuesta "${title}"?`)) return;
-      await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approvePoll', titulo: title }) });
-      loadControlPanelData();
-      loadSession();
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approvePoll', titulo: title }) });
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('✔ Encuesta aprobada con éxito.');
+        loadControlPanelData();
+        loadSession();
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al aprobar encuesta.');
+      }
     }
 
     async function rejectPoll(title) {
       const motivo = prompt(`Motivo del rechazo para la encuesta "${title}":`, "Pregunta no apta.");
       if (motivo === null) return;
-      await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectPoll', titulo: title, motivo: motivo }) });
-      loadControlPanelData();
-      loadSession();
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      try {
+        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectPoll', titulo: title, motivo: motivo }) });
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('✔ Encuesta rechazada.');
+        loadControlPanelData();
+        loadSession();
+      } catch (err) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        alert('Error al rechazar encuesta.');
+      }
     }
 
     async function deletePoll(title) {
@@ -1973,10 +2031,18 @@
           const pendingUsers = users.filter(u => u.status && u.status.toLowerCase() === 'pending');
           pendingList.innerHTML = pendingUsers.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay solicitudes pendientes.</p>' : '';
           pendingUsers.forEach(u => {
+            const cleanDate = normalizeDate(u.fecha || '');
+            const cleanTime = normalizeTime(u.hora || '');
+            const timeInfo = (cleanDate || cleanTime) ? `<div class="text-[9px] text-slate-400 mt-0.5">📅 ${cleanDate} • ⏰ ${cleanTime}</div>` : '';
+
             const item = document.createElement('div');
             item.className = 'bg-slate-900 p-2.5 rounded-lg border border-amber-900/40 flex items-center justify-between text-xs';
             item.innerHTML = `
-              <div><span class="font-bold text-white text-[11px]">${u.username}</span> <span class="text-[9px] text-amber-400">(${u.rank})</span></div>
+              <div>
+                <span class="font-bold text-white text-[11px]">${u.username}</span> 
+                <span class="text-[9px] text-amber-400">(${u.rank})</span>
+                ${timeInfo}
+              </div>
               <div class="flex gap-1">
                 <button onclick="approveUser('${u.username}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-check"></i></button>
                 <button onclick="rejectUserModal('${u.username}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-xmark"></i></button>
@@ -1991,10 +2057,17 @@
           const pendingNews = news ? news.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
           pendingNewsList.innerHTML = pendingNews.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay comunicados pendientes.</p>' : '';
           pendingNews.forEach(item => {
+            const cleanDate = normalizeDate(item.fecha);
+            const cleanTime = normalizeTime(item.hora);
+            const timeStr = (cleanDate || cleanTime !== "N/D") ? `📅 ${cleanDate} • ⏰ ${cleanTime}` : '';
+
             const div = document.createElement('div');
             div.className = 'bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1';
             div.innerHTML = `
-              <div class="text-[10px] text-amber-400 font-bold">Enviado por: ${item.autor}</div>
+              <div class="flex justify-between items-center text-[10px] text-amber-400 font-bold">
+                <span>Enviado por: ${item.autor}</span>
+                <span class="text-slate-400">${timeStr}</span>
+              </div>
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[11px] text-slate-300">${item.mensaje}</p>
               <div class="flex gap-2 pt-1">
@@ -2011,10 +2084,17 @@
           const pendingDoctrina = doctrina ? doctrina.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
           pendingDoctrinaList.innerHTML = pendingDoctrina.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay doctrinas pendientes.</p>' : '';
           pendingDoctrina.forEach(item => {
+            const cleanDate = normalizeDate(item.fecha);
+            const cleanTime = normalizeTime(item.hora);
+            const timeStr = (cleanDate || cleanTime !== "N/D") ? `📅 ${cleanDate} • ⏰ ${cleanTime}` : '';
+
             const div = document.createElement('div');
             div.className = 'bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1';
             div.innerHTML = `
-              <div class="text-[10px] text-blue-400 font-bold">Enviado por: ${item.autor}</div>
+              <div class="flex justify-between items-center text-[10px] text-blue-400 font-bold">
+                <span>Enviado por: ${item.autor}</span>
+                <span class="text-slate-400">${timeStr}</span>
+              </div>
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[11px] text-slate-300">${item.mensaje}</p>
               <div class="flex gap-2 pt-1">
@@ -2031,10 +2111,17 @@
           const pendingPolls = polls ? polls.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
           pendingPollsList.innerHTML = pendingPolls.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay encuestas pendientes de aprobación.</p>' : '';
           pendingPolls.forEach(item => {
+            const cleanDate = normalizeDate(item.fecha);
+            const cleanTime = normalizeTime(item.hora);
+            const timeStr = (cleanDate || cleanTime !== "N/D") ? `📅 ${cleanDate} • ⏰ ${cleanTime}` : '';
+
             const div = document.createElement('div');
             div.className = 'bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1';
             div.innerHTML = `
-              <div class="text-[10px] text-emerald-400 font-bold">Enviado por: ${item.autor}</div>
+              <div class="flex justify-between items-center text-[10px] text-emerald-400 font-bold">
+                <span>Enviado por: ${item.autor}</span>
+                <span class="text-slate-400">${timeStr}</span>
+              </div>
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[10px] text-slate-400">Opciones: ${item.options}</p>
               <div class="flex gap-2 pt-1">
