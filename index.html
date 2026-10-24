@@ -177,7 +177,7 @@
                   <span id="profileBadgeLevel" class="text-[9px] text-amber-300 font-bold">🔰 Soldado Raso</span>
                   <button onclick="openRankInfoModal()" class="text-[10px] text-amber-400 hover:text-white transition" title="Ver tabla de rangos"><i class="fa-solid fa-circle-question"></i></button>
                 </div>
-                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Total acumulado de la jornada de hoy">Total hoy: 00:00</span>
+                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Duración del turno actual o último turno">Turno: 00:00</span>
               </div>
             </div>
           </div>
@@ -556,7 +556,6 @@
     let doctrinaStorageMap = {};
     let pollStorageMap = {};
     
-    // MAPAS SEGUROS PARA APROBACIÓN POR ÍNDICE (EVITA ERRORES CON COMILLAS EN TÍTULOS)
     let pendingNewsMap = {};
     let pendingDoctrinaMap = {};
     let pendingPollsMap = {};
@@ -571,7 +570,7 @@
       { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos", "C) Retirarse de base"], a: 0 },
       { q: "¿Qué significa el Código Q: QAP?", options: ["A) ¿Dónde te encuentras?", "B) ¿Estás escuchando / en frecuencia?", "C) Solicito refuerzos"], a: 1 },
       { q: "¿Cuál es el significado de QTH?", options: ["A) Ubicación / Dirección", "B) Hora del servidor", "C) Conductor"], a: 0 },
-      { q: "En la Biblia RP, ¿Qué significa SAAV?", options: ["A) Sistema Aéreo", "B) Sin Amor a la Vida (no valorar la vida)", "C) Soldado Vigilante"], a: 1 },
+      { q: "En la Biblia RP, ¿Qué significa SAAV?", options: ["A) Sistema Aéreo", "B) Sin Amor a la Vida (not valorar la vida)", "C) Soldado Vigilante"], a: 1 },
       { q: "¿Qué código Q se utiliza para solicitar REFUERZOS urgentes?", options: ["A) QRR", "B) QTH", "C) QAP"], a: 0 },
       { q: "Según el Reglamento, ¿Qué función principal tiene el Rango 1 / PRIVADO?", options: ["A) Dirigir la base militar", "B) Obedecer a superiores y vigilar / cuidar la base", "C) Autorizar licencias"], a: 1 },
       { q: "¿Cuál es la norma sobre el valor de la vida en el servidor?", options: ["A) Correr hacia un arma apuntándome", "B) Valorar mi vida ante cualquier amenaza (No SAAV)", "C) Disparar sin mediar palabra"], a: 1 }
@@ -1337,36 +1336,54 @@
       }, 5000);
     }
 
+    // ==========================================
+    // CAMBIO SOLICITADO: MUESTRA EL TURNO ACTUAL EN VIVO O EL ÚLTIMO TURNO CERRADO
+    // ==========================================
     function updateTodayHoursLive() {
-      const todayStr = getColombiaDateString();
-      let todayTotalHours = 0, weeklyTotalHours = 0;
+      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
+      const el = document.getElementById('profileTodayHours');
+      if (!el) return;
 
+      if (activeShiftStart) {
+        // Si está en servicio, muestra el tiempo transcurrido de su turno actual en vivo
+        const activeHours = (Date.now() - parseInt(activeShiftStart)) / 3600000;
+        el.innerText = `Turno: ${decimalToHM(activeHours)}`;
+      } else {
+        // Si está fuera de servicio, busca el último turno cerrado del usuario en el historial
+        let lastShiftDuration = 0;
+        if (globalHistoryCache && globalHistoryCache.length > 0) {
+          const userHistory = globalHistoryCache.filter(h => h.username && h.username.toLowerCase() === currentUser.username.toLowerCase());
+          if (userHistory.length > 0) {
+            const lastRecord = userHistory[userHistory.length - 1];
+            if (lastRecord.duracion) {
+              el.innerText = `Turno: ${lastRecord.duracion}`;
+              // Calculamos también las horas semanales para el nivel
+              let weeklyHours = 0;
+              userHistory.forEach(h => {
+                if (isDateInCurrentWeek(h.fecha)) weeklyHours += parseFloat(h.horas || 0);
+              });
+              document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyHours);
+              return;
+            } else if (lastRecord.horas) {
+              lastShiftDuration = parseFloat(lastRecord.horas);
+            }
+          }
+        }
+        el.innerText = `Turno: ${decimalToHM(lastShiftDuration)}`;
+      }
+
+      // Actualizar insignia semanal
+      let weeklyTotalHours = 0;
       if (globalHistoryCache) {
         globalHistoryCache.forEach(h => {
-          if (h.username.toLowerCase() === currentUser.username.toLowerCase()) {
-            const hHours = parseFloat(h.horas || 0);
-            if (normalizeDate(h.fecha) === todayStr) todayTotalHours += hHours;
-            if (isDateInCurrentWeek(h.fecha)) weeklyTotalHours += hHours;
+          if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase()) {
+            if (isDateInCurrentWeek(h.fecha)) weeklyTotalHours += parseFloat(h.horas || 0);
           }
         });
       }
-
-      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
-        const activeHours = (Date.now() - parseInt(activeShiftStart)) / 3600000;
-        todayTotalHours += activeHours;
-        weeklyTotalHours += activeHours;
+        weeklyTotalHours += (Date.now() - parseInt(activeShiftStart)) / 3600000;
       }
-
-      const el = document.getElementById('profileTodayHours');
-      if (el) {
-        if (activeShiftStart) {
-          el.innerText = `En servicio: ${decimalToHM(todayTotalHours)}`;
-        } else {
-          el.innerText = `Total hoy: ${decimalToHM(todayTotalHours)}`;
-        }
-      }
-
       document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyTotalHours);
     }
 
@@ -1710,9 +1727,6 @@
       document.getElementById('cancelEditBtn').classList.add('hidden');
     }
 
-    // ==========================================
-    // ACCIONES DE APROBACIÓN Y RECHAZO SEGURAS POR ÍNDICE (EVITA ERRORES CON COMILLAS Y SÍMBOLOS)
-    // ==========================================
     async function approvePendingNews(index) {
       const title = pendingNewsMap[index];
       if (!title) return;
@@ -1737,7 +1751,7 @@
       const title = pendingNewsMap[index];
       if (!title) return;
       const motivo = prompt(`Motivo del rechazo para el comunicado "${title}":`, "Falta ajustar formato o directrices.");
-      if (motivo === null) return; // Si cancela, no hace nada
+      if (motivo === null) return;
       document.getElementById('loadingOverlay').classList.add('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectNews', titulo: title, motivo: motivo }) });
@@ -1791,7 +1805,7 @@
       if (!title) return;
       const motivo = prompt(`Motivo del rechazo para la doctrina "${title}":`, "Requiere corrección de contenido.");
       if (motivo === null) return;
-      document.getElementById('loadingOverlay').classList.remove('hidden');
+      document.getElementById('loadingOverlay').classList.add('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectDoctrina', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -1832,7 +1846,7 @@
       if (!title) return;
       const motivo = prompt(`Motivo del rechazo para la encuesta "${title}":`, "Pregunta no apta para la directiva.");
       if (motivo === null) return;
-      document.getElementById('loadingOverlay').classList.remove('hidden');
+      document.getElementById('loadingOverlay').classList.add('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectPoll', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
