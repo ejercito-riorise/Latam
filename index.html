@@ -1184,7 +1184,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.remove('hidden');
+      document.getElementById('loadingOverlay').classList.add('hidden');
       try {
         const response = await fetch(WEB_APP_URL);
         const resData = await response.json();
@@ -1711,6 +1711,9 @@
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approveNews', titulo: title }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('✔ Comunicado aprobado con éxito.');
+        if (cachedData && cachedData.news) {
+          cachedData.news.forEach(n => { if (n.titulo === title) n.estado = 'approved'; });
+        }
         loadControlPanelData();
         loadSession();
       } catch (err) {
@@ -1727,6 +1730,9 @@
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectNews', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('✔ Comunicado rechazado.');
+        if (cachedData && cachedData.news) {
+          cachedData.news = cachedData.news.filter(n => n.titulo !== title);
+        }
         loadControlPanelData();
         loadSession();
       } catch (err) {
@@ -1754,6 +1760,9 @@
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approveDoctrina', titulo: title }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('✔ Doctrina aprobada con éxito.');
+        if (cachedData && cachedData.doctrina) {
+          cachedData.doctrina.forEach(d => { if (d.titulo === title) d.estado = 'approved'; });
+        }
         loadControlPanelData();
         loadSession();
       } catch (err) {
@@ -1770,6 +1779,9 @@
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectDoctrina', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('✔ Doctrina rechazada.');
+        if (cachedData && cachedData.doctrina) {
+          cachedData.doctrina = cachedData.doctrina.filter(d => d.titulo !== title);
+        }
         loadControlPanelData();
         loadSession();
       } catch (err) {
@@ -1785,6 +1797,9 @@
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approvePoll', titulo: title }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('✔ Encuesta aprobada con éxito.');
+        if (cachedData && cachedData.polls) {
+          cachedData.polls.forEach(p => { if (p.titulo === title) p.estado = 'approved'; });
+        }
         loadControlPanelData();
         loadSession();
       } catch (err) {
@@ -1801,6 +1816,9 @@
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectPoll', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert('✔ Encuesta rechazada.');
+        if (cachedData && cachedData.polls) {
+          cachedData.polls = cachedData.polls.filter(p => p.titulo !== title);
+        }
         loadControlPanelData();
         loadSession();
       } catch (err) {
@@ -2169,6 +2187,9 @@
     async function approveUser(username) {
       await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approve', username: username }) });
       alert(`✔ Cuenta de ${username} aprobada.`);
+      if (cachedData && cachedData.users) {
+        cachedData.users.forEach(u => { if (u.username === username) u.status = 'approved'; });
+      }
       loadControlPanelData();
     }
 
@@ -2176,6 +2197,9 @@
       const motivo = prompt(`Motivo del rechazo para ${username}:`, "Requisitos incompletos.");
       if (motivo === null) return;
       await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectUser', username: username, motivo: motivo }) });
+      if (cachedData && cachedData.users) {
+        cachedData.users = cachedData.users.filter(u => u.username !== username);
+      }
       loadControlPanelData();
     }
 
