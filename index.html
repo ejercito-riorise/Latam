@@ -704,6 +704,7 @@
     function checkMandatoryPoll(polls) {
       if (!currentUser || !polls || polls.length === 0) return;
       const activePoll = polls[polls.length - 1];
+      if (!activePoll || !activePoll.titulo) return;
       const votedKey = `votedPoll_${currentUser.username}_${activePoll.titulo}`;
       
       if (!localStorage.getItem(votedKey)) {
@@ -734,7 +735,6 @@
       const votedKey = `votedPoll_${currentUser.username}_${pollTitle}`;
       localStorage.setItem(votedKey, selectedOption);
       
-      // Registrar conteo local de votos
       const votesKey = `pollVotes_${pollTitle}`;
       let pollData = JSON.parse(localStorage.getItem(votesKey) || "{}");
       pollData[selectedOption] = (pollData[selectedOption] || 0) + 1;
@@ -758,7 +758,7 @@
       const rankLower = (currentUser.rank || '').toLowerCase();
       const isHigherRank = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
       if (!isHigherRank) {
-        alert("⚠ Solo Coroneles, General y Superadmin pueden crear encuestas.");
+        alert("⚠ Solo Coroneles y General pueden crear encuestas.");
         return;
       }
 
@@ -1136,6 +1136,8 @@
 
         currentUser = { username: found.username, rank: found.rank, hours: parseFloat(found.hours || 0), activeShiftStart: found.activeShiftStart };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
+        localStorage.setItem(`sessionLoginTime_${currentUser.username}`, Date.now());
+
         cachedData = resData;
         globalHistoryCache = resData.history || [];
         renderDashboardUI(resData);
@@ -1149,6 +1151,28 @@
       const savedSession = localStorage.getItem('rioRiseCurrentSession');
       if (savedSession) {
         currentUser = JSON.parse(savedSession);
+        
+        // CIERRE DE SESIÓN AUTOMÁTICO DE 4 HORAS (SIN AFECTAR TURNO ACTIVO)
+        const loginTimeKey = `sessionLoginTime_${currentUser.username}`;
+        let loginTime = localStorage.getItem(loginTimeKey);
+        if (!loginTime) {
+          loginTime = Date.now();
+          localStorage.setItem(loginTimeKey, loginTime);
+        }
+        
+        const fourHoursMs = 4 * 60 * 60 * 1000;
+        if (Date.now() - parseInt(loginTime) > fourHoursMs) {
+          const activeShift = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
+          if (!activeShift) {
+            alert("⏰ Su sesión ha expirado (4 horas). Por favor ingrese de nuevo.");
+            logout();
+            return;
+          } else {
+            // Renovar tiempo de sesión porque está en servicio activo
+            localStorage.setItem(loginTimeKey, Date.now());
+          }
+        }
+
         document.getElementById('authSection').classList.add('hidden');
         document.getElementById('mainDashboard').classList.remove('hidden');
         document.getElementById('profileName').innerText = currentUser.username;
@@ -1273,7 +1297,6 @@
       let htmlContent = '';
       newsStorageMap = {};
 
-      // MOSTRAR ENCUESTAS ACTIVAS PRIMERO EN EL FEEDS DE NOVEDADES
       if (polls && polls.length > 0) {
         polls.forEach((poll) => {
           const votesKey = `pollVotes_${poll.titulo}`;
@@ -1355,7 +1378,6 @@
             <p class="text-[11px] text-slate-300 whitespace-pre-wrap">${item.mensaje}</p>
             ${imageHtml}
             
-            <!-- REACCIONES Y COMENTARIOS -->
             <div class="pt-2 border-t border-slate-900 flex items-center justify-between text-[10px]">
               <button onclick="toggleReaction('${item.titulo.replace(/'/g, "\\'")}')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-800 flex items-center gap-1 font-bold">
                 🫡 Salud! <span id="reactCount_${item.titulo}" class="text-amber-400 font-mono">${countReact}</span>
@@ -1365,7 +1387,6 @@
               </button>
             </div>
 
-            <!-- CAJA DE COMENTARIOS DESPLEGABLE -->
             <div id="commentsBox_${index}" class="hidden pt-2 border-t border-slate-900 space-y-2">
               <div id="commentsList_${index}" class="space-y-1 max-h-32 overflow-y-auto pr-1 text-[10px]">
                 <p class="text-slate-500 italic">No hay comentarios aún.</p>
@@ -1728,7 +1749,6 @@
         document.getElementById('shiftStatusBadge').className = 'text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
         document.getElementById('timerDisplay').classList.add('hidden');
 
-        // DIVIDIR TURNO SI CRUZA LA MEDIANOCHE (00:00 HORA COLOMBIA)
         await processAndSaveSplitShift(startTime, endTime);
       }
     }
@@ -1905,7 +1925,7 @@
       loadControlPanelData();
     }
 
-    // RANKING DIARIO REORGANIZADO: PRIMERO CONECTADOS (MAYOR A MENOR) -> LUEGO DESCONECTADOS (MAYOR A MENOR)
+    // RANKING DIARIO: ETIQUETAS COMPACTAS Y DE ANCHO FIJO (INDEPENDIENTES DEL LARGO DEL NICK)
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
@@ -1941,7 +1961,6 @@
         return { ...u, liveHours, isConnected: !!u.activeShiftStart };
       });
 
-      // ORDENAMIENTO ESTRICTO: CONECTADOS PRIMERO (DE MAYOR A MENOR) LUEGO DESCONECTADOS (DE MAYOR A MENOR)
       dailyArray.sort((a, b) => {
         if (a.isConnected && !b.isConnected) return -1;
         if (!a.isConnected && b.isConnected) return 1;
@@ -1954,12 +1973,12 @@
         let statusBadge = '';
         if (u.activeShiftStart) {
           if (isAllowedNight) {
-            statusBadge = `<span class="flex items-center gap-1 text-[9px] text-emerald-400 font-bold bg-emerald-950/80 border border-emerald-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-circle text-[6px] animate-ping"></i> EN SERVICIO</span>`;
+            statusBadge = `<span class="inline-flex items-center justify-center gap-1 text-[8px] text-emerald-400 font-bold bg-emerald-950/90 border border-emerald-800 px-1.5 py-0.5 rounded whitespace-nowrap w-[95px] text-center"><i class="fa-solid fa-circle text-[5px] animate-ping"></i> EN SERVICIO</span>`;
           } else {
-            statusBadge = `<span class="flex items-center gap-1 text-[9px] text-amber-300 font-bold bg-amber-950/80 border border-amber-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-triangle-exclamation text-[8px]"></i> FUERA DE TURNO</span>`;
+            statusBadge = `<span class="inline-flex items-center justify-center gap-1 text-[8px] text-amber-300 font-bold bg-amber-950/90 border border-amber-800 px-1.5 py-0.5 rounded whitespace-nowrap w-[95px] text-center"><i class="fa-solid fa-triangle-exclamation text-[7px]"></i> FUERA TURNO</span>`;
           }
         } else {
-          statusBadge = `<span class="flex items-center gap-1 text-[9px] text-slate-400 font-bold bg-slate-950 border border-slate-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-circle text-[6px] text-slate-600"></i> DESCONECTADO</span>`;
+          statusBadge = `<span class="inline-flex items-center justify-center gap-1 text-[8px] text-slate-400 font-bold bg-slate-950 border border-slate-800 px-1.5 py-0.5 rounded whitespace-nowrap w-[95px] text-center"><i class="fa-solid fa-circle text-[5px] text-slate-600"></i> DESCONECTADO</span>`;
         }
 
         let rankBadgeIcon = `<span class="font-mono font-bold text-slate-500 text-xs w-4 text-center">#${index + 1}</span>`;
@@ -1968,19 +1987,19 @@
         else if (index === 2) rankBadgeIcon = `<i class="fa-solid fa-award text-amber-600 text-sm" title="3° Lugar"></i>`;
 
         const item = document.createElement('div');
-        item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs';
+        item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs gap-2';
         item.innerHTML = `
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 overflow-hidden flex-1">
             ${rankBadgeIcon}
-            <div>
-              <div class="flex items-center gap-1.5">
-                <span class="font-bold text-white text-[11px]">${u.username}</span>
-                <span class="text-[8px] badge-${u.rank ? u.rank.toLowerCase() : 'privado'} px-1 rounded uppercase">${u.rank || 'PRIVADO'}</span>
+            <div class="truncate">
+              <div class="flex items-center gap-1.5 truncate">
+                <span class="font-bold text-white text-[11px] truncate">${u.username}</span>
+                <span class="text-[8px] badge-${u.rank ? u.rank.toLowerCase() : 'privado'} px-1 rounded uppercase shrink-0">${u.rank || 'PRIVADO'}</span>
               </div>
               <div class="mt-0.5">${statusBadge}</div>
             </div>
           </div>
-          <span class="text-cyan-400 font-mono font-bold text-xs">${decimalToHM(u.liveHours)}</span>
+          <span class="text-cyan-400 font-mono font-bold text-xs shrink-0">${decimalToHM(u.liveHours)}</span>
         `;
         dailyReportList.appendChild(item);
       });
