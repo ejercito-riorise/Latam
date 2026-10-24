@@ -561,7 +561,7 @@
     let currentExamIndex = 0;
 
     const fullTriviaQuestionsBank = [
-      { q: "¿Qué significa VDM en las normas del servidor?", options: ["A) Vehículo de Milicia", "B) Atropellar a otros jugadores sin motivo", "C) Vender armas de la base"], a: 1 },
+      { q: "¿Qué significa VDM en las normas del servidor?", options: ["A) Vehículo de Milicia", "B) Atropellar a otros jugadores बिना motivo", "C) Vender armas de la base"], a: 1 },
       { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos", "C) Retirarse de base"], a: 0 },
       { q: "¿Qué significa el Código Q: QAP?", options: ["A) ¿Dónde te encuentras?", "B) ¿Estás escuchando / en frecuencia?", "C) Solicito refuerzos"], a: 1 },
       { q: "¿Cuál es el significado de QTH?", options: ["A) Ubicación / Dirección", "B) Hora del servidor", "C) Conductor"], a: 0 },
@@ -1184,7 +1184,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         const response = await fetch(WEB_APP_URL);
         const resData = await response.json();
@@ -1704,6 +1704,7 @@
       document.getElementById('cancelEditBtn').classList.add('hidden');
     }
 
+    // ACCIONES DE APROBACIÓN Y RECHAZO CON MOTIVO OBLIGATORIO Y ACTUALIZACIÓN INMEDIATA
     async function approveNews(title) {
       if (!confirm(`¿Aprobar comunicado "${title}"?`)) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
@@ -1723,13 +1724,13 @@
     }
 
     async function rejectNews(title) {
-      const motivo = prompt(`Motivo del rechazo para "${title}":`, "Falta ajustar formato.");
-      if (motivo === null) return;
+      const motivo = prompt(`Motivo del rechazo para el comunicado "${title}":`, "Falta ajustar formato o directrices.");
+      if (motivo === null) return; // Si cancela, no hace nada
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectNews', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Comunicado rechazado.');
+        alert('✔ Comunicado rechazado con motivo guardado.');
         if (cachedData && cachedData.news) {
           cachedData.news = cachedData.news.filter(n => n.titulo !== title);
         }
@@ -1772,13 +1773,13 @@
     }
 
     async function rejectDoctrina(title) {
-      const motivo = prompt(`Motivo del rechazo para la doctrina "${title}":`, "Requiere corrección.");
+      const motivo = prompt(`Motivo del rechazo para la doctrina "${title}":`, "Requiere corrección de contenido.");
       if (motivo === null) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectDoctrina', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Doctrina rechazada.');
+        alert('✔ Doctrina rechazada con motivo guardado.');
         if (cachedData && cachedData.doctrina) {
           cachedData.doctrina = cachedData.doctrina.filter(d => d.titulo !== title);
         }
@@ -1809,13 +1810,13 @@
     }
 
     async function rejectPoll(title) {
-      const motivo = prompt(`Motivo del rechazo para la encuesta "${title}":`, "Pregunta no apta.");
+      const motivo = prompt(`Motivo del rechazo para la encuesta "${title}":`, "Pregunta no apta para la directiva.");
       if (motivo === null) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectPoll', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Encuesta rechazada.');
+        alert('✔ Encuesta rechazada con motivo guardado.');
         if (cachedData && cachedData.polls) {
           cachedData.polls = cachedData.polls.filter(p => p.titulo !== title);
         }
@@ -2092,8 +2093,8 @@
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[11px] text-slate-300">${item.mensaje}</p>
               <div class="flex gap-2 pt-1">
-                <button onclick="approveNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-[10px]">Aprobar</button>
-                <button onclick="rejectNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">Rechazar</button>
+                <button onclick="approveNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-bold">Aprobar</button>
+                <button onclick="rejectNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold">Rechazar</button>
               </div>
             `;
             pendingNewsList.appendChild(div);
@@ -2119,8 +2120,8 @@
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[11px] text-slate-300">${item.mensaje}</p>
               <div class="flex gap-2 pt-1">
-                <button onclick="approveDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-[10px]">Aprobar</button>
-                <button onclick="rejectDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">Rechazar</button>
+                <button onclick="approveDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-bold">Aprobar</button>
+                <button onclick="rejectDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold">Rechazar</button>
               </div>
             `;
             pendingDoctrinaList.appendChild(div);
@@ -2146,8 +2147,8 @@
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[10px] text-slate-400">Opciones: ${item.options}</p>
               <div class="flex gap-2 pt-1">
-                <button onclick="approvePoll('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-[10px]">Aprobar</button>
-                <button onclick="rejectPoll('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">Rechazar</button>
+                <button onclick="approvePoll('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-bold">Aprobar</button>
+                <button onclick="rejectPoll('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold">Rechazar</button>
               </div>
             `;
             pendingPollsList.appendChild(div);
