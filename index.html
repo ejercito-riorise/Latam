@@ -555,13 +555,19 @@
     let newsStorageMap = {};
     let doctrinaStorageMap = {};
     let pollStorageMap = {};
+    
+    // MAPAS SEGUROS PARA APROBACIÓN POR ÍNDICE (EVITA ERRORES CON COMILLAS EN TÍTULOS)
+    let pendingNewsMap = {};
+    let pendingDoctrinaMap = {};
+    let pendingPollsMap = {};
+
     let practiceHonorPoints = 0;
     let currentTriviaIndex = 0;
     let examQuestionsPool = [];
     let currentExamIndex = 0;
 
     const fullTriviaQuestionsBank = [
-      { q: "¿Qué significa VDM en las normas del servidor?", options: ["A) Vehículo de Milicia", "B) Atropellar a otros jugadores बिना motivo", "C) Vender armas de la base"], a: 1 },
+      { q: "¿Qué significa VDM en las normas del servidor?", options: ["A) Vehículo de Milicia", "B) Atropellar a otros jugadores sin motivo", "C) Vender armas de la base"], a: 1 },
       { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos", "C) Retirarse de base"], a: 0 },
       { q: "¿Qué significa el Código Q: QAP?", options: ["A) ¿Dónde te encuentras?", "B) ¿Estás escuchando / en frecuencia?", "C) Solicito refuerzos"], a: 1 },
       { q: "¿Cuál es el significado de QTH?", options: ["A) Ubicación / Dirección", "B) Hora del servidor", "C) Conductor"], a: 0 },
@@ -1184,7 +1190,7 @@
       const user = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
 
-      document.getElementById('loadingOverlay').classList.remove('hidden');
+      document.getElementById('loadingOverlay').classList.add('hidden');
       try {
         const response = await fetch(WEB_APP_URL);
         const resData = await response.json();
@@ -1704,8 +1710,12 @@
       document.getElementById('cancelEditBtn').classList.add('hidden');
     }
 
-    // ACCIONES DE APROBACIÓN Y RECHAZO CON MOTIVO OBLIGATORIO Y ACTUALIZACIÓN INMEDIATA
-    async function approveNews(title) {
+    // ==========================================
+    // ACCIONES DE APROBACIÓN Y RECHAZO SEGURAS POR ÍNDICE (EVITA ERRORES CON COMILLAS Y SÍMBOLOS)
+    // ==========================================
+    async function approvePendingNews(index) {
+      const title = pendingNewsMap[index];
+      if (!title) return;
       if (!confirm(`¿Aprobar comunicado "${title}"?`)) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
@@ -1723,10 +1733,12 @@
       }
     }
 
-    async function rejectNews(title) {
+    async function rejectPendingNews(index) {
+      const title = pendingNewsMap[index];
+      if (!title) return;
       const motivo = prompt(`Motivo del rechazo para el comunicado "${title}":`, "Falta ajustar formato o directrices.");
       if (motivo === null) return; // Si cancela, no hace nada
-      document.getElementById('loadingOverlay').classList.remove('hidden');
+      document.getElementById('loadingOverlay').classList.add('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectNews', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
@@ -1754,7 +1766,9 @@
       } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error al eliminar.'); }
     }
 
-    async function approveDoctrina(title) {
+    async function approvePendingDoctrina(index) {
+      const title = pendingDoctrinaMap[index];
+      if (!title) return;
       if (!confirm(`¿Aprobar doctrina "${title}"?`)) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
@@ -1772,7 +1786,9 @@
       }
     }
 
-    async function rejectDoctrina(title) {
+    async function rejectPendingDoctrina(index) {
+      const title = pendingDoctrinaMap[index];
+      if (!title) return;
       const motivo = prompt(`Motivo del rechazo para la doctrina "${title}":`, "Requiere corrección de contenido.");
       if (motivo === null) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
@@ -1791,7 +1807,9 @@
       }
     }
 
-    async function approvePoll(title) {
+    async function approvePendingPoll(index) {
+      const title = pendingPollsMap[index];
+      if (!title) return;
       if (!confirm(`¿Aprobar encuesta "${title}"?`)) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
@@ -1809,7 +1827,9 @@
       }
     }
 
-    async function rejectPoll(title) {
+    async function rejectPendingPoll(index) {
+      const title = pendingPollsMap[index];
+      if (!title) return;
       const motivo = prompt(`Motivo del rechazo para la encuesta "${title}":`, "Pregunta no apta para la directiva.");
       if (motivo === null) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
@@ -2078,7 +2098,9 @@
         if (pendingNewsList && (isSuperAdmin || isCoronel)) {
           const pendingNews = news ? news.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
           pendingNewsList.innerHTML = pendingNews.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay comunicados pendientes.</p>' : '';
-          pendingNews.forEach(item => {
+          pendingNewsMap = {};
+          pendingNews.forEach((item, index) => {
+            pendingNewsMap[index] = item.titulo;
             const cleanDate = normalizeDate(item.fecha);
             const cleanTime = normalizeTime(item.hora);
             const timeStr = (cleanDate || cleanTime !== "N/D") ? `📅 ${cleanDate} • ⏰ ${cleanTime}` : '';
@@ -2093,8 +2115,8 @@
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[11px] text-slate-300">${item.mensaje}</p>
               <div class="flex gap-2 pt-1">
-                <button onclick="approveNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-bold">Aprobar</button>
-                <button onclick="rejectNews('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold">Rechazar</button>
+                <button onclick="approvePendingNews(${index})" class="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-bold">Aprobar</button>
+                <button onclick="rejectPendingNews(${index})" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold">Rechazar</button>
               </div>
             `;
             pendingNewsList.appendChild(div);
@@ -2105,7 +2127,9 @@
         if (pendingDoctrinaList && (isSuperAdmin || isCoronel)) {
           const pendingDoctrina = doctrina ? doctrina.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
           pendingDoctrinaList.innerHTML = pendingDoctrina.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay doctrinas pendientes.</p>' : '';
-          pendingDoctrina.forEach(item => {
+          pendingDoctrinaMap = {};
+          pendingDoctrina.forEach((item, index) => {
+            pendingDoctrinaMap[index] = item.titulo;
             const cleanDate = normalizeDate(item.fecha);
             const cleanTime = normalizeTime(item.hora);
             const timeStr = (cleanDate || cleanTime !== "N/D") ? `📅 ${cleanDate} • ⏰ ${cleanTime}` : '';
@@ -2120,8 +2144,8 @@
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[11px] text-slate-300">${item.mensaje}</p>
               <div class="flex gap-2 pt-1">
-                <button onclick="approveDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-bold">Aprobar</button>
-                <button onclick="rejectDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold">Rechazar</button>
+                <button onclick="approvePendingDoctrina(${index})" class="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-bold">Aprobar</button>
+                <button onclick="rejectPendingDoctrina(${index})" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold">Rechazar</button>
               </div>
             `;
             pendingDoctrinaList.appendChild(div);
@@ -2132,7 +2156,9 @@
         if (pendingPollsList && (isSuperAdmin || isCoronel)) {
           const pendingPolls = polls ? polls.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
           pendingPollsList.innerHTML = pendingPolls.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay encuestas pendientes de aprobación.</p>' : '';
-          pendingPolls.forEach(item => {
+          pendingPollsMap = {};
+          pendingPolls.forEach((item, index) => {
+            pendingPollsMap[index] = item.titulo;
             const cleanDate = normalizeDate(item.fecha);
             const cleanTime = normalizeTime(item.hora);
             const timeStr = (cleanDate || cleanTime !== "N/D") ? `📅 ${cleanDate} • ⏰ ${cleanTime}` : '';
@@ -2147,8 +2173,8 @@
               <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
               <p class="text-[10px] text-slate-400">Opciones: ${item.options}</p>
               <div class="flex gap-2 pt-1">
-                <button onclick="approvePoll('${item.titulo.replace(/'/g, "\\'")}')" class="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-bold">Aprobar</button>
-                <button onclick="rejectPoll('${item.titulo.replace(/'/g, "\\'")}')" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold">Rechazar</button>
+                <button onclick="approvePendingPoll(${index})" class="bg-emerald-600 text-white px-3 py-1 rounded text-[10px] font-bold">Aprobar</button>
+                <button onclick="rejectPendingPoll(${index})" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold">Rechazar</button>
               </div>
             `;
             pendingPollsList.appendChild(div);
