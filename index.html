@@ -12,7 +12,7 @@
   <!-- METADATOS WHATSAPP / OPEN GRAPH CON TU ESCUDO AZUL Y FONDO OSCURO -->
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
   <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
-  <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgMjUwIj4KICA8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iIzBmMTcyYSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMCwgMjUpIj4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNzUiIGZpbGw9IiMxZTI5M2IiIHN0cm9rPSIjM2I4MmY2IiBzdHJvamUtd2lkdGg9IjUiLz4KICAgIDxwYXRoIGQ9Ik0xMDAgNTkgTDEzMCA3MSBDMTMwIDEwMyAxMTQgMTI4IDEwMCAxMzkgQzg2IDEyOCA3MCAxMDMgNzAgNzEgWiIgZmlsbD0iIzNiODJmNiIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNMTAwIDU5IEwxMzAgNzEgQzEzMCAxMDMgMTE0IDEyOCAxMDAgMTM5IFoiIGZpbGw9IiM2MGE1ZmEiIG9wYWNpdHk9IjAuNSIvPgogIDwvZz4KICA8dGV4dCB4PSIyMTAiIHk9IjExMCIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9InN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZvbnQtc2l6ZT0iMzIiIHRyYWNrPSIxIj5JTlRSQU5FVCBFQjwvdGV4dD4KICA8dGV4dCB4PSIyMTAiIHk9IjE0OCIgZmlsbD0iIzk0YTNiOCIgZm9udC1mYW1pbHk9InN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMiI+RWpwxlicml0byBSaW9SaXNlPC90ZXh0Pgo8L3N2Zz4=">
+  <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgMjUwIj4KICA8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iIzBmMTcyYSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMCwgMjUpIj4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNzUiIGZpbGw9IiMxZTI5M2IiIHN0cm9rPSIjM2I4MmY2IiBzdHJvamUtd2lkdGg9IjUiLz4KICAgIDxwYXRoIGQ9Ik0xMDAgNTkgTDEzMCA3MSBDMTMwIDEwMyAxMTQgMTI4IDEwMCAxMzkgQzg2IDEyOCA3MCAxMDMgNzAgNzEgWiIgZmlsbD0iIzNiODJmNiIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNMTAwIDU5IEwxMzAgNzEgQzEzMCAxMDMgMTE4IDEyOCAxMDAgMTM5IFoiIGZpbGw9IiM2MGE1ZmEiIG9wYWNpdHk9IjAuNSIvPgogIDwvZz4KICA8dGV4dCB4PSIyMTAiIHk9IjExMCIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9InN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZvbnQtc2l6ZT0iMzIiIHRyYWNrPSIxIj5JTlRSQU5FVCBFQjwvdGV4dD4KICA8dGV4dCB4PSIyMTAiIHk9IjE0OCIgZmlsbD0iIzk0YTNiOCIgZm9udC1mYW1pbHk9InN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMiI+RWpwxlicml0byBSaW9SaXNlPC90ZXh0Pgo8L3N2Zz4=">
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
@@ -565,6 +565,17 @@
       loadTriviaQuestion();
     });
 
+    // REVISAR Y ACTUALIZAR CRONÓMETRO AL VOLVER A LA PESTAÑA (SEGUNDO PLANO)
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && currentUser) {
+        const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
+        if (activeShiftStart) {
+          updateTimerDisplayLive(parseInt(activeShiftStart));
+          updateTodayHoursLive();
+        }
+      }
+    });
+
     function changeTheme(themeName, save = true) {
       document.body.className = "min-h-screen flex flex-col justify-between";
       if (themeName === 'selva') document.body.classList.add('theme-selva');
@@ -722,8 +733,17 @@
     function submitPollVote(pollTitle, selectedOption) {
       const votedKey = `votedPoll_${currentUser.username}_${pollTitle}`;
       localStorage.setItem(votedKey, selectedOption);
+      
+      // Registrar conteo local de votos
+      const votesKey = `pollVotes_${pollTitle}`;
+      let pollData = JSON.parse(localStorage.getItem(votesKey) || "{}");
+      pollData[selectedOption] = (pollData[selectedOption] || 0) + 1;
+      pollData._total = (pollData._total || 0) + 1;
+      localStorage.setItem(votesKey, JSON.stringify(pollData));
+
       document.getElementById('mandatoryPollModal').classList.add('hidden');
       alert("✔ ¡Voto registrado con éxito! Gracias por participar.");
+      loadSession();
     }
 
     function switchPublishSubTab(sub) {
@@ -1140,7 +1160,7 @@
           const response = await fetch(WEB_APP_URL);
           cachedData = await response.json();
           globalHistoryCache = cachedData.history || [];
-          renderNewsFeed(cachedData.news);
+          renderNewsFeed(cachedData.news, cachedData.polls);
           renderDoctrinaFeed(cachedData.doctrina);
           checkAuthorNotifications(cachedData.news, cachedData.doctrina);
           updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina);
@@ -1172,7 +1192,7 @@
       rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
 
       globalHistoryCache = resData.history || [];
-      renderNewsFeed(resData.news);
+      renderNewsFeed(resData.news, resData.polls);
       renderDoctrinaFeed(resData.doctrina);
       checkAuthorNotifications(resData.news, resData.doctrina);
       updateCommandAlertBadges(resData.users, resData.news, resData.doctrina);
@@ -1194,7 +1214,7 @@
           const resData = await response.json();
           cachedData = resData;
           globalHistoryCache = resData.history || [];
-          renderNewsFeed(resData.news);
+          renderNewsFeed(resData.news, resData.polls);
           renderDoctrinaFeed(resData.doctrina);
           checkAuthorNotifications(resData.news, resData.doctrina);
           updateCommandAlertBadges(resData.users, resData.news, resData.doctrina);
@@ -1246,19 +1266,72 @@
       return diffMs / 3600000;
     }
 
-    function renderNewsFeed(news) {
+    function renderNewsFeed(news, polls) {
       const feed = document.getElementById('newsFeedContainer');
       const approvedNews = news ? news.filter(item => !item.estado || item.estado.toLowerCase() === 'approved') : [];
-      if (approvedNews.length === 0) {
-        feed.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay órdenes del día publicadas.</p>';
+      
+      let htmlContent = '';
+      newsStorageMap = {};
+
+      // MOSTRAR ENCUESTAS ACTIVAS PRIMERO EN EL FEEDS DE NOVEDADES
+      if (polls && polls.length > 0) {
+        polls.forEach((poll) => {
+          const votesKey = `pollVotes_${poll.titulo}`;
+          const pollData = JSON.parse(localStorage.getItem(votesKey) || "{}");
+          const totalVotes = pollData._total || 0;
+          const userVotedOpt = localStorage.getItem(`votedPoll_${currentUser.username}_${poll.titulo}`);
+
+          let optionsHtml = '';
+          let optionsList = poll.options || [];
+          if (typeof optionsList === 'string') optionsList = optionsList.split(',');
+
+          optionsList.forEach(opt => {
+            const cleanOpt = opt.trim();
+            const optVotes = pollData[cleanOpt] || 0;
+            const pct = totalVotes > 0 ? Math.round((optVotes / totalVotes) * 100) : 0;
+            const isUserChoice = userVotedOpt === cleanOpt;
+
+            if (userVotedOpt) {
+              optionsHtml += `
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[10px] text-slate-300 font-semibold">
+                    <span>${cleanOpt} ${isUserChoice ? '✔ (Tu voto)' : ''}</span>
+                    <span class="font-mono text-amber-400">${pct}% (${optVotes})</span>
+                  </div>
+                  <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                    <div class="bg-amber-500 h-2 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                  </div>
+                </div>
+              `;
+            } else {
+              optionsHtml += `
+                <button onclick="submitPollVote('${poll.titulo.replace(/'/g, "\\'")}', '${cleanOpt.replace(/'/g, "\\'")}')" class="w-full text-left bg-slate-900 hover:bg-slate-800 p-2 rounded text-[11px] text-slate-200 border border-slate-800 font-semibold transition">
+                  📊 ${cleanOpt}
+                </button>
+              `;
+            }
+          });
+
+          htmlContent += `
+            <div class="bg-slate-950 p-3 rounded-lg border border-amber-500/50 space-y-2 shadow-lg">
+              <div class="flex items-center justify-between text-[10px] text-amber-400 border-b border-slate-900 pb-1 font-bold">
+                <span><i class="fa-solid fa-square-poll-vertical mr-1"></i>Encuesta Oficial</span>
+                <span>Total: ${totalVotes} votos</span>
+              </div>
+              <h4 class="font-bold text-white text-xs">${poll.titulo}</h4>
+              <div class="space-y-2 pt-1">${optionsHtml}</div>
+            </div>
+          `;
+        });
+      }
+
+      if (approvedNews.length === 0 && (!polls || polls.length === 0)) {
+        feed.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay órdenes del día ni encuestas publicadas.</p>';
         return;
       }
 
       const rankLower = (currentUser.rank || '').toLowerCase();
       const canManageNews = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
-
-      let htmlContent = '';
-      newsStorageMap = {};
 
       [...approvedNews].reverse().forEach((item, index) => {
         newsStorageMap[index] = item;
@@ -1567,19 +1640,23 @@
           cutTime.setHours(3, 0, 0, 0);
           const forcedEndTime = cutTime.getTime();
           const startTime = parseInt(activeShiftStart);
-          const totalSeconds = Math.max(0, Math.floor((forcedEndTime - startTime) / 1000));
-          const hoursWorked = totalSeconds / 3600;
 
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           currentUser.activeShiftStart = null;
           
-          if (hoursWorked > 0) {
-            saveShiftLog(hoursWorked, `${Math.floor(totalSeconds / 3600)}h ${Math.floor((totalSeconds % 3600) / 60)}m`, getColombiaDateString());
-          }
+          processAndSaveSplitShift(startTime, forcedEndTime);
           return;
         }
         activateShiftUI(parseInt(activeShiftStart));
       }
+    }
+
+    function updateTimerDisplayLive(startTime) {
+      const diffSeconds = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
+      const hours = String(Math.floor(diffSeconds / 3600)).padStart(2, '0');
+      const mins = String(Math.floor((diffSeconds % 3600) / 60)).padStart(2, '0');
+      const secs = String(Math.floor(diffSeconds % 60)).padStart(2, '0');
+      document.getElementById('stopwatch').innerText = `${hours}:${mins}:${secs}`;
     }
 
     function activateShiftUI(startTime) {
@@ -1590,6 +1667,8 @@
       badge.className = 'text-[9px] bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-bold animate-pulse';
       btn.innerHTML = '<i class="fa-solid fa-square mr-1"></i> Finalizar Servicio';
       btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded text-xs transition';
+
+      updateTimerDisplayLive(startTime);
 
       if (shiftInterval) clearInterval(shiftInterval);
       shiftInterval = setInterval(() => {
@@ -1602,20 +1681,17 @@
             const cutTime = new Date(colombiaDate);
             cutTime.setHours(3, 0, 0, 0);
             const forcedEndTime = cutTime.getTime();
-            const totalSeconds = Math.max(0, Math.floor((forcedEndTime - startTime) / 1000));
-            const hoursWorked = totalSeconds / 3600;
 
             localStorage.removeItem(`shiftStart_${currentUser.username}`);
             clearInterval(shiftInterval);
             shiftInterval = null;
 
-            saveShiftLog(hoursWorked, `${Math.floor(totalSeconds / 3600)}h ${Math.floor((totalSeconds % 3600) / 60)}m`, getColombiaDateString());
+            processAndSaveSplitShift(startTime, forcedEndTime);
             return;
           }
         }
 
-        const diffSeconds = Math.floor((Date.now() - startTime) / 1000);
-        document.getElementById('stopwatch').innerText = `${String(Math.floor(diffSeconds / 3600)).padStart(2, '0')}:${String(Math.floor((diffSeconds % 3600) / 60)).padStart(2, '0')}:${String(diffSeconds % 60).padStart(2, '0')}`;
+        updateTimerDisplayLive(startTime);
         updateTodayHoursLive();
       }, 1000);
     }
@@ -1642,9 +1718,7 @@
         shiftInterval = null;
 
         const startTime = parseInt(savedStart);
-        const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
-        const hoursWorked = totalSeconds / 3600;
-
+        const endTime = Date.now();
         localStorage.removeItem(activeShiftKey);
         currentUser.activeShiftStart = null;
 
@@ -1654,7 +1728,48 @@
         document.getElementById('shiftStatusBadge').className = 'text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
         document.getElementById('timerDisplay').classList.add('hidden');
 
-        saveShiftLog(hoursWorked, `${Math.floor(totalSeconds / 3600)}h ${Math.floor((totalSeconds % 3600) / 60)}m`, getColombiaDateString());
+        // DIVIDIR TURNO SI CRUZA LA MEDIANOCHE (00:00 HORA COLOMBIA)
+        await processAndSaveSplitShift(startTime, endTime);
+      }
+    }
+
+    async function processAndSaveSplitShift(startTimeMs, endTimeMs) {
+      const startColStr = new Date(startTimeMs).toLocaleString("en-US", { timeZone: "America/Bogota" });
+      const endColStr = new Date(endTimeMs).toLocaleString("en-US", { timeZone: "America/Bogota" });
+      
+      const startDate = new Date(startColStr);
+      const endDate = new Date(endColStr);
+
+      const startDateStr = startDate.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+      const endDateStr = endDate.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+
+      if (startDateStr === endDateStr) {
+        const totalSeconds = Math.floor((endTimeMs - startTimeMs) / 1000);
+        const hoursWorked = totalSeconds / 3600;
+        const timeSpentMsg = `${Math.floor(totalSeconds / 3600)}h ${Math.floor((totalSeconds % 3600) / 60)}m`;
+        await saveShiftLog(hoursWorked, timeSpentMsg, startDateStr);
+      } else {
+        const midnight = new Date(startDate);
+        midnight.setDate(midnight.getDate() + 1);
+        midnight.setHours(0, 0, 0, 0);
+        const midnightMs = midnight.getTime();
+
+        const secondsPart1 = Math.max(0, Math.floor((midnightMs - startTimeMs) / 1000));
+        if (secondsPart1 > 60) {
+          const hoursPart1 = secondsPart1 / 3600;
+          const msgPart1 = `${Math.floor(secondsPart1 / 3600)}h ${Math.floor((secondsPart1 % 3600) / 60)}m`;
+          await saveShiftLog(hoursPart1, msgPart1, startDateStr);
+        }
+
+        const secondsPart2 = Math.max(0, Math.floor((endTimeMs - midnightMs) / 1000));
+        if (secondsPart2 > 60) {
+          const hoursPart2 = secondsPart2 / 3600;
+          const msgPart2 = `${Math.floor(secondsPart2 / 3600)}h ${Math.floor((secondsPart2 % 3600) / 60)}m`;
+          await saveShiftLog(hoursPart2, msgPart2, endDateStr);
+        }
+
+        alert(`✔ Turno dividido por medianoche registrado con éxito en ambos días.`);
+        loadSession();
       }
     }
 
@@ -1670,10 +1785,11 @@
         if (result.status === 'success') {
           currentUser.hours = result.total;
           localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-          alert(`✔ Turno finalizado. Registrado: ${timeSpentMsg}`);
-          loadSession();
         }
-      } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error al guardar turno.'); }
+      } catch (err) { 
+        document.getElementById('loadingOverlay').classList.add('hidden'); 
+        alert('Error al guardar bloque de turno.'); 
+      }
     }
 
     async function loadControlPanelData() {
@@ -1789,6 +1905,7 @@
       loadControlPanelData();
     }
 
+    // RANKING DIARIO REORGANIZADO: PRIMERO CONECTADOS (MAYOR A MENOR) -> LUEGO DESCONECTADOS (MAYOR A MENOR)
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
@@ -1821,8 +1938,15 @@
         if (u.activeShiftStart) {
           liveHours += getEffectiveActiveHours(parseInt(u.activeShiftStart));
         }
-        return { ...u, liveHours };
-      }).sort((a, b) => b.liveHours - a.liveHours);
+        return { ...u, liveHours, isConnected: !!u.activeShiftStart };
+      });
+
+      // ORDENAMIENTO ESTRICTO: CONECTADOS PRIMERO (DE MAYOR A MENOR) LUEGO DESCONECTADOS (DE MAYOR A MENOR)
+      dailyArray.sort((a, b) => {
+        if (a.isConnected && !b.isConnected) return -1;
+        if (!a.isConnected && b.isConnected) return 1;
+        return b.liveHours - a.liveHours;
+      });
 
       dailyReportList.innerHTML = dailyArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros hoy.</p>' : '';
       
