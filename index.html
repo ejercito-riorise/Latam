@@ -11,7 +11,7 @@
 
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
   <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
-  <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgMjUwIj4KICA8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iIzBmMTcyYSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMCwgMjUpIj4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNzUiIGZpbGw9IiMxZTI5M2IiIHN0cm9rPSIjM2I4MmY2IiBzdHJvamUtd2lkdGg9IjUiLz4KICAgIDxwYXRoIGQ9Ik0xMDAgNTkgTDEzOCA3MSBDMTMwIDEwMyAxMTQgMTI4IDEwMCAxMzkgQzg2IDEyOCA3MCAxMDMgNzAgNzEgWiIgZmlsbD0iIzNiODJmNiIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNMTAwIDU5IEwxMzAgNzEgQzEzMCAxMDMgMTE4IDEyOCAxMDAgMTM5 WiIgZmlsbD0iIzYwYTVmYSIgb3BhY2l0eT0iMC41Ii8+CiAgPC9nPgKICA8dGV4dCB4PSIyMTAiIHk9IjExMCIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9InN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZvbnQtc2l6ZT0iMzIiIHRyYWNrPSIxIj5JTlRSQU5FVCBFQjwvdGV4dD4KICA8dGV4dCB4PSIyMTAiIHk9IjE0OCIgZmlsbD0iIzk0YTNiOCIgZm9udC1mYW1pbHk9InN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMiI+RWpwxlicml0byBSaW9SaXNlPC90ZXh0Pgo8L3N2Zz4=">
+  <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgMjUwIj4KICA8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iIzBmMTcyYSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMCwgMjUpIj4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNzUiIGZpbGw9IiMxZTI5M2IiIHN0cm9rPSIjM2I4MmY2IiBzdHJvamUtd2lkdGg9IjUiLz4KICAgIDxwYXRoIGQ9Ik0xMDAgNTkgTDEzOCA3MSBDMTMwIDEwMyAxMTQgMTI4IDEwMCAxMzkgQzg2IDEyOCA3MCAxMDMgNzAgNzEgWiIgZmlsbD0iIzNiODJmNiIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNMTAwIDU5IEwxMzAgNzEgQzEzMCAxMDMgMTE4IDEyOCAgMTAwIDEzOSBaIiBmaWxsPSIjNjBhNWZhIiBvcGFjaXR5PSIwLjUiLz4KICA8L2c+CiAgPHRleHQgeD0iMjEwIiB5PSIxMTAiIGZpbGw9IiNmZmYiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LXNpemU9IjMyIiB0cmFjaz0iMSI+SU5UUkFORVQgRUI8L3RleHQ+CiAgPHRleHQgeD0iMjEwIiB5PSIxNDgiIGZpbGw9IiM5NGEzYjgiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiPkVqcMOpcml0byBSaW9SaXNlPC90ZXh0Pgo8L3N2Zz4=">
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="manifest.json">
@@ -1098,7 +1098,18 @@
         }
       }
 
-      if (tab === 'filters') applyHistoryFilter();
+      if (tab === 'filters') {
+        const dateInput = document.getElementById('filterDateInput');
+        if (dateInput && !dateInput.value) {
+          // Asignar fecha actual por defecto en formato YYYY-MM-DD
+          const now = new Date();
+          const year = now.getFullYear();
+          const month = String(now.getMonth() + 1).padStart(2, '0');
+          const day = String(now.getDate()).padStart(2, '0');
+          dateInput.value = `${year}-${month}-${day}`;
+        }
+        applyHistoryFilter();
+      }
     }
 
     async function handleRegister(e) {
