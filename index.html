@@ -201,7 +201,7 @@
 
           <div id="shiftControls" class="space-y-2">
             <div id="timerDisplay" class="hidden text-center py-1.5 bg-slate-950 rounded border border-slate-800">
-              <p class="text-[10px] text-slate-400">Tiempo transcurrido en tu turno actual:</p>
+              <p class="text-[10px] text-slate-400">Tiempo transcurrido en tu turno actual (Máx 9h):</p>
               <p id="stopwatch" class="text-xl font-mono font-bold text-green-400">00:00:00</p>
             </div>
             <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
@@ -418,7 +418,7 @@
         
         <!-- VISTA PUBLICAR (COMUNICADO / ENCUESTA) -->
         <div id="viewNewsAdmin" class="space-y-3 hidden">
-          <div class="grid grid-cols-2 bg-slate-950 p-1 rounded border border-slate-800 mb-2">
+          <div class="grid grid-cols-2 bg-slate-950 p-1 border border-slate-800 mb-2">
             <button type="button" onclick="switchPublishSubTab('comunicado')" id="pubSubNewsBtn" class="py-1 text-[10px] font-bold rounded bg-blue-600 text-white">📢 Comunicado</button>
             <button type="button" onclick="switchPublishSubTab('encuesta')" id="pubSubPollBtn" class="py-1 text-[10px] font-bold rounded text-slate-400">📊 Encuesta</button>
           </div>
@@ -565,12 +565,15 @@
     let examQuestionsPool = [];
     let currentExamIndex = 0;
 
+    // Límite máximo de horas continuas por turno (9 Horas)
+    const MAX_SHIFT_MS = 9 * 60 * 60 * 1000;
+
     const fullTriviaQuestionsBank = [
       { q: "¿Qué significa VDM en las normas del servidor?", options: ["A) Vehículo de Milicia", "B) Atropellar a otros jugadores sin motivo", "C) Vender armas de la base"], a: 1 },
       { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos", "C) Retirarse de base"], a: 0 },
       { q: "¿Qué significa el Código Q: QAP?", options: ["A) ¿Dónde te encuentras?", "B) ¿Estás escuchando / en frecuencia?", "C) Solicito refuerzos"], a: 1 },
       { q: "¿Cuál es el significado de QTH?", options: ["A) Ubicación / Dirección", "B) Hora del servidor", "C) Conductor"], a: 0 },
-      { q: "En la Biblia RP, ¿Qué significa SAAV?", options: ["A) Sistema Aéreo", "B) Sin Amor a la Vida (not valorar la vida)", "C) Soldado Vigilante"], a: 1 },
+      { q: "En la Biblia RP, ¿Qué significa SAAV?", options: ["A) Sistema Aéreo", "B) Sin Amor a la Vida (no valorar la vida)", "C) Soldado Vigilante"], a: 1 },
       { q: "¿Qué código Q se utiliza para solicitar REFUERZOS urgentes?", options: ["A) QRR", "B) QTH", "C) QAP"], a: 0 },
       { q: "Según el Reglamento, ¿Qué función principal tiene el Rango 1 / PRIVADO?", options: ["A) Dirigir la base militar", "B) Obedecer a superiores y vigilar / cuidar la base", "C) Autorizar licencias"], a: 1 },
       { q: "¿Cuál es la norma sobre el valor de la vida en el servidor?", options: ["A) Correr hacia un arma apuntándome", "B) Valorar mi vida ante cualquier amenaza (No SAAV)", "C) Disparar sin mediar palabra"], a: 1 }
@@ -1336,20 +1339,15 @@
       }, 5000);
     }
 
-    // ==========================================
-    // CAMBIO SOLICITADO: MUESTRA EL TURNO ACTUAL EN VIVO O EL ÚLTIMO TURNO CERRADO
-    // ==========================================
     function updateTodayHoursLive() {
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       const el = document.getElementById('profileTodayHours');
       if (!el) return;
 
       if (activeShiftStart) {
-        // Si está en servicio, muestra el tiempo transcurrido de su turno actual en vivo
         const activeHours = (Date.now() - parseInt(activeShiftStart)) / 3600000;
         el.innerText = `Turno: ${decimalToHM(activeHours)}`;
       } else {
-        // Si está fuera de servicio, busca el último turno cerrado del usuario en el historial
         let lastShiftDuration = 0;
         if (globalHistoryCache && globalHistoryCache.length > 0) {
           const userHistory = globalHistoryCache.filter(h => h.username && h.username.toLowerCase() === currentUser.username.toLowerCase());
@@ -1357,7 +1355,6 @@
             const lastRecord = userHistory[userHistory.length - 1];
             if (lastRecord.duracion) {
               el.innerText = `Turno: ${lastRecord.duracion}`;
-              // Calculamos también las horas semanales para el nivel
               let weeklyHours = 0;
               userHistory.forEach(h => {
                 if (isDateInCurrentWeek(h.fecha)) weeklyHours += parseFloat(h.horas || 0);
@@ -1372,7 +1369,6 @@
         el.innerText = `Turno: ${decimalToHM(lastShiftDuration)}`;
       }
 
-      // Actualizar insignia semanal
       let weeklyTotalHours = 0;
       if (globalHistoryCache) {
         globalHistoryCache.forEach(h => {
@@ -1887,6 +1883,21 @@
     function checkActiveShiftOnLoad() {
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
+        const startTime = parseInt(activeShiftStart);
+        const elapsedTimeMs = Date.now() - startTime;
+
+        // SI YA SUPERÓ EL LÍMITE MÁXIMO DE 9 HORAS (32,400,000 ms)
+        if (elapsedTimeMs >= MAX_SHIFT_MS) {
+          alert('⏰ Tu servicio anterior superó el límite máximo de 9 horas continuas y fue finalizado automáticamente.');
+          const forcedEndTime = startTime + MAX_SHIFT_MS;
+          
+          localStorage.removeItem(`shiftStart_${currentUser.username}`);
+          currentUser.activeShiftStart = null;
+          
+          processAndSaveSplitShift(startTime, forcedEndTime);
+          return;
+        }
+
         const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colombiaDate = new Date(colombiaTimeStr);
         const currentHour = colombiaDate.getHours();
@@ -1895,7 +1906,6 @@
           const cutTime = new Date(colombiaDate);
           cutTime.setHours(3, 0, 0, 0);
           const forcedEndTime = cutTime.getTime();
-          const startTime = parseInt(activeShiftStart);
 
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           currentUser.activeShiftStart = null;
@@ -1903,7 +1913,7 @@
           processAndSaveSplitShift(startTime, forcedEndTime);
           return;
         }
-        activateShiftUI(parseInt(activeShiftStart));
+        activateShiftUI(startTime);
       }
     }
 
@@ -1929,6 +1939,21 @@
 
       if (shiftInterval) clearInterval(shiftInterval);
       shiftInterval = setInterval(() => {
+        const elapsedTimeMs = Date.now() - startTime;
+
+        // REGLA: CORTE AUTOMÁTICO AL CUMPLIR EXACTAMENTE 9 HORAS (MAX_SHIFT_MS)
+        if (elapsedTimeMs >= MAX_SHIFT_MS) {
+          alert('⏰ Servicio finalizado automáticamente al alcanzar el tiempo límite máximo de 9 horas continuas.');
+          const forcedEndTime = startTime + MAX_SHIFT_MS;
+
+          localStorage.removeItem(`shiftStart_${currentUser.username}`);
+          clearInterval(shiftInterval);
+          shiftInterval = null;
+
+          processAndSaveSplitShift(startTime, forcedEndTime);
+          return;
+        }
+
         const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colombiaDate = new Date(colombiaTimeStr);
         
@@ -2259,7 +2284,6 @@
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
-      const todayStr = getColombiaDateString();
       const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
       const isAllowedNight = (currentHour >= 18 || currentHour < 3);
 
@@ -2274,19 +2298,12 @@
         }; 
       });
 
-      if (history) {
-        history.forEach(h => {
-          if (normalizeDate(h.fecha) === todayStr && h.username) {
-            let uKey = h.username.toLowerCase();
-            if (dailyTotals[uKey]) dailyTotals[uKey].hours += parseFloat(h.horas || 0);
-          }
-        });
-      }
-
       const dailyArray = Object.values(dailyTotals).map(u => {
-        let liveHours = u.hours;
+        let liveHours = 0;
         if (u.activeShiftStart) {
-          liveHours += (Date.now() - parseInt(u.activeShiftStart)) / 3600000;
+          // Si está en servicio, cuenta estrictamente el tiempo que lleva corriendo el turno actual (Topado en 9h máximo)
+          const elapsed = Date.now() - parseInt(u.activeShiftStart);
+          liveHours = Math.min(elapsed, MAX_SHIFT_MS) / 3600000;
         }
         return { ...u, liveHours, isConnected: !!u.activeShiftStart };
       });
