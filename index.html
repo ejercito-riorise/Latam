@@ -177,7 +177,7 @@
                   <span id="profileBadgeLevel" class="text-[9px] text-amber-300 font-bold">🔰 Soldado Raso</span>
                   <button onclick="openRankInfoModal()" class="text-[10px] text-amber-400 hover:text-white transition" title="Ver tabla de rangos"><i class="fa-solid fa-circle-question"></i></button>
                 </div>
-                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Duración del turno actual o último turno">Turno: 00:00</span>
+                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Total acumulado hoy">Turno Hoy: 00:00</span>
               </div>
             </div>
           </div>
@@ -201,7 +201,7 @@
 
           <div id="shiftControls" class="space-y-2">
             <div id="timerDisplay" class="hidden text-center py-1.5 bg-slate-950 rounded border border-slate-800">
-              <p class="text-[10px] text-slate-400">Tiempo transcurrido en tu turno actual (Máx 9h):</p>
+              <p class="text-[10px] text-slate-400">Turno actual en curso (Máx 9h):</p>
               <p id="stopwatch" class="text-xl font-mono font-bold text-green-400">00:00:00</p>
             </div>
             <button id="btnToggleShift" onclick="toggleShift()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">
@@ -565,7 +565,6 @@
     let examQuestionsPool = [];
     let currentExamIndex = 0;
 
-    // Límite máximo de horas continuas por turno (9 Horas)
     const MAX_SHIFT_MS = 9 * 60 * 60 * 1000;
 
     const fullTriviaQuestionsBank = [
@@ -1339,44 +1338,40 @@
       }, 5000);
     }
 
+    // ==========================================
+    // CORRECCIÓN: SUMA EL HISTORIAL DE HOY + EL TURNO ACTIVO EN CURSO
+    // ==========================================
     function updateTodayHoursLive() {
-      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       const el = document.getElementById('profileTodayHours');
       if (!el) return;
 
-      if (activeShiftStart) {
-        // Validación: Si el turno empezó en un día anterior, no cuenta para el tiempo en vivo de hoy
-        const startDateStr = new Date(parseInt(activeShiftStart)).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
-        const todayStr = getColombiaDateString();
+      const todayStr = getColombiaDateString();
+      let totalHoursToday = 0;
 
-        if (startDateStr === todayStr) {
-          const activeHours = (Date.now() - parseInt(activeShiftStart)) / 3600000;
-          el.innerText = `Turno: ${decimalToHM(activeHours)}`;
-        } else {
-          el.innerText = `Turno: 00:00`;
-        }
-      } else {
-        let lastShiftDuration = 0;
-        if (globalHistoryCache && globalHistoryCache.length > 0) {
-          const userHistory = globalHistoryCache.filter(h => h.username && h.username.toLowerCase() === currentUser.username.toLowerCase());
-          if (userHistory.length > 0) {
-            const lastRecord = userHistory[userHistory.length - 1];
-            if (lastRecord.duracion) {
-              el.innerText = `Turno: ${lastRecord.duracion}`;
-              let weeklyHours = 0;
-              userHistory.forEach(h => {
-                if (isDateInCurrentWeek(h.fecha)) weeklyHours += parseFloat(h.horas || 0);
-              });
-              document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyHours);
-              return;
-            } else if (lastRecord.horas) {
-              lastShiftDuration = parseFloat(lastRecord.horas);
+      // 1. Sumar los turnos ya finalizados y guardados en el historial que correspondan a hoy
+      if (globalHistoryCache && globalHistoryCache.length > 0) {
+        globalHistoryCache.forEach(h => {
+          if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase()) {
+            if (normalizeDate(h.fecha) === todayStr) {
+              totalHoursToday += parseFloat(h.horas || 0);
             }
           }
-        }
-        el.innerText = `Turno: ${decimalToHM(lastShiftDuration)}`;
+        });
       }
 
+      // 2. Sumar el turno activo actual si empezó hoy
+      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
+      if (activeShiftStart) {
+        const startDateStr = new Date(parseInt(activeShiftStart)).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+        if (startDateStr === todayStr) {
+          const activeHours = (Date.now() - parseInt(activeShiftStart)) / 3600000;
+          totalHoursToday += activeHours;
+        }
+      }
+
+      el.innerText = `Turno Hoy: ${decimalToHM(totalHoursToday)}`;
+
+      // Calcular nivel semanal
       let weeklyTotalHours = 0;
       if (globalHistoryCache) {
         globalHistoryCache.forEach(h => {
@@ -1387,7 +1382,6 @@
       }
       if (activeShiftStart) {
         const startDateStr = new Date(parseInt(activeShiftStart)).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
-        const todayStr = getColombiaDateString();
         if (startDateStr === todayStr) {
           weeklyTotalHours += (Date.now() - parseInt(activeShiftStart)) / 3600000;
         }
@@ -2292,7 +2286,7 @@
     }
 
     // ==========================================
-    // CORRECCIÓN: SOLO CUENTA EL TIEMPO EN VIVO SI EL TURNO EMPEZÓ HOY (EVITA ARRASTRAR TIEMPO VIEJO)
+    // CORRECCIÓN: SUMA HISTORIAL GUARDADO + TURNO ACTIVO PARA EL RANKING DE HOY
     // ==========================================
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
@@ -2307,32 +2301,43 @@
         dailyTotals[u.username.toLowerCase()] = { 
           username: u.username, 
           rank: u.rank, 
-          hours: 0, 
-          activeShiftStart: u.activeShiftStart || localStorage.getItem(`shiftStart_${u.username}`)
+          totalHours: 0, 
+          activeShiftStart: u.activeShiftStart || localStorage.getItem(`shiftStart_${u.username}`),
+          isConnected: false
         }; 
       });
 
-      const dailyArray = Object.values(dailyTotals).map(u => {
-        let liveHours = 0;
-        let isTodayActive = false;
+      // 1. Sumar registros ya guardados en el historial de hoy
+      if (history && history.length > 0) {
+        history.forEach(h => {
+          if (h.username && dailyTotals[h.username.toLowerCase()]) {
+            if (normalizeDate(h.fecha) === todayStr) {
+              dailyTotals[h.username.toLowerCase()].totalHours += parseFloat(h.horas || 0);
+            }
+          }
+        });
+      }
 
+      // 2. Sumar turno activo actual si comenzó hoy
+      Object.keys(dailyTotals).forEach(key => {
+        let u = dailyTotals[key];
         if (u.activeShiftStart) {
           const shiftStartDateStr = new Date(parseInt(u.activeShiftStart)).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
-          
-          // Solo cuenta si el turno activo comenzó HOY. Si viene de un día anterior sin cerrar, se ignora para el ranking de hoy.
           if (shiftStartDateStr === todayStr) {
             const elapsed = Date.now() - parseInt(u.activeShiftStart);
-            liveHours = Math.min(elapsed, MAX_SHIFT_MS) / 3600000;
-            isTodayActive = true;
+            const liveHours = Math.min(elapsed, MAX_SHIFT_MS) / 3600000;
+            u.totalHours += liveHours;
+            u.isConnected = true;
           }
         }
-        return { ...u, liveHours, isConnected: isTodayActive };
       });
+
+      const dailyArray = Object.values(dailyTotals);
 
       dailyArray.sort((a, b) => {
         if (a.isConnected && !b.isConnected) return -1;
         if (!a.isConnected && b.isConnected) return 1;
-        return b.liveHours - a.liveHours;
+        return b.totalHours - a.totalHours;
       });
 
       dailyReportList.innerHTML = dailyArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros hoy.</p>' : '';
@@ -2367,7 +2372,7 @@
               <div class="mt-0.5">${statusBadge}</div>
             </div>
           </div>
-          <span class="text-cyan-400 font-mono font-bold text-xs shrink-0">${decimalToHM(u.liveHours)}</span>
+          <span class="text-cyan-400 font-mono font-bold text-xs shrink-0">${decimalToHM(u.totalHours)}</span>
         `;
         dailyReportList.appendChild(item);
       });
