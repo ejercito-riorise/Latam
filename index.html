@@ -1338,9 +1338,6 @@
       }, 5000);
     }
 
-    // ==========================================
-    // CORRECCIÓN: SUMA EL HISTORIAL DE HOY + EL TURNO ACTIVO EN CURSO
-    // ==========================================
     function updateTodayHoursLive() {
       const el = document.getElementById('profileTodayHours');
       if (!el) return;
@@ -1348,7 +1345,6 @@
       const todayStr = getColombiaDateString();
       let totalHoursToday = 0;
 
-      // 1. Sumar los turnos ya finalizados y guardados en el historial que correspondan a hoy
       if (globalHistoryCache && globalHistoryCache.length > 0) {
         globalHistoryCache.forEach(h => {
           if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase()) {
@@ -1359,19 +1355,20 @@
         });
       }
 
-      // 2. Sumar el turno activo actual si empezó hoy
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
-        const startDateStr = new Date(parseInt(activeShiftStart)).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+        const startTime = parseInt(activeShiftStart);
+        const startDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
         if (startDateStr === todayStr) {
-          const activeHours = (Date.now() - parseInt(activeShiftStart)) / 3600000;
-          totalHoursToday += activeHours;
+          const elapsed = Date.now() - startTime;
+          if (elapsed < MAX_SHIFT_MS) {
+            totalHoursToday += elapsed / 3600000;
+          }
         }
       }
 
       el.innerText = `Turno Hoy: ${decimalToHM(totalHoursToday)}`;
 
-      // Calcular nivel semanal
       let weeklyTotalHours = 0;
       if (globalHistoryCache) {
         globalHistoryCache.forEach(h => {
@@ -1381,9 +1378,13 @@
         });
       }
       if (activeShiftStart) {
-        const startDateStr = new Date(parseInt(activeShiftStart)).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+        const startTime = parseInt(activeShiftStart);
+        const startDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
         if (startDateStr === todayStr) {
-          weeklyTotalHours += (Date.now() - parseInt(activeShiftStart)) / 3600000;
+          const elapsed = Date.now() - startTime;
+          if (elapsed < MAX_SHIFT_MS) {
+            weeklyTotalHours += elapsed / 3600000;
+          }
         }
       }
       document.getElementById('profileBadgeLevel').innerText = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyTotalHours);
@@ -2286,7 +2287,7 @@
     }
 
     // ==========================================
-    // CORRECCIÓN: SUMA HISTORIAL GUARDADO + TURNO ACTIVO PARA EL RANKING DE HOY
+    // CORRECCIÓN: FILTRA TURNOS MAYORES A 9 HORAS (EVITA 24H FALSAS)
     // ==========================================
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
@@ -2307,7 +2308,6 @@
         }; 
       });
 
-      // 1. Sumar registros ya guardados en el historial de hoy
       if (history && history.length > 0) {
         history.forEach(h => {
           if (h.username && dailyTotals[h.username.toLowerCase()]) {
@@ -2318,16 +2318,20 @@
         });
       }
 
-      // 2. Sumar turno activo actual si comenzó hoy
       Object.keys(dailyTotals).forEach(key => {
         let u = dailyTotals[key];
         if (u.activeShiftStart) {
-          const shiftStartDateStr = new Date(parseInt(u.activeShiftStart)).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+          const startTime = parseInt(u.activeShiftStart);
+          const shiftStartDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+          
           if (shiftStartDateStr === todayStr) {
-            const elapsed = Date.now() - parseInt(u.activeShiftStart);
-            const liveHours = Math.min(elapsed, MAX_SHIFT_MS) / 3600000;
-            u.totalHours += liveHours;
-            u.isConnected = true;
+            const elapsed = Date.now() - startTime;
+            // Si supera las 9 horas (MAX_SHIFT_MS), no se cuenta como activo en vivo para evitar bug
+            if (elapsed < MAX_SHIFT_MS) {
+              const liveHours = elapsed / 3600000;
+              u.totalHours += liveHours;
+              u.isConnected = true;
+            }
           }
         }
       });
