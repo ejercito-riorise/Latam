@@ -216,7 +216,7 @@
             <i class="fa-solid fa-bullhorn"></i> Novedades
           </button>
           <button id="navDoctrinaBtn" onclick="switchMainTab('doctrina')" class="py-2 text-xs font-bold rounded-md transition text-slate-400 hover:text-white bg-transparent flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-book-open"></i> Doctrina y Normas
+            <i class="fa-solid fa-book-open"></i> Academia y Reglamento
           </button>
         </div>
 
@@ -234,14 +234,14 @@
           </div>
         </div>
 
-        <!-- SECCIÓN DOCTRINA (REGLAMENTO INTERACTIVO PRO) -->
+        <!-- SECCIÓN ACADEMIA Y REGLAMENTO OFICIAL (PRO & INTERACTIVA) -->
         <div id="sectionDoctrina" class="military-card p-3 rounded-xl space-y-3 hidden">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
               <div>
-                <h3 class="font-bold text-white text-xs">Academia Táctica y Reglamento</h3>
-                <p class="text-[9px] text-slate-400">Lectura obligatoria y quiz de retención</p>
+                <h3 class="font-bold text-white text-xs">Academia Táctica y Reglamento Oficial</h3>
+                <p class="text-[9px] text-slate-400">Normativa oficial del Ejército RioRise</p>
               </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -249,15 +249,15 @@
             </button>
           </div>
 
-          <!-- ACADEMIA: BOTÓN PARA LANZAR EL QUIZ INTERACTIVO -->
-          <div class="bg-gradient-to-r from-blue-950/80 to-slate-900 p-3 rounded-xl border border-blue-500/40 flex items-center justify-between shadow-md">
+          <!-- BANNER DE EVALUACIÓN OBLIGATORIA / EXAMEN -->
+          <div class="bg-gradient-to-r from-blue-950/80 to-slate-900 p-3 rounded-xl border border-blue-500/50 flex items-center justify-between shadow-md">
             <div class="flex items-center gap-2.5">
               <div class="w-9 h-9 rounded-lg bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400 text-base">
                 <i class="fa-solid fa-brain"></i>
               </div>
               <div>
-                <h4 class="text-xs font-bold text-blue-300">Examen de Reglamento EB</h4>
-                <p class="text-[10px] text-slate-300">Pon a prueba tu conocimiento táctico</p>
+                <h4 class="text-xs font-bold text-blue-300">Desafío de Tropa (Quiz)</h4>
+                <p class="text-[10px] text-slate-300">Gana puntos evaluando el reglamento</p>
               </div>
             </div>
             <button onclick="openReglasQuizModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-2 rounded-lg shadow-lg transition flex items-center gap-1 shrink-0">
@@ -265,130 +265,112 @@
             </button>
           </div>
 
-          <!-- CONTENEDOR DE MANUALES O REGLAMENTOS DINÁMICOS -->
-          <div id="doctrinaFeedContainer" class="space-y-2.5">
-            
-            <!-- CAPÍTULO 1 -->
+          <!-- SUB-PESTAÑAS DE REGLAMENTO (PARA EVITAR CONTAMINACIÓN VISUAL) -->
+          <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
+            <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🪖 1 al 3</button>
+            <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ 4 (Prohibido)</button>
+            <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📡 5 al 7</button>
+          </div>
+
+          <!-- BLOQUE 1: GENERAL, DEBERES Y PERMISOS (Capítulos 1, 2 y 3) -->
+          <div id="regView1" class="space-y-2">
             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <button onclick="toggleChapter('cap1')" class="w-full flex justify-between items-center text-xs font-bold text-amber-400">
+              <div class="bg-amber-950/40 border border-amber-800/60 p-2 rounded text-amber-300 text-[10px] mb-2 space-y-1">
+                <p><strong>🕒 Horario de trabajo:</strong> De 17:00 a 02:00 (Obligatorio uniforme y servicio).</p>
+                <p><strong>⚠️ Nota General:</strong> El General y los Coroneles aplican medidas disciplinarias independientes ante infracciones.</p>
+              </div>
+              
+              <button onclick="toggleChapter('cap1')" class="w-full flex justify-between items-center text-xs font-bold text-amber-400 py-1">
                 <span><i class="fa-solid fa-shield-halved mr-1.5"></i> CAPÍTULO 1: Disposiciones Generales</span>
                 <i id="chevron_cap1" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
               </button>
-              <div id="cap1" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-2">
-                <p><strong>🕒 Horario de trabajo:</strong> De 17:00 a 02:00. Durante este periodo, todos los empleados deben estar de servicio y uniformados.</p>
-                <div class="bg-amber-950/40 border border-amber-800/60 p-2 rounded text-amber-300">
-                  <strong>⚠️ Nota importante:</strong> El General y los Coroneles tienen derecho a informar a la administración o aplicar medidas disciplinarias de forma independiente si detectan una infracción.
-                </div>
+              <div id="cap1" class="hidden mt-2 pt-2 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
                 <p><strong>1.1.</strong> Todos los empleados del ejército deben conocer y cumplir este reglamento.</p>
-                <p><strong>1.2.</strong> Por infracciones a los artículos, pueden sufrir medidas disciplinarias: advertencia, amonestación, despido o despido con inclusión en la lista negra.</p>
+                <p><strong>1.2.</strong> Infracciones conllevan: advertencia, amonestación, despido o lista negra.</p>
                 <p><strong>1.3.</strong> Todo empleado tiene derecho a apelar una medida disciplinaria.</p>
-                <p><strong>1.4.</strong> Durante el horario laboral, todos los empleados deben estar uniformados. Permiso especial al General o Coroneles.</p>
+                <p><strong>1.4.</strong> Uniforme obligatorio en horario laboral (permiso exclusivo de General/Coroneles).</p>
               </div>
             </div>
 
-            <!-- CAPÍTULO 2 -->
             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <button onclick="toggleChapter('cap2')" class="w-full flex justify-between items-center text-xs font-bold text-blue-400">
-                <span><i class="fa-solid fa-user-tie mr-1.5"></i> CAPÍTULO 2: Deberes Principales de Oficiales</span>
+              <button onclick="toggleChapter('cap2')" class="w-full flex justify-between items-center text-xs font-bold text-blue-400 py-1">
+                <span><i class="fa-solid fa-user-tie mr-1.5"></i> CAPÍTULO 2: Deberes de Oficiales</span>
                 <i id="chevron_cap2" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
               </button>
-              <div id="cap2" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
-                <p><strong>2.1.</strong> Conocer y obedecer las leyes del estado, los estatutos y asegurar su cumplimiento.</p>
-                <p><strong>2.2.</strong> Proteger la vida de los ciudadanos por cualquier medio necesario.</p>
-                <p><strong>2.3.</strong> Obedecer las órdenes de los oficiales superiores sin cuestionarlas (marco legal).</p>
-                <p><strong>2.4.</strong> Respetar la cadena de mando estrictamente.</p>
-                <p><strong>2.5.</strong> Seguir el orden interno de la organización.</p>
-                <p><strong>2.6.</strong> Ser cortes y diplomático al comunicarse con los ciudadanos.</p>
-                <p><strong>2.7.</strong> En caso de daños intencionales o accidentales, el oficial debe reparar el vehículo de trabajo.</p>
-                <p><strong>2.8.</strong> Los soldados deben conocer a sus oficiales superiores por su rostro y nombre.</p>
-                <p><strong>2.9.</strong> Proteger los bienes y objetos de valor del ejército.</p>
-                <p><strong>2.10.</strong> Presentar los documentos al oficial de guardia en los puestos de control.</p>
-                <p><strong>2.11.</strong> En los puestos de control, verificar documentos de todos los civiles que lleguen.</p>
-                <p><strong>2.12.</strong> Los soldados deben presentarse antes de verificar los documentos.</p>
-                <p><strong>2.13.</strong> Vigilar el territorio del ejército diariamente (distribución por el ayudante o líder).</p>
+              <div id="cap2" class="hidden mt-2 pt-2 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
+                <p><strong>2.1.</strong> Obedecer leyes del estado y estatutos de la organización.</p>
+                <p><strong>2.2.</strong> Proteger la vida de los ciudadanos por cualquier medio.</p>
+                <p><strong>2.3.</strong> Obedecer órdenes de superiores sin cuestionar (marco legal).</p>
+                <p><strong>2.4.</strong> Respetar la cadena de mando y orden interno (2.4, 2.5).</p>
+                <p><strong>2.5.</strong> Ser cortés y diplomático con los ciudadanos (2.6).</p>
+                <p><strong>2.6.</strong> Reparar vehículos de trabajo por daños (2.7) y conocer superiores por rostro/nombre (2.8).</p>
+                <p><strong>2.7.</strong> Proteger bienes, presentar documentos a guardia y verificar civiles (2.9 a 2.12).</p>
+                <p><strong>2.8.</strong> Vigilar territorio diariamente según distribución del ayudante/líder (2.13).</p>
               </div>
             </div>
 
-            <!-- CAPÍTULO 3 -->
             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
               <button onclick="toggleChapter('cap3')" class="w-full flex justify-between items-center text-xs font-bold text-emerald-400">
                 <span><i class="fa-solid fa-person-military-rifle mr-1.5"></i> CAPÍTULO 3: El Personal Puede</span>
                 <i id="chevron_cap3" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
               </button>
-              <div id="cap3" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
-                <p><strong>3.1.</strong> Disparar a los civiles que ingresen ilegalmente al territorio del ejército.</p>
-                <p><strong>3.2.</strong> Prestar asistencia a otras facciones gubernamentales durante eventos.</p>
-                <p><strong>3.3.</strong> Verificar los documentos de identidad de civiles y personal.</p>
-                <p><strong>3.4.</strong> Hacer preguntas a los oficiales superiores.</p>
-                <p><strong>3.5.</strong> Practicar tiro fuera del horario laboral.</p>
-                <p><strong>3.6.</strong> Solicitar asistencia por radio.</p>
-                <p><strong>3.7.</strong> Disparar a los civiles que apunten con un arma a otro civil o agente de policía.</p>
-                <p><strong>3.8.</strong> Tomar licencia o vacaciones con aprobación del General o Coroneles (hasta por 2 semanas).</p>
-                <p><strong>3.9.</strong> Bloquear caminos para prevenir delitos (ej. entrega de guaraná por la mafia).</p>
-                <p><strong>3.10.</strong> Chocar o disparar contra vehículos para prevenir delitos.</p>
-                <p><strong>3.11.</strong> Transportar y almacenar armas en cualquier lugar.</p>
-                <p><strong>3.12.</strong> Estacionar vehículos personales en el territorio de la organización.</p>
+              <div id="cap3" class="hidden mt-2 pt-2 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
+                <p><strong>3.1 a 3.4.</strong> Disparar a ingresos ilegales, ayudar a facciones, verificar documentos e interrogar.</p>
+                <p><strong>3.5 a 3.8.</strong> Practicar tiro fuera de hora, pedir radio, disparar ante amenazas directas a civiles/policía y tomar licencias de hasta 2 semanas (aprobación de General/Coroneles).</p>
+                <p><strong>3.9 a 3.12.</strong> Bloquear caminos/chocar autos para evitar delitos (ej. guaraná de mafia), transportar armas y estacionar vehículos personales en base.</p>
               </div>
             </div>
+          </div>
 
-            <!-- CAPÍTULO 4 -->
-            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <button onclick="toggleChapter('cap4')" class="w-full flex justify-between items-center text-xs font-bold text-red-400">
-                <span><i class="fa-solid fa-ban mr-1.5"></i> CAPÍTULO 4: Prohibido para Empleados</span>
-                <i id="chevron_cap4" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
-              </button>
-              <div id="cap4" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
-                <p><strong>4.1.</strong> Vender o ceder uniformes militares.</p>
-                <p><strong>4.2.</strong> Vender cualquier propiedad del gobierno.</p>
-                <p><strong>4.3.</strong> Solicitar ascensos de rango o puesto.</p>
-                <p><strong>4.4.</strong> Abandonar la base sin permiso (nota: considerarse ausencia no autorizada).</p>
-                <p><strong>4.5.</strong> Permanecer solo en barrios marginales innecesariamente.</p>
-                <p><strong>4.6.</strong> Causar daño físico a compañeros, civiles, empleados o propiedad sin motivo.</p>
-                <p><strong>4.7.</strong> Engañar a soldados o civiles.</p>
-                <p><strong>4.8.</strong> Discutir, ignorar o cuestionar órdenes de oficiales superiores.</p>
-                <p><strong>4.9.</strong> Usar lenguaje obsceno, insultar o humillar a alguien.</p>
-                <p><strong>4.10.</strong> Colaborar con grupos criminales o mafias.</p>
-                <p><strong>4.11.</strong> Abusar de autoridad.</p>
-                <p><strong>4.12.</strong> Usar máscara innecesariamente (uso debe reportarse por radio indicando el motivo).</p>
-                <p><strong>4.13.</strong> Acompañar a civiles o miembros de pandillas en la base.</p>
-                <p><strong>4.14.</strong> Manejar asuntos personales durante el trabajo.</p>
-                <p><strong>4.15.</strong> Poseer o consumir drogas o alcohol para fines personales.</p>
-                <p><strong>4.16.</strong> Usar vehículos oficiales para fines personales.</p>
-                <p><strong>4.17.</strong> Realizar actividades ilícitas o comportamiento inapropiado.</p>
-                <p><strong>4.18.</strong> Hacer mal uso del megáfono.</p>
-                <p><strong>4.19.</strong> Trabajar en empleos secundarios durante el servicio o estando de uniforme.</p>
-                <p><strong>4.20.</strong> Aceptar sobornos.</p>
-                <p><strong>4.21.</strong> Uso de armas para fines personales.</p>
-                <p><strong>4.22.</strong> Ocupar o abandonar puestos sin reportarlo por radio.</p>
-                <p><strong>4.23.</strong> Cambiar o elegir puestos sin autorización.</p>
-                <p><strong>4.24.</strong> Usar la radio y chat del departamento para fines ajenos al trabajo.</p>
+          <!-- BLOQUE 2: PROHIBICIONES (Capítulo 4) -->
+          <div id="regView2" class="space-y-2 hidden">
+            <div class="bg-slate-950 p-3 rounded-xl border border-red-900/60 space-y-2">
+              <div class="flex items-center gap-1.5 text-xs font-bold text-red-400 border-b border-slate-900 pb-1">
+                <i class="fa-solid fa-ban"></i> CAPÍTULO 4: Prohibido para Empleados
+              </div>
+              <div class="text-[11px] text-slate-300 space-y-1.5 max-h-64 overflow-y-auto pr-1">
+                <p><strong>4.1 - 4.3.</strong> Vender uniformes o propiedad del gobierno, y solicitar ascensos.</p>
+                <p><strong>4.4.</strong> Abandonar la base sin permiso ni reporte (ausencia no autorizada).</p>
+                <p><strong>4.5 - 4.7.</strong> Permanecer solo en barrios marginales, dañar bienes/compañeros sin motivo y engañar a civiles o soldados.</p>
+                <p><strong>4.8 - 4.10.</strong> Desobedecer órdenes superiores, usar lenguaje obsceno/insultar y colaborar con mafias o grupos criminales.</p>
+                <p><strong>4.11 - 4.13.</strong> Abusar de autoridad, usar máscara sin reporte previo por radio y acompañar a pandilleros en la base.</p>
+                <p><strong>4.14 - 4.16.</strong> Manejar asuntos personales en servicio, poseer/consumir drogas o alcohol, y usar vehículos oficiales para fines personales.</p>
+                <p><strong>4.17 - 4.21.</strong> Conducta inapropiada, actividades ilícitas, mal uso de megáfono, empleos secundarios en servicio y aceptar sobornos.</p>
+                <p><strong>4.22 - 4.25.</strong> Uso de armas personal, abandonar puestos sin radio, cambiar puestos sin autorización y usar la radio/chat para fines ajenos al trabajo.</p>
               </div>
             </div>
+          </div>
 
-            <!-- CAPÍTULO 5, 6 y 7 -->
+          <!-- BLOQUE 3: ENTRENAMIENTO Y COMUNICACIÓN (Capítulos 5, 6 y 7) -->
+          <div id="regView3" class="space-y-2 hidden">
             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
               <button onclick="toggleChapter('cap5')" class="w-full flex justify-between items-center text-xs font-bold text-purple-400">
-                <span><i class="fa-solid fa-book-bookmark mr-1.5"></i> CAPÍTULO 5, 6 y 7: Entrenamiento y Normas</span>
+                <span><i class="fa-solid fa-person-running mr-1.5"></i> CAPÍTULO 5: Reglas de Entrenamiento</span>
                 <i id="chevron_cap5" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
               </button>
-              <div id="cap5" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-2">
-                <p class="font-bold text-amber-300">⚔️ Reglas de Entrenamiento (Cap. 5):</p>
-                <p><strong>5.1.</strong> El tiempo de entrenamiento es de 5 minutos exactos.</p>
-                <p><strong>5.2.</strong> Se prohíbe el uso de gestos (excepto levantar la mano).</p>
-                <p><strong>5.3.</strong> Se prohíbe quebrantar la disciplina o usar la radio/teléfono.</p>
-                <p><strong>5.4.</strong> Se prohíbe hablar (incluso susurrar) o portar armas durante el entrenamiento.</p>
-                
-                <p class="font-bold text-cyan-300 pt-1">📡 Comunicación y Subordinación (Cap. 6 y 7):</p>
-                <p><strong>6.1.</strong> Comunicarse cortésmente con todos los ciudadanos.</p>
-                <p><strong>6.2.</strong> Prohibidos asuntos personales, insultos y discusiones por radio.</p>
-                <div class="bg-cyan-950/40 border border-cyan-800/60 p-2 rounded text-cyan-300">
-                  <p><strong>7.1. Horas mínimas semanales:</strong> 7 horas obligatorias.</p>
-                  <p><strong>7.2. Ausencia máxima:</strong> 3 días sin previo aviso.</p>
+              <div id="cap5" class="hidden mt-2 pt-2 border-t border-slate-900 text-[11px] text-slate-300 space-y-1">
+                <p><strong>5.1.</strong> Duración exacta: 5 minutos.</p>
+                <p><strong>5.2.</strong> Prohibidos gestos (excepto levantar la mano).</p>
+                <p><strong>5.3 a 5.7.</strong> Prohibido quebrantar disciplina, usar radio, hablar (ni susurrar), usar teléfono o portar armas.</p>
+              </div>
+            </div>
+
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <button onclick="toggleChapter('cap6')" class="w-full flex justify-between items-center text-xs font-bold text-cyan-400">
+                <span><i class="fa-solid fa-tower-broadcast mr-1.5"></i> CAPÍTULO 6 y 7: Comunicación y Jornada</span>
+                <i id="chevron_cap5_extra" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
+              </button>
+              <div id="cap6" class="hidden mt-2 pt-2 border-t border-slate-900 text-[11px] text-slate-300 space-y-2">
+                <p><strong>6.1.</strong> Trato cortés a todos los ciudadanos sin importar estatus.</p>
+                <p><strong>6.2.</strong> Prohibidos asuntos personales, insultos y discusiones por radio o chat departamental.</p>
+                <div class="bg-cyan-950/40 border border-cyan-800/60 p-2 rounded text-cyan-300 space-y-1">
+                  <p><strong>7.1. Mínimo diario:</strong> 4 horas de juego para el personal.</p>
+                  <p><strong>7.2. Ausencia máxima:</strong> 3 días sin reportar.</p>
                 </div>
               </div>
             </div>
-
           </div>
+
         </div>
 
         <!-- CENTRO DE ENTRENAMIENTO Y MAPA TÁCTICO (ACORDEÓN) -->
@@ -478,12 +460,12 @@
     </div>
   </div>
 
-  <!-- MODAL EXAMEN REGLAMENTO INTERACTIVO -->
+  <!-- MODAL QUIZ INTERACTIVO DE REGLAMENTO -->
   <div id="reglasQuizModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[120] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-blue-500/60 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
         <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-brain animate-pulse"></i> Quiz Oficial de Reglamento
+          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento Oficial
         </h4>
         <button onclick="closeReglasQuizModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -724,14 +706,14 @@
     let examQuestionsPool = [];
     let currentExamIndex = 0;
 
-    // QUIZ DE REGLAMENTO INTERACTIVO
+    // QUIZ DE REGLAMENTO INTERACTIVO PRO
     const reglamentoQuizPool = [
-      { q: "Según el Capítulo 1, ¿cuál es el horario de trabajo obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00", "C) Libre las 24 horas"], a: 1 },
-      { q: "Según el Capítulo 2 (Deberes), ¿qué debe hacer un oficial en caso de dañar un vehículo?", options: ["A) Dejarlo abandonado", "B) Reparar el vehículo de trabajo", "C) Comprar uno personal"], a: 1 },
-      { q: "Según el Capítulo 3, ¿cuánto tiempo máximo de licencia o vacaciones se puede aprobar?", options: ["A) Hasta por dos semanas", "B) 1 mes", "C) 3 días máximo"], a: 0 },
-      { q: "Según el Capítulo 4 (Prohibiciones), ¿está permitido vender uniformes militares?", options: ["A) Sí, si necesito dinero", "B) No, está estrictamente prohibido (Art. 4.1)", "C) Solo a amigos cercanos"], a: 1 },
-      { q: "Según el Capítulo 5, ¿cuánto dura exactamente un entrenamiento oficial?", options: ["A) 15 minutos", "B) 5 minutos exactos", "C) Lo que decida el soldado"], a: 1 },
-      { q: "Según el Capítulo 7, ¿cuántas horas mínimas semanales debe cumplir un soldado?", options: ["A) 7 horas", "B) 14 horas", "C) 20 horas"], a: 0 }
+      { q: "¿Cuál es el horario de trabajo obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00", "C) Libre las 24 horas"], a: 1 },
+      { q: "¿Qué debe hacer un oficial en caso de dañar un vehículo?", options: ["A) Dejarlo abandonado", "B) Reparar el vehículo de trabajo", "C) Comprar uno personal"], a: 1 },
+      { q: "¿Cuánto tiempo máximo de licencia o vacaciones se puede aprobar?", options: ["A) Hasta por dos semanas", "B) 1 mes", "C) 3 días máximo"], a: 0 },
+      { q: "¿Está permitido vender uniformes militares?", options: ["A) Sí, si necesito dinero", "B) No, está estrictamente prohibido (Art. 4.1)", "C) Solo a amigos cercanos"], a: 1 },
+      { q: "¿Cuánto dura exactamente un entrenamiento oficial?", options: ["A) 15 minutos", "B) 5 minutos exactos", "C) Lo que decida el soldado"], a: 1 },
+      { q: "¿Cuántas horas mínimas semanales o diarias debe cumplir el personal?", options: ["A) 4 horas diarias", "B) 14 horas", "C) 20 horas"], a: 0 }
     ];
     let currentQuizIndex = 0;
     let quizScore = 0;
@@ -774,7 +756,18 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // INTERACTIVIDAD CAPÍTULOS DE REGLAMENTO
+    // CONTROL DE SUB-PESTAÑAS DE REGLAMENTO
+    function switchRegTab(tabNum) {
+      document.getElementById('regView1').classList.toggle('hidden', tabNum !== 1);
+      document.getElementById('regView2').classList.toggle('hidden', tabNum !== 2);
+      document.getElementById('regView3').classList.toggle('hidden', tabNum !== 3);
+
+      document.getElementById('regTab1Btn').className = tabNum === 1 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
+      document.getElementById('regTab2Btn').className = tabNum === 2 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
+      document.getElementById('regTab3Btn').className = tabNum === 3 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
+    }
+
+    // INTERACTIVIDAD ACORDEÓN DE CAPÍTULOS
     function toggleChapter(id) {
       const el = document.getElementById(id);
       const chevron = document.getElementById(`chevron_${id}`);
@@ -783,7 +776,7 @@
       if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
     }
 
-    // ACADEMIA QUIZ INTERACTIVO
+    // QUIZ INTERACTIVO REGLAMENTO
     function openReglasQuizModal() {
       currentQuizIndex = 0;
       quizScore = 0;
@@ -831,7 +824,7 @@
           loadQuizQuestion();
         } else {
           closeReglasQuizModal();
-          alert(`🎓 ¡Quiz de Reglamento Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 5 ? '🏆 ¡Excelente dominio del reglamento!' : '⚠ Te sugerimos repasar los capítulos de la academia.'}`);
+          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 5 ? '🏆 ¡Excelente dominio del reglamento militar!' : '⚠ Te sugerimos repasar los capítulos de la academia.'}`);
         }
       }, 1200);
     }
