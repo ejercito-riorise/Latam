@@ -234,14 +234,14 @@
           </div>
         </div>
 
-        <!-- SECCIÓN ACADEMIA Y REGLAMENTO OFICIAL (PRO & INTERACTIVA) -->
+        <!-- SECCIÓN ACADEMIA, REGLAMENTO, CÓDIGOS Q, BIBLIA RP Y MAPA TÁCTICO INTERACTIVO -->
         <div id="sectionDoctrina" class="military-card p-3 rounded-xl space-y-3 hidden">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
               <div>
                 <h3 class="font-bold text-white text-xs">Academia Táctica y Manuales</h3>
-                <p class="text-[9px] text-slate-400">Normativa, Biblia RP y Códigos Q</p>
+                <p class="text-[9px] text-slate-400">Normativa, Biblia RP, Códigos Q y Mapa Base</p>
               </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -257,7 +257,7 @@
               </div>
               <div>
                 <h4 class="text-xs font-bold text-blue-300">Desafío de Tropa (Quiz)</h4>
-                <p class="text-[10px] text-slate-300">Evalúa reglamento, Biblia RP[cite: 2] y códigos Q</p>
+                <p class="text-[10px] text-slate-300">Evalúa reglamento, Biblia RP y códigos Q</p>
               </div>
             </div>
             <button onclick="openReglasQuizModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-2 rounded-lg shadow-lg transition flex items-center gap-1 shrink-0">
@@ -265,7 +265,7 @@
             </button>
           </div>
 
-          <!-- SUB-PESTAÑAS DE ACADEMIA (REGLAMENTO + CÓDIGOS Q + BIBLIA RP) -->
+          <!-- SUB-PESTAÑAS DE ACADEMIA ORDENADAS -->
           <div class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
             <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🪖 1-3</button>
             <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ 4</button>
@@ -388,85 +388,43 @@
             </div>
           </div>
 
-          <!-- BLOQUE 5: BIBLIA RP DE RIO RISE (NUEVO)[cite: 2] -->
-          <div id="regView5" class="space-y-2 hidden">
+          <!-- BLOQUE 5: BIBLIA RP Y MAPA TÁCTICO INTERACTIVO -->
+          <div id="regView5" class="space-y-3 hidden">
+            <!-- Biblia RP -->
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-book-bible mr-1"></i> Biblia RP Oficial - Rio Rise[cite: 2]</h4>
+                <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-book-bible mr-1"></i> Biblia RP Oficial - Rio Rise</h4>
                 <span class="text-[9px] text-slate-400">Normativa del Servidor</span>
               </div>
               <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
                 <input type="text" id="rpSearch" oninput="filterRpRules()" placeholder="Busca un concepto (Ej: RDM, MG, KOS)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
               </div>
-              <div id="rpContainer" class="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto pr-1 text-[11px]"></div>
+              <div id="rpContainer" class="grid grid-cols-1 gap-1.5 max-h-48 overflow-y-auto pr-1 text-[11px]"></div>
             </div>
-          </div>
 
-        </div>
-
-        <!-- CENTRO DE ENTRENAMIENTO Y MAPA TÁCTICO (ACORDEÓN) -->
-        <div id="offDutySimulatorCard" class="military-card rounded-xl border border-amber-500/40 overflow-hidden shadow-md">
-          <button onclick="toggleTrainingAccordion()" class="w-full p-3 bg-slate-900/90 hover:bg-slate-900 flex items-center justify-between text-left transition">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-crosshairs text-amber-400 text-sm animate-pulse"></i>
-              <div>
-                <h4 class="text-xs font-bold text-amber-300">Mapa Real y Entrenamiento Táctico</h4>
-                <p class="text-[10px] text-slate-400">Mapa base, examen RP[cite: 2] y operaciones</p>
+            <!-- MAPA TÁCTICO INTERACTIVO DE LA BASE (NUEVO) -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/50 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-900 pb-2">
+                <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-map-location-dot mr-1"></i> Mapa Táctico Interactivo de la Base</h4>
+                <span class="text-[9px] text-emerald-400 font-bold">Base Oficial RioRise</span>
               </div>
-            </div>
-            <i id="trainingChevron" class="fa-solid fa-chevron-down text-amber-400 text-xs transition-transform"></i>
-          </button>
-
-          <div id="trainingBodyContainer" class="hidden p-3 space-y-3 bg-slate-950/60 border-t border-slate-800">
-            <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
-              <button id="tabTriviaBtn" onclick="switchTrainTab('trivia')" class="py-1 font-bold rounded text-white bg-amber-600 shadow">🧠 Trivia RP</button>
-              <button id="tabMapBtn" onclick="switchTrainTab('map')" class="py-1 font-bold rounded text-slate-400 hover:text-white">🗺️ Mapa Base</button>
-              <button id="tabOpsBtn" onclick="switchTrainTab('ops')" class="py-1 font-bold rounded text-slate-400 hover:text-white">📅 Operaciones</button>
-            </div>
-
-            <!-- TRIVIA -->
-            <div id="trainTriviaView" class="space-y-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-              <div class="flex justify-between items-center text-[10px]">
-                <span class="text-slate-400 font-semibold">Examen de Conocimiento Táctico</span>
-                <span class="text-amber-300 font-mono font-bold">Honor: <span id="honorPoints">0</span> pts</span>
-              </div>
-              <p id="triviaQuestion" class="text-xs font-bold text-white min-h-[32px]">Cargando pregunta...</p>
-              <div id="triviaOptions" class="space-y-1.5"></div>
-              <p id="triviaFeedback" class="text-[10px] font-bold hidden"></p>
-            </div>
-
-            <!-- MAPA REAL -->
-            <div id="trainMapView" class="hidden space-y-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-center">
-              <p class="text-[10px] text-slate-300 font-semibold mb-1">Mapa Oficial de la Base Militar Rio Rise:</p>
-              <div class="rounded overflow-hidden border border-slate-700 bg-slate-950 cursor-pointer group relative" onclick="openImageModal('https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9')">
-                <img src="https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9" alt="Mapa Base Rio Rise" class="w-full h-auto object-cover max-h-56" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&auto=format&fit=crop&q=60';">
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1">
-                  <i class="fa-solid fa-magnifying-glass-plus"></i> Toca para ampliar mapa completo
+              <p class="text-[10px] text-slate-300">Toca el mapa para ampliarlo y estudiar la ubicación de garajes, torres tango y sectores de defensa[cite: 3]:</p>
+              <div class="rounded-lg overflow-hidden border border-slate-700 bg-slate-900 cursor-pointer group relative text-center" onclick="openImageModal('https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9')">
+                <img src="https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9" alt="Mapa Base Rio Rise" class="w-full h-auto object-cover max-h-56 group-hover:scale-105 transition duration-300" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&auto=format&fit=crop&q=60';">
+                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1.5">
+                  <i class="fa-solid fa-magnifying-glass-plus text-amber-400"></i> Toca para ampliar mapa en alta resolución
                 </div>
               </div>
-              <p class="text-[9px] text-slate-400 italic mt-1">Estudia los accesos, torres de vigilancia y sectores perimetrales.</p>
-            </div>
-
-            <!-- OPERACIONES -->
-            <div id="trainOpsView" class="hidden space-y-2 text-[10px]">
-              <div class="bg-slate-900 p-2 rounded border border-slate-800">
-                <h5 class="font-bold text-purple-400"><i class="fa-solid fa-skull-crossbones mr-1"></i> Invasiones del EB</h5>
-                <p class="text-slate-300"><strong>Martes:</strong> Facciones Morada / Verde (17:00 a 24:00).</p>
-                <p class="text-slate-300"><strong>Jueves:</strong> Mafias (19:00 a 23:00).</p>
-              </div>
-              <div class="bg-slate-900 p-2 rounded border border-slate-800">
-                <h5 class="font-bold text-amber-400"><i class="fa-solid fa-shield-cat mr-1"></i> Pacificaciones</h5>
-                <p class="text-slate-300"><strong>Sábados:</strong> 21:00 a 22:00.</p>
-                <p class="text-slate-300"><strong>Domingos y Lunes:</strong> 21:00 a 00:00 (con Policía Federal).</p>
-              </div>
-              <div class="bg-slate-900 p-2 rounded border border-slate-800">
-                <h5 class="font-bold text-emerald-400"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Cargamento CRM</h5>
-                <p class="text-slate-300">Todos los días a las <strong>17:00</strong> y <strong>19:00 /time</strong>.</p>
+              <div class="grid grid-cols-2 gap-1.5 text-[10px] pt-1">
+                <div class="bg-slate-900 p-1.5 rounded border border-slate-800 text-slate-300">🛡️ <strong>Torres Tango:</strong> 1 al 8 perimetrales</div>
+                <div class="bg-slate-900 p-1.5 rounded border border-slate-800 text-slate-300">🚁 <strong>Helipuerto & Aéreo:</strong> Zona sur de despliegue</div>
+                <div class="bg-slate-900 p-1.5 rounded border border-slate-800 text-slate-300">🚗 <strong>Garajes:</strong> 1, 2 y 3 operativos</div>
+                <div class="bg-slate-900 p-1.5 rounded border border-slate-800 text-slate-300">⚡ <strong>Planta Eléctrica:</strong> Sector este protegido</div>
               </div>
             </div>
-
           </div>
+
         </div>
 
       </div>
@@ -482,7 +440,7 @@
         </h4>
       </div>
       <p class="text-[11px] text-slate-300">
-        Debes aprobar obligatoriamente la evaluación táctica de la Biblia RP[cite: 2] y códigos de radio para desbloquear tu acceso.
+        Debes aprobar obligatoriamente la evaluación táctica de la Biblia RP y códigos de radio para desbloquear tu acceso.
       </p>
       <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
         <p id="examQuestion" class="text-xs font-bold text-white"></p>
@@ -497,7 +455,7 @@
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-blue-500/60 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
         <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento, Biblia RP[cite: 2] y Códigos Q
+          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento, Biblia RP y Códigos Q
         </h4>
         <button onclick="closeReglasQuizModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -768,7 +726,7 @@
       { code: "TKS", meaning: "Gracias" }
     ];
 
-    // BIBLIA RP OFICIAL DE RIO RISE (EXTRAÍDA DE LA FOTO)[cite: 2]
+    // BIBLIA RP OFICIAL DE RIO RISE
     const rpRulesData = [
       { code: "MDM", meaning: "Matar a más de 3 personas" },
       { code: "RDM", meaning: "Entrar en una acción sin estar involucrado" },
@@ -817,22 +775,10 @@
 
     const MAX_SHIFT_MS = 9 * 60 * 60 * 1000;
 
-    const fullTriviaQuestionsBank = [
-      { q: "¿Qué significa VDM en las normas del servidor?", options: ["A) Vehículo de Milicia", "B) Atropellar a otros jugadores", "C) Vender armas"], a: 1 },
-      { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos", "C) Retirarse"], a: 0 },
-      { q: "¿Qué significa el Código Q: QAP?", options: ["A) ¿Dónde te encuentras?", "B) ¿Estás escuchando / en frecuencia?", "C) Solicito refuerzos"], a: 1 },
-      { q: "¿Cuál es el significado de QTH?", options: ["A) Ubicación / Dirección", "B) Hora del servidor", "C) Conductor"], a: 0 },
-      { q: "En la Biblia RP, ¿Significado de SAAV?", options: ["A) Sistema Aéreo", "B) Sin amor a la vida", "C) Soldado Vigilante"], a: 1 },
-      { q: "¿Qué código Q se utiliza para solicitar REFUERZOS urgentes?", options: ["A) QRR", "B) QTH", "C) QAP"], a: 0 },
-      { q: "¿Qué significa MG en el servidor?", options: ["A) Movimiento General", "B) Usar información de fuera del juego", "C) Munición gruesa"], a: 1 },
-      { q: "¿Qué indica el término KOS?", options: ["A) Matar al visualizar", "B) Kiosco oficial", "C) Código de salida"], a: 0 }
-    ];
-
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('rioRiseTheme') || 'noche';
       changeTheme(savedTheme, false);
       document.getElementById('themeSelector').value = savedTheme;
-      loadTriviaQuestion();
       renderQCodes(qCodesData);
       renderRpRules(rpRulesData);
     });
@@ -980,63 +926,8 @@
       }, 1200);
     }
 
-    function toggleTrainingAccordion() {
-      const body = document.getElementById('trainingBodyContainer');
-      const chevron = document.getElementById('trainingChevron');
-      const isHidden = body.classList.contains('hidden');
-      body.classList.toggle('hidden', !isHidden);
-      chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-    }
-
     function openRankInfoModal() { document.getElementById('rankInfoModal').classList.remove('hidden'); }
     function closeRankInfoModal() { document.getElementById('rankInfoModal').classList.add('hidden'); }
-
-    function switchTrainTab(tab) {
-      document.getElementById('trainTriviaView').classList.toggle('hidden', tab !== 'trivia');
-      document.getElementById('trainMapView').classList.toggle('hidden', tab !== 'map');
-      document.getElementById('trainOpsView').classList.toggle('hidden', tab !== 'ops');
-
-      document.getElementById('tabTriviaBtn').className = tab === 'trivia' ? 'py-1 font-bold rounded text-white bg-amber-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
-      document.getElementById('tabMapBtn').className = tab === 'map' ? 'py-1 font-bold rounded text-white bg-amber-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
-      document.getElementById('tabOpsBtn').className = tab === 'ops' ? 'py-1 font-bold rounded text-white bg-amber-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
-    }
-
-    function loadTriviaQuestion() {
-      const qObj = fullTriviaQuestionsBank[currentTriviaIndex];
-      document.getElementById('triviaQuestion').innerText = qObj.q;
-      const optsContainer = document.getElementById('triviaOptions');
-      optsContainer.innerHTML = '';
-      document.getElementById('triviaFeedback').classList.add('hidden');
-
-      qObj.options.forEach((optText, i) => {
-        const btn = document.createElement('button');
-        btn.className = "w-full text-left bg-slate-950 hover:bg-slate-900 p-2 rounded text-[11px] text-slate-200 border border-slate-800 transition font-semibold";
-        btn.innerText = optText;
-        btn.onclick = () => answerTrivia(i);
-        optsContainer.appendChild(btn);
-      });
-    }
-
-    function answerTrivia(selectedIndex) {
-      const qObj = fullTriviaQuestionsBank[currentTriviaIndex];
-      const feedbackEl = document.getElementById('triviaFeedback');
-      feedbackEl.classList.remove('hidden');
-
-      if (selectedIndex === qObj.a) {
-        practiceHonorPoints += 15;
-        document.getElementById('honorPoints').innerText = practiceHonorPoints;
-        feedbackEl.className = "text-[10px] font-bold text-emerald-400";
-        feedbackEl.innerText = "🎯 ¡Correcto! +15 Puntos.";
-      } else {
-        feedbackEl.className = "text-[10px] font-bold text-red-400";
-        feedbackEl.innerText = "❌ Incorrecto.";
-      }
-
-      setTimeout(() => {
-        currentTriviaIndex = (currentTriviaIndex + 1) % fullTriviaQuestionsBank.length;
-        loadTriviaQuestion();
-      }, 1500);
-    }
 
     function checkPrivateExamRequirement(user) {
       if (!user) return;
@@ -1044,7 +935,7 @@
       if (rank === 'privado') {
         const examPassedKey = `examPassed_${user.username}`;
         if (!localStorage.getItem(examPassedKey)) {
-          examQuestionsPool = [...fullTriviaQuestionsBank].sort(() => 0.5 - Math.random()).slice(0, 3);
+          examQuestionsPool = [...reglamentoQuizPool].sort(() => 0.5 - Math.random()).slice(0, 3);
           currentExamIndex = 0;
           document.getElementById('privateExamModal').classList.remove('hidden');
           loadExamQuestion();
@@ -1090,7 +981,7 @@
         feedbackEl.className = "text-[10px] font-bold text-red-400";
         feedbackEl.innerText = "❌ Incorrecto. Reiniciando test con nuevas preguntas...";
         setTimeout(() => {
-          examQuestionsPool = [...fullTriviaQuestionsBank].sort(() => 0.5 - Math.random()).slice(0, 3);
+          examQuestionsPool = [...reglamentoQuizPool].sort(() => 0.5 - Math.random()).slice(0, 3);
           currentExamIndex = 0;
           loadExamQuestion();
         }, 1500);
