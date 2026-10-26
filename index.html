@@ -240,8 +240,8 @@
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
               <div>
-                <h3 class="font-bold text-white text-xs">Academia Táctica y Reglamento Oficial</h3>
-                <p class="text-[9px] text-slate-400">Normativa oficial del Ejército RioRise</p>
+                <h3 class="font-bold text-white text-xs">Academia Táctica y Manual de Códigos Q</h3>
+                <p class="text-[9px] text-slate-400">Normativa oficial y radiofonía Ejército RioRise</p>
               </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -257,7 +257,7 @@
               </div>
               <div>
                 <h4 class="text-xs font-bold text-blue-300">Desafío de Tropa (Quiz)</h4>
-                <p class="text-[10px] text-slate-300">Gana puntos evaluando el reglamento</p>
+                <p class="text-[10px] text-slate-300">Gana puntos evaluando el reglamento y códigos</p>
               </div>
             </div>
             <button onclick="openReglasQuizModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-2 rounded-lg shadow-lg transition flex items-center gap-1 shrink-0">
@@ -265,11 +265,12 @@
             </button>
           </div>
 
-          <!-- SUB-PESTAÑAS DE REGLAMENTO (PARA EVITAR CONTAMINACIÓN VISUAL) -->
-          <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
+          <!-- SUB-PESTAÑAS DE ACADEMIA (REGLAMENTO + CÓDIGOS Q) -->
+          <div class="grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
             <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🪖 1 al 3</button>
-            <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ 4 (Prohibido)</button>
+            <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ 4</button>
             <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📡 5 al 7</button>
+            <button id="regTab4Btn" onclick="switchRegTab(4)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📻 Códigos Q</button>
           </div>
 
           <!-- BLOQUE 1: GENERAL, DEBERES Y PERMISOS (Capítulos 1, 2 y 3) -->
@@ -333,7 +334,7 @@
                 <p><strong>4.4.</strong> Abandonar la base sin permiso ni reporte (ausencia no autorizada).</p>
                 <p><strong>4.5 - 4.7.</strong> Permanecer solo en barrios marginales, dañar bienes/compañeros sin motivo y engañar a civiles o soldados.</p>
                 <p><strong>4.8 - 4.10.</strong> Desobedecer órdenes superiores, usar lenguaje obsceno/insultar y colaborar con mafias o grupos criminales.</p>
-                <p><strong>4.11 - 4.13.</strong> Abusar de autoridad, usar máscara sin reporte previo por radio y acompañar a pandilleros en la base.</p>
+                <p><strong>4.11 - 4.13.</strong> Abusar de autoridad, usar máscara sin reporte previo por radio y acompañar a pandilleros en base.</p>
                 <p><strong>4.14 - 4.16.</strong> Manejar asuntos personales en servicio, poseer/consumir drogas o alcohol, y usar vehículos oficiales para fines personales.</p>
                 <p><strong>4.17 - 4.21.</strong> Conducta inapropiada, actividades ilícitas, mal uso de megáfono, empleos secundarios en servicio y aceptar sobornos.</p>
                 <p><strong>4.22 - 4.25.</strong> Uso de armas personal, abandonar puestos sin radio, cambiar puestos sin autorización y usar la radio/chat para fines ajenos al trabajo.</p>
@@ -367,6 +368,27 @@
                   <p><strong>7.1. Mínimo diario:</strong> 4 horas de juego para el personal.</p>
                   <p><strong>7.2. Ausencia máxima:</strong> 3 días sin reportar.</p>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 4: CÓDIGOS Q OFICIALES (NUEVO) -->
+          <div id="regView4" class="space-y-2 hidden">
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-900 pb-2">
+                <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-tower-broadcast mr-1"></i> Manual de Códigos Q de Facciones</h4>
+                <span class="text-[9px] text-slate-400">Uso Obligatorio en Radio</span>
+              </div>
+              
+              <!-- Buscador de Códigos Q -->
+              <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+                <input type="text" id="qCodeSearch" oninput="filterQCodes()" placeholder="Busca un código (Ej: QRR, dirección, etc.)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+              </div>
+
+              <!-- Lista de Códigos Q en Grid / Tarjetas limpias -->
+              <div id="qCodesContainer" class="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto pr-1 text-[11px]">
+                <!-- Se inyecta por JS o HTML estático optimizado -->
               </div>
             </div>
           </div>
@@ -450,7 +472,7 @@
         </h4>
       </div>
       <p class="text-[11px] text-slate-300">
-        Debes aprobar obligatoriamente la evaluación táctica de la Biblia RP para poder desbloquear tu acceso al sistema.
+        Debes aprobar obligatoriamente la evaluación táctica de la Biblia RP y códigos de radio para desbloquear tu acceso.
       </p>
       <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
         <p id="examQuestion" class="text-xs font-bold text-white"></p>
@@ -460,12 +482,12 @@
     </div>
   </div>
 
-  <!-- MODAL QUIZ INTERACTIVO DE REGLAMENTO -->
+  <!-- MODAL QUIZ INTERACTIVO DE REGLAMENTO Y CÓDIGOS -->
   <div id="reglasQuizModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[120] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-blue-500/60 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
         <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento Oficial
+          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento y Códigos Q
         </h4>
         <button onclick="closeReglasQuizModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -706,14 +728,52 @@
     let examQuestionsPool = [];
     let currentExamIndex = 0;
 
-    // QUIZ DE REGLAMENTO INTERACTIVO PRO
+    // LISTADO OFICIAL DE CÓDIGOS Q DE FACCIONES
+    const qCodesData = [
+      { code: "QAP", meaning: "¿Estás escuchando?" },
+      { code: "QAR", meaning: "Desconectar" },
+      { code: "QRR", meaning: "Refuerzo" },
+      { code: "QTI", meaning: "En camino" },
+      { code: "QRN", meaning: "Interferencia" },
+      { code: "QRA", meaning: "Nombre del operador" },
+      { code: "QRL", meaning: "Estoy ocupado" },
+      { code: "QRM", meaning: "Interferencia humana" },
+      { code: "QRQ", meaning: "Transmite más rápido" },
+      { code: "QRS", meaning: "Transmite más despacio" },
+      { code: "QRT", meaning: "Fuera del aire" },
+      { code: "QRU", meaning: "Ocurrencia" },
+      { code: "QRV", meaning: "A sus órdenes" },
+      { code: "QRX", meaning: "Espere" },
+      { code: "QRY", meaning: "¿Cuándo podré transmitir?" },
+      { code: "QRZ", meaning: "¿Quién me llamó?" },
+      { code: "QSA", meaning: "¿Cómo estás recibiendo?" },
+      { code: "QSL", meaning: "Entendido" },
+      { code: "QSF", meaning: "¿Realizaste salvamento?" },
+      { code: "QSM", meaning: "¿Estás escuchando?" },
+      { code: "QSO", meaning: "Comunicado aviso" },
+      { code: "QSP", meaning: "Hacer puente" },
+      { code: "QTC", meaning: "Mensaje" },
+      { code: "QTH", meaning: "Dirección" },
+      { code: "QTR", meaning: "Hora exacta" },
+      { code: "QTU", meaning: "Hora" },
+      { code: "QTA", meaning: "Cancelar mensaje" },
+      { code: "QSV", meaning: "Vehículo" },
+      { code: "QSD", meaning: "Conductor" },
+      { code: "QSJ", meaning: "Dinero" },
+      { code: "TKS", meaning: "Gracias" }
+    ];
+
+    // QUIZ DE REGLAMENTO Y CÓDIGOS Q INTERACTIVO PRO
     const reglamentoQuizPool = [
+      { q: "¿Cuál es el significado del Código Q: QRR?", options: ["A) Espere", "B) Refuerzo", "C) Dirección"], a: 1 },
+      { q: "¿Qué significa el código QSL en radiofonía?", options: ["A) Entendido", "B) Dinero", "C) Fuera del aire"], a: 0 },
+      { q: "¿Cuál es el código Q para indicar que estás 'En camino'?", options: ["A) QTI", "B) QAP", "C) QTH"], a: 0 },
+      { q: "¿Qué significa el código QTH?", options: ["A) Hora exacta", "B) Dirección / Ubicación", "C) Conductor"], a: 1 },
       { q: "¿Cuál es el horario de trabajo obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00", "C) Libre las 24 horas"], a: 1 },
       { q: "¿Qué debe hacer un oficial en caso de dañar un vehículo?", options: ["A) Dejarlo abandonado", "B) Reparar el vehículo de trabajo", "C) Comprar uno personal"], a: 1 },
       { q: "¿Cuánto tiempo máximo de licencia o vacaciones se puede aprobar?", options: ["A) Hasta por dos semanas", "B) 1 mes", "C) 3 días máximo"], a: 0 },
       { q: "¿Está permitido vender uniformes militares?", options: ["A) Sí, si necesito dinero", "B) No, está estrictamente prohibido (Art. 4.1)", "C) Solo a amigos cercanos"], a: 1 },
-      { q: "¿Cuánto dura exactamente un entrenamiento oficial?", options: ["A) 15 minutos", "B) 5 minutos exactos", "C) Lo que decida el soldado"], a: 1 },
-      { q: "¿Cuántas horas mínimas semanales o diarias debe cumplir el personal?", options: ["A) 4 horas diarias", "B) 14 horas", "C) 20 horas"], a: 0 }
+      { q: "¿Cuánto dura exactamente un entrenamiento oficial?", options: ["A) 15 minutos", "B) 5 minutos exactos", "C) Lo que decida el soldado"], a: 1 }
     ];
     let currentQuizIndex = 0;
     let quizScore = 0;
@@ -725,7 +785,7 @@
       { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos", "C) Retirarse de base"], a: 0 },
       { q: "¿Qué significa el Código Q: QAP?", options: ["A) ¿Dónde te encuentras?", "B) ¿Estás escuchando / en frecuencia?", "C) Solicito refuerzos"], a: 1 },
       { q: "¿Cuál es el significado de QTH?", options: ["A) Ubicación / Dirección", "B) Hora del servidor", "C) Conductor"], a: 0 },
-      { q: "En la Biblia RP, ¿Qué significa SAAV?", options: ["A) Sistema Aéreo", "B) Sin Amor a la Vida (no valorar la vida)", "C) Soldado Vigilante"], a: 1 },
+      { q: "En la Biblia RP, ¿Significado de SAAV?", options: ["A) Sistema Aéreo", "B) Sin Amor a la Vida (no valorar la vida)", "C) Soldado Vigilante"], a: 1 },
       { q: "¿Qué código Q se utiliza para solicitar REFUERZOS urgentes?", options: ["A) QRR", "B) QTH", "C) QAP"], a: 0 },
       { q: "Según el Reglamento, ¿Qué función principal tiene el Rango 1 / PRIVADO?", options: ["A) Dirigir la base militar", "B) Obedecer a superiores y vigilar / cuidar la base", "C) Autorizar licencias"], a: 1 },
       { q: "¿Cuál es la norma sobre el valor de la vida en el servidor?", options: ["A) Correr hacia un arma apuntándome", "B) Valorar mi vida ante cualquier amenaza (No SAAV)", "C) Disparar sin mediar palabra"], a: 1 }
@@ -736,6 +796,7 @@
       changeTheme(savedTheme, false);
       document.getElementById('themeSelector').value = savedTheme;
       loadTriviaQuestion();
+      renderQCodes(qCodesData);
     });
 
     document.addEventListener('visibilitychange', () => {
@@ -756,15 +817,42 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // CONTROL DE SUB-PESTAÑAS DE REGLAMENTO
+    // CONTROL DE SUB-PESTAÑAS DE REGLAMENTO Y CÓDIGOS Q
     function switchRegTab(tabNum) {
       document.getElementById('regView1').classList.toggle('hidden', tabNum !== 1);
       document.getElementById('regView2').classList.toggle('hidden', tabNum !== 2);
       document.getElementById('regView3').classList.toggle('hidden', tabNum !== 3);
+      document.getElementById('regView4').classList.toggle('hidden', tabNum !== 4);
 
       document.getElementById('regTab1Btn').className = tabNum === 1 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab2Btn').className = tabNum === 2 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab3Btn').className = tabNum === 3 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
+      document.getElementById('regTab4Btn').className = tabNum === 4 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
+    }
+
+    function renderQCodes(list) {
+      const container = document.getElementById('qCodesContainer');
+      if (!container) return;
+      if (list.length === 0) {
+        container.innerHTML = '<p class="text-slate-500 italic text-center py-2">No se encontraron códigos.</p>';
+        return;
+      }
+      let html = '';
+      list.forEach(item => {
+        html += `
+          <div class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center justify-between">
+            <span class="font-mono font-bold text-amber-400">${item.code}</span>
+            <span class="text-slate-200 text-right">${item.meaning}</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function filterQCodes() {
+      const query = document.getElementById('qCodeSearch').value.toLowerCase().trim();
+      const filtered = qCodesData.filter(item => item.code.toLowerCase().includes(query) || item.meaning.toLowerCase().includes(query));
+      renderQCodes(filtered);
     }
 
     // INTERACTIVIDAD ACORDEÓN DE CAPÍTULOS
@@ -824,7 +912,7 @@
           loadQuizQuestion();
         } else {
           closeReglasQuizModal();
-          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 5 ? '🏆 ¡Excelente dominio del reglamento militar!' : '⚠ Te sugerimos repasar los capítulos de la academia.'}`);
+          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 7 ? '🏆 ¡Excelente dominio del reglamento y códigos Q!' : '⚠ Te sugerimos repasar la academia y códigos Q.'}`);
         }
       }, 1200);
     }
