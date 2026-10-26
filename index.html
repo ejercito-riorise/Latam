@@ -20,6 +20,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
     :root {
       --bg-main: #0b0f19;
       --card-grad-1: #1e293b;
@@ -842,6 +845,7 @@
     let newsStorageMap = {};
     let doctrinaStorageMap = {};
     let pollStorageMap = {};
+    let lastRenderedNewsSignature = "";
     
     let pendingNewsMap = {};
     let pendingDoctrinaMap = {};
@@ -1841,9 +1845,17 @@
 
     function renderNewsFeed(news, polls) {
       const feed = document.getElementById('newsFeedContainer');
+      if (!feed) return;
+
       const approvedNews = news ? news.filter(item => !item.estado || item.estado.toLowerCase() === 'approved') : [];
       const approvedPolls = polls ? polls.filter(item => !item.estado || item.estado.toLowerCase() === 'approved') : [];
       
+      const currentSignature = JSON.stringify(approvedNews) + JSON.stringify(approvedPolls);
+      if (currentSignature === lastRenderedNewsSignature && feed.innerHTML.trim() !== "") {
+        return; 
+      }
+      lastRenderedNewsSignature = currentSignature;
+
       let htmlContent = '';
       newsStorageMap = {};
       pollStorageMap = {};
