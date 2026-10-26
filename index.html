@@ -265,24 +265,37 @@
             </button>
           </div>
 
-          <!-- SUB-PESTAÑAS DE ACADEMIA (7 OPCIONES: HORARIO Y REGLAS, ACCIONES EB, 4-7, RANGOS, CÓDIGOS Q, BIBLIA RP, MAPA) -->
+          <!-- SUB-PESTAÑAS DE ACADEMIA ORGANIZADAS Y LIMPIAS -->
           <div class="grid grid-cols-7 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[9px]">
-            <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🕒 1-3</button>
+            <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🕒 Reglas</button>
             <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⚔️ Acciones</button>
-            <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ 4</button>
+            <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ Cap 4-7</button>
             <button id="regTab4Btn" onclick="switchRegTab(4)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⭐ Rangos</button>
             <button id="regTab5Btn" onclick="switchRegTab(5)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📻 Q</button>
             <button id="regTab6Btn" onclick="switchRegTab(6)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📖 RP</button>
-            <button id="regTab7Btn" onclick="switchRegTab(7)" class="py-1 font-bold rounded text-slate-400 hover:text-white">🗺️ Mapa</button>
+            <button id="regTab7Btn" onclick="switchRegTab(7)" class="py-1 font-bold rounded text-slate-400 hover:text-white">🗺️ Info</button>
           </div>
 
-          <!-- BLOQUE 1: HORARIO DE SERVICIO, GENERAL Y DEBERES (Capítulos 1, 2 y 3) -->
+          <!-- BLOQUE 1: HORARIO, WHATSAPP, HORARIOS LATAM Y CAPÍTULOS 1-3 -->
           <div id="regView1" class="space-y-2">
-            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <div class="bg-amber-950/40 border border-amber-800/60 p-2.5 rounded text-amber-300 text-[11px] mb-2 space-y-1.5">
-                <p><strong class="text-white text-xs">🕒 Horario de Servicio:</strong> De 17:00 a 02:00 /TIME.</p>
-                <p class="text-[10px] text-amber-200/90">El horario <code>/TIME</code> es el horario oficial del servidor (no la hora del país en que te encuentres). Puedes verificar qué hora es en el juego utilizando el comando <code>/TIME</code> en el chat del juego.</p>
-                <p class="text-[10px]"><strong>⚠️ Nota General:</strong> El General y los Coroneles aplican medidas disciplinarias independientes ante infracciones.</p>
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 space-y-2.5">
+              
+              <!-- Alerta WhatsApp -->
+              <div class="bg-amber-950/40 border border-amber-800/60 p-2.5 rounded text-amber-300 text-[11px] space-y-1">
+                <p class="font-bold text-white"><i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i> Aviso Obligatorio Grupo de WhatsApp:</p>
+                <p class="text-[10px] text-amber-200/90">Toda persona que se sume al grupo debe colocarse obligatoriamente como etiqueta: <code class="bg-slate-900 px-1 py-0.5 rounded text-white font-bold">Rango + Nombre</code>. De lo contrario, será expulsado del grupo[span_6](start_span)[span_6](end_span).</p>
+              </div>
+
+              <!-- Horarios y Países LATAM 9 -->
+              <div class="bg-slate-900 p-2.5 rounded border border-slate-800 space-y-1.5">
+                <p class="font-bold text-white text-xs"><i class="fa-solid fa-clock mr-1 text-blue-400"></i> Horario de Servicio y Conversión LATAM 9:</p>
+                <p class="text-[10px] text-slate-300">El servicio oficial en el servidor inicia de <strong>17:00 a 02:00 /TIME</strong>[span_7](start_span)[span_7](end_span). A continuación, la equivalencia de entrada por países[span_8](start_span)[span_8](end_span):</p>
+                <div class="grid grid-cols-2 gap-1 text-[10px] pt-1">
+                  <div class="bg-slate-950 p-1 rounded border border-slate-800">🇦🇷 Argentina / 🇺🇾 Uruguay / 🇵🇾 Paraguay / 🇧🇷 Brasil / 🇨🇱 Chile: <strong class="text-white">20:00</strong>[span_9](start_span)[span_9](end_span)</div>
+                  <div class="bg-slate-950 p-1 rounded border border-slate-800">🇧🇴 Bolivia / 🇻🇪 Venezuela / 🇬🇾 Guyana: <strong class="text-white">19:00</strong>[span_10](start_span)[span_10](end_span)</div>
+                  <div class="bg-slate-950 p-1 rounded border border-slate-800">🇨🇴 Colombia / 🇵🇪 Perú / 🇪🇨 Ecuador / 🇵🇦 Panamá: <strong class="text-white">18:00</strong>[span_11](start_span)[span_11](end_span)</div>
+                  <div class="bg-slate-950 p-1 rounded border border-slate-800">🇨🇷 Costa Rica / 🇳🇮 Nicaragua / 🇭🇳 Honduras / 🇸🇻 El Salvador / 🇬🇹 Guatemala / 🇧🇿 Belice / 🇲🇽 México: <strong class="text-white">17:00 / 16:00</strong>[span_12](start_span)[span_12](end_span)</div>
+                </div>
               </div>
               
               <button onclick="toggleChapter('cap1')" class="w-full flex justify-between items-center text-xs font-bold text-amber-400 py-1">
@@ -327,66 +340,91 @@
             </div>
           </div>
 
-          <!-- BLOQUE 2: ACCIONES PRINCIPALES DE LA EB EN EL ROL (NUEVA INFORMACIÓN DE IMÁGENES) -->
+          <!-- BLOQUE 2: ACCIONES EB, PACIFICACIONES E INVASIONES -->
           <div id="regView2" class="space-y-3 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-blue-500/50 space-y-3">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-shield-dog mr-1"></i> Acciones Principales de la EB en el Rol</h4>
+                <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-shield-dog mr-1"></i> Acciones, Pacificaciones e Invasiones EB</h4>
                 <span class="text-[9px] text-emerald-400 font-bold">Operativa Oficial</span>
               </div>
-              <p class="text-[10px] text-slate-300">Las Fuerzas Armadas de Brasil (EB) participan y lideran diversas acciones clave en el servidor:</p>
+              <p class="text-[10px] text-slate-300">Cronograma oficial de operaciones especiales y patrullaje:</p>
 
               <div class="space-y-3 pt-1 text-[11px]">
                 <!-- Acción 1: Cargamento -->
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-amber-400 text-xs">
                     <span>🚚 1. CRM (Cargamento)</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">17:00 / 19:00 /TIME</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Horarios:</strong> Primer cargamento: 17:00 /TIME | Segundo cargamento: 19:00 /TIME (Se realiza todos los días, 2 veces al día).</p>
-                  <p class="text-slate-300 text-[10px]"><strong>¿En qué consiste?:</strong> La organización EB utiliza un camión para transportar material desde un puerto y traerlo a la base militar. Con ese material se fabrican armas. En esta acción la PF (Policía Federal) interviene ayudando a la EB a traer el camión cargado a la base.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Amenaza de Mafias:</strong> Las mafias de la ciudad intentarán robar el camión en el transcurso del viaje de regreso a base; pueden chocarlo, voltearlo, robarlo e intentarán llevarlo a la mansión de la mafia para usarlo en su beneficio.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Horarios:</strong> 17:00 y 19:00 /TIME (Todos los días, 2 veces al día)[span_13](start_span)[span_13](end_span).</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Dinámica:</strong> La EB transporta material desde el puerto con un camión para fabricar armas, apoyados por la Policía Federal (PF). Las mafias intentarán interceptarlo y robarlo para llevarlo a su mansión[span_14](start_span)[span_14](end_span).</p>
                 </div>
 
                 <!-- Acción 2: Patrullaje -->
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-cyan-400 text-xs">
                     <span>🚙 2. Patrullaje Táctico</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">3+ Vehículos</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>¿En qué consiste?:</strong> La EB realiza una actividad donde sale a patrullar la ciudad con 3 o más vehículos militares por las calles, controlando el orden y realizando procedimientos de detención.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Supervisión:</strong> Obligatoriamente esta acción debe estar supervisada por un <strong>General o un Coronel</strong>.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Dinámica:</strong> Patrullaje en la ciudad con 3 o más vehículos militares controlando el orden. Obligatoriamente supervisado por un <strong>General o Coronel</strong>[span_15](start_span)[span_15](end_span).</p>
                 </div>
 
-                <!-- Acción 3: Pacificaciones -->
+                <!-- Acción 3: Pacificaciones (Sábado, Domingo y Lunes) -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
                   <div class="flex justify-between items-center font-bold text-red-400 text-xs">
-                    <span>🎯 3. Pacificaciones (Invasiones)</span>
+                    <span>🎯 3. Pacificaciones y Operaciones</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Guerra de Territorio</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>¿Qué es?:</strong> Momento donde una organización invade el territorio de otra; la organización que logre eliminar a todos los participantes de la facción enemiga gana y es recompensada.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Mafia hacia EB:</strong> Una organización enemiga (mafia) invade la base militar; si eliminan a toda la base ganan y son recompensados (también puede ganar la EB eliminando a todos los participantes de la mafia).</p>
-                  <p class="text-slate-300 text-[10px]"><strong>EB hacia Mafia:</strong> La EB realiza una acción donde toda la base militar invade las favelas o territorios de las mafias en la ciudad para ganar eliminando a todo el personal de la mafia.</p>
+                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Sábado (21:00 a 22:00):</strong> Operación de pacificación del Ejército contra las mafias[span_16](start_span)[span_16](end_span).</p>
+                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Domingo y Lunes (21:00 a 00:00):</strong> Operación conjunta de la EB y la Policía Federal contra las facciones[span_17](start_span)[span_17](end_span).</p>
+                </div>
+
+                <!-- Acción 4: Invasiones (Martes y Jueves) -->
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+                  <div class="flex justify-between items-center font-bold text-purple-400 text-xs">
+                    <span>⚔️ 4. Invasiones del EB (Martes y Jueves)</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Facciones y Mafias</span>
+                  </div>
+                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Martes:</strong> Facciones Morada y Verde de <strong>17:00 a 24:00</strong>[span_18](start_span)[span_18](end_span).</p>
+                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Jueves:</strong> Mafia Blanca y Mafia Azul pueden programar una acción contra el EB entre las <strong>19:00 y las 23:00</strong>[span_19](start_span)[span_19](end_span).</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Regla de Intervalo:</strong> Es obligatorio un intervalo mínimo de <strong>2 horas</strong> entre acciones (no se permiten intervalos inferiores)[span_20](start_span)[span_20](end_span).</p>
+                  <div class="bg-red-950/40 border border-red-800/60 p-2 rounded text-red-300 text-[10px] space-y-1 mt-1">
+                    <p class="font-bold">🚨 Reglas Adicionales de Maletines:</p>
+                    <p>Si una familia roba un maletín durante una acción de la mafia en el EB, la familia que conquiste la mafia en ausencia de la otra verá su mafia <strong>reiniciada y recibirá una advertencia</strong>. La mafia anterior recuperará su mafia[span_21](start_span)[span_21](end_span).</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- BLOQUE 3: PROHIBICIONES (Capítulo 4) -->
+          <!-- BLOQUE 3: PROHIBICIONES (Capítulo 4 al 7) -->
           <div id="regView3" class="space-y-2 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-red-900/60 space-y-2">
               <div class="flex items-center gap-1.5 text-xs font-bold text-red-400 border-b border-slate-900 pb-1">
-                <i class="fa-solid fa-ban"></i> CAPÍTULO 4: Prohibido para Empleados
+                <i class="fa-solid fa-ban"></i> CAPÍTULO 4 AL 7: Prohibiciones y Sanciones
               </div>
-              <div class="text-[11px] text-slate-300 space-y-1.5 max-h-64 overflow-y-auto pr-1">
-                <p><strong>4.1 - 4.3.</strong> Vender uniformes o propiedad del gobierno, y solicitar ascensos.</p>
-                <p><strong>4.4.</strong> Abandonar la base sin permiso ni reporte (ausencia no autorizada).</p>
-                <p><strong>4.5 - 4.7.</strong> Permanecer solo en barrios marginales, dañar bienes/compañeros sin motivo y engañar a civiles o soldados.</p>
-                <p><strong>4.8 - 4.10.</strong> Desobedecer órdenes superiores, usar lenguaje obsceno/insultar y colaborar con mafias o grupos criminales.</p>
-                <p><strong>4.11 - 4.13.</strong> Abusar de autoridad, usar máscara sin reporte previo por radio y acompañar a pandilleros en base.</p>
-                <p><strong>4.14 - 4.16.</strong> Manejar asuntos personales en servicio, poseer/consumir drogas o alcohol, y usar vehículos oficiales para fines personales.</p>
-                <p><strong>4.17 - 4.21.</strong> Conducta inapropiada, actividades ilícitas, mal uso de megáfono, empleos secundarios en servicio y aceptar sobornos.</p>
-                <p><strong>4.22 - 4.25.</strong> Uso de armas personal, abandonar puestos sin radio, cambiar puestos sin autorización y usar la radio/chat para fines ajenos al trabajo.</p>
+              <div class="text-[11px] text-slate-300 space-y-2 max-h-64 overflow-y-auto pr-1">
+                <div>
+                  <p class="font-bold text-amber-300">Capítulo 4: Prohibido para Empleados</p>
+                  <p><strong>4.1 a 4.10.</strong> Vender uniformes, solicitar ascensos, abandonar base sin permiso, permanecer solo en barrios marginales, dañar bienes, engañar civiles, desobedecer superiores, usar lenguaje obsceno y colaborar con mafias.</p>
+                  <p><strong>4.11 a 4.25.</strong> Abusar de autoridad, usar máscara sin reporte, consumir drogas/alcohol, usar vehículos oficiales para fines personales, aceptar sobornos y abandonar puestos.</p>
+                </div>
+                <div class="pt-2 border-t border-slate-900">
+                  <p class="font-bold text-red-400">Capítulo 5: Faltas Graves</p>
+                  <p><strong>5.1.</strong> Agresión directa a superiores o compañeros de armas.</p>
+                  <p><strong>5.2.</strong> Divulgación de información confidencial o táctica de la base a terceros.</p>
+                  <p><strong>5.3.</strong> Robo de armamento oficial o vehículos blindados para beneficio particular.</p>
+                </div>
+                <div class="pt-2 border-t border-slate-900">
+                  <p class="font-bold text-red-400">Capítulo 6: Medidas Disciplinarias</p>
+                  <p><strong>6.1.</strong> Las faltas leves ameritan llamadas de atención verbales o escritas en legajo.</p>
+                  <p><strong>6.2.</strong> Las faltas graves conllevan suspensión temporal de funciones o degradación de rango inmediata por decisión del Alto Mando.</p>
+                </div>
+                <div class="pt-2 border-t border-slate-900">
+                  <p class="font-bold text-red-400">Capítulo 7: Destitución y Lista Negra</p>
+                  <p><strong>7.1.</strong> Acumulación de 3 amonestaciones resulta en despido fulminante.</p>
+                  <p><strong>7.2.</strong> Traición a la organización o colaboración comprobada con facciones enemigas durante incursiones se castiga con ingreso automático a <strong>Lista Negra Permanente</strong>.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -489,7 +527,7 @@
             </div>
           </div>
 
-          <!-- BLOQUE 7: MAPA TÁCTICO INTERACTIVO -->
+          <!-- BLOQUE 7: MAPA TÁCTICO Y UBICACIÓN -->
           <div id="regView7" class="space-y-3 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/50 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
@@ -844,19 +882,18 @@
       { code: "FLAMING RP", meaning: "Ofensa contra jugadores" }
     ];
 
-    // QUIZ DE REGLAMENTO, RANGOS, ACCIONES Y CÓDIGOS INTERACTIVO
+    // QUIZ INTERACTIVO
     const reglamentoQuizPool = [
       { q: "¿A qué hora inician los cargamentos (CRM) oficiales de la EB?", options: ["A) 12:00 y 15:00 /TIME", "B) 17:00 y 19:00 /TIME", "C) 20:00 y 22:00 /TIME"], a: 1 },
       { q: "¿Qué organización interviene ayudando a la EB a traer el camión de cargamento (CRM)?", options: ["A) La PF (Policía Federal)", "B) Los Civiles", "C) Los Paramédicos"], a: 0 },
       { q: "¿Cuántos vehículos militares como mínimo se requieren para realizar un Patrullaje Táctico?", options: ["A) 1 vehículo", "B) 2 vehículos", "C) 3 o más vehículos"], a: 2 },
-      { q: "¿Quién debe supervisar obligatoriamente una acción de Patrullaje?", options: ["A) Un Privado", "B) Un General o un Coronel", "C) Un Sargento"], a: 1 },
-      { q: "¿Qué función principal tiene el Rango 1 / Privado?", options: ["A) Mandar la base", "B) Obedecer órdenes y cuidar ubicaciones como guardia", "C) Usar vehículos aéreos"], a: 1 },
+      { q: "¿Cuál es la etiqueta obligatoria para unirse al grupo de WhatsApp?", options: ["A) Solo el nombre", "B) Rango + Nombre", "C) Apodo del juego"], a: 1 },
+      { q: "¿Qué día se realiza la pacificación de la EB contra las mafias de 21:00 a 22:00?", options: ["A) Sábado", "B) Martes", "C) Jueves"], a: 0 },
       { q: "¿A qué rango se le permite utilizar toda arma de fuego y liderar las acciones?", options: ["A) Rango 1 / Privado", "B) Rango 2 / Sargento", "C) Rango 4 / Mayor"], a: 2 },
       { q: "¿Quiénes son los encargados de la enseñanza y educación de los Privados?", options: ["A) Rango 2 / Sargentos", "B) Rango 5 / Coroneles", "C) Nuevos Reclutas"], a: 0 },
       { q: "¿Cuál es la característica del Rango 5 / Coronel?", options: ["A) Son soldados rasos", "B) Dan las órdenes y sus órdenes no se cuestionan, se cumplen", "C) Solo cuidan la puerta"], a: 1 },
       { q: "¿Qué significa RDM según la Biblia RP?", options: ["A) Reparar de inmediato", "B) Entrar en una acción sin estar involucrado", "C) Retirarse de base"], a: 1 },
-      { q: "¿Cuál es el significado del Código Q: QRR?", options: ["A) Espere", "B) Refuerzo", "C) Dirección"], a: 1 },
-      { q: "¿Cuál es el horario de servicio obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00 /TIME", "C) Libre las 24 horas"], a: 1 }
+      { q: "¿Cuál es el significado del Código Q: QRR?", options: ["A) Espere", "B) Refuerzo", "C) Dirección"], a: 1 }
     ];
     let currentQuizIndex = 0;
     let quizScore = 0;
@@ -889,7 +926,7 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // CONTROL DE SUB-PESTAÑAS DE ACADEMIA (7 VISTAS)
+    // CONTROL DE SUB-PESTAÑAS DE ACADEMIA
     function switchRegTab(tabNum) {
       document.getElementById('regView1').classList.toggle('hidden', tabNum !== 1);
       document.getElementById('regView2').classList.toggle('hidden', tabNum !== 2);
@@ -1013,7 +1050,7 @@
           loadQuizQuestion();
         } else {
           closeReglasQuizModal();
-          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 9 ? '🏆 ¡Excelente dominio del reglamento, rangos y acciones!' : '⚠ Te sugerimos repasar la academia completa.'}`);
+          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 8 ? '🏆 ¡Excelente dominio del reglamento!' : '⚠ Te sugerimos repasar la academia.'}`);
         }
       }, 1200);
     }
@@ -1071,7 +1108,7 @@
         }, 1200);
       } else {
         feedbackEl.className = "text-[10px] font-bold text-red-400";
-        feedbackEl.innerText = "❌ Incorrecto. Reiniciando test con nuevas preguntas...";
+        feedbackEl.innerText = "❌ Incorrecto. Reiniciando test...";
         setTimeout(() => {
           examQuestionsPool = [...reglamentoQuizPool].sort(() => 0.5 - Math.random()).slice(0, 3);
           currentExamIndex = 0;
@@ -1132,7 +1169,7 @@
         const res = await response.json();
         document.getElementById('loadingOverlay').classList.add('hidden');
         if (res.status === 'success') {
-          alert("✔ ¡Voto registrado con éxito en el servidor!");
+          alert("✔ ¡Voto registrado con éxito!");
           loadSession();
         } else {
           alert("⚠ " + (res.message || "Error al registrar voto."));
@@ -1181,7 +1218,7 @@
           })
         });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert(isAutoApproved ? '✔ Nueva encuesta publicada con éxito.' : '✔ Propuesta de encuesta enviada a revisión.');
+        alert(isAutoApproved ? '✔ Nueva encuesta publicada.' : '✔ Propuesta enviada a revisión.');
         document.getElementById('pollTitle').value = '';
         document.getElementById('pollOptions').value = '';
         toggleControlPanel(false);
@@ -2036,7 +2073,7 @@
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approveNews', titulo: title }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Comunicado aprobado con éxito.');
+        alert('✔ Comunicado aprobado.');
         if (cachedData && cachedData.news) {
           cachedData.news.forEach(n => { if (n.titulo === title) n.estado = 'approved'; });
         }
@@ -2044,20 +2081,20 @@
         loadSession();
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al aprobar comunicado.');
+        alert('Error.');
       }
     }
 
     async function rejectPendingNews(index) {
       const title = pendingNewsMap[index];
       if (!title) return;
-      const motivo = prompt(`Motivo del rechazo para el comunicado "${title}":`, "Falta ajustar formato o directrices.");
+      const motivo = prompt(`Motivo del rechazo para "${title}":`, "Falta ajustar formato.");
       if (motivo === null) return;
-      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectNews', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Comunicado rechazado con motivo guardado.');
+        alert('✔ Comunicado rechazado.');
         if (cachedData && cachedData.news) {
           cachedData.news = cachedData.news.filter(n => n.titulo !== title);
         }
@@ -2065,7 +2102,7 @@
         loadSession();
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al rechazar comunicado.');
+        alert('Error.');
       }
     }
 
@@ -2075,10 +2112,10 @@
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteNews', titulo: title }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Comunicado eliminado.');
+        alert('✔ Eliminado.');
         loadControlPanelData();
         loadSession();
-      } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error al eliminar.'); }
+      } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error.'); }
     }
 
     async function approvePendingDoctrina(index) {
@@ -2089,7 +2126,7 @@
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approveDoctrina', titulo: title }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Doctrina aprobada con éxito.');
+        alert('✔ Doctrina aprobada.');
         if (cachedData && cachedData.doctrina) {
           cachedData.doctrina.forEach(d => { if (d.titulo === title) d.estado = 'approved'; });
         }
@@ -2097,20 +2134,20 @@
         loadSession();
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al aprobar doctrina.');
+        alert('Error.');
       }
     }
 
     async function rejectPendingDoctrina(index) {
       const title = pendingDoctrinaMap[index];
       if (!title) return;
-      const motivo = prompt(`Motivo del rechazo para la doctrina "${title}":`, "Requiere corrección de contenido.");
+      const motivo = prompt(`Motivo del rechazo para "${title}":`, "Requiere corrección.");
       if (motivo === null) return;
-      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectDoctrina', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Doctrina rechazada con motivo guardado.');
+        alert('✔ Rechazado.');
         if (cachedData && cachedData.doctrina) {
           cachedData.doctrina = cachedData.doctrina.filter(d => d.titulo !== title);
         }
@@ -2118,7 +2155,7 @@
         loadSession();
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al rechazar doctrina.');
+        alert('Error.');
       }
     }
 
@@ -2130,7 +2167,7 @@
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'approvePoll', titulo: title }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Encuesta aprobada con éxito.');
+        alert('✔ Encuesta aprobada.');
         if (cachedData && cachedData.polls) {
           cachedData.polls.forEach(p => { if (p.titulo === title) p.estado = 'approved'; });
         }
@@ -2138,20 +2175,20 @@
         loadSession();
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al aprobar encuesta.');
+        alert('Error.');
       }
     }
 
     async function rejectPendingPoll(index) {
       const title = pendingPollsMap[index];
       if (!title) return;
-      const motivo = prompt(`Motivo del rechazo para la encuesta "${title}":`, "Pregunta no apta para la directiva.");
+      const motivo = prompt(`Motivo del rechazo para "${title}":`, "No apta.");
       if (motivo === null) return;
-      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'rejectPoll', titulo: title, motivo: motivo }) });
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Encuesta rechazada con motivo guardado.');
+        alert('✔ Rechazado.');
         if (cachedData && cachedData.polls) {
           cachedData.polls = cachedData.polls.filter(p => p.titulo !== title);
         }
@@ -2159,12 +2196,12 @@
         loadSession();
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al rechazar encuesta.');
+        alert('Error.');
       }
     }
 
     async function deletePoll(title) {
-      if (!confirm(`⚠ ¿Estás seguro de eliminar la encuesta "${title}"?`)) return;
+      if (!confirm(`⚠ ¿Eliminar encuesta "${title}"?`)) return;
       document.getElementById('loadingOverlay').classList.remove('hidden');
       try {
         await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'deletePoll', titulo: title }) });
@@ -2174,7 +2211,7 @@
         loadSession();
       } catch (err) {
         document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('Error al eliminar encuesta.');
+        alert('Error.');
       }
     }
 
@@ -2192,12 +2229,10 @@
         const elapsedTimeMs = Date.now() - startTime;
 
         if (elapsedTimeMs >= MAX_SHIFT_MS) {
-          alert('⏰ Tu servicio anterior superó el límite máximo de 9 horas continuas y fue finalizado automáticamente.');
+          alert('⏰ Tu servicio superó el límite de 9 horas y fue finalizado.');
           const forcedEndTime = startTime + MAX_SHIFT_MS;
-          
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           currentUser.activeShiftStart = null;
-          
           processAndSaveSplitShift(startTime, forcedEndTime);
           return;
         }
@@ -2210,10 +2245,8 @@
           const cutTime = new Date(colombiaDate);
           cutTime.setHours(2, 0, 0, 0);
           const forcedEndTime = cutTime.getTime();
-
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           currentUser.activeShiftStart = null;
-          
           processAndSaveSplitShift(startTime, forcedEndTime);
           return;
         }
@@ -2246,13 +2279,11 @@
         const elapsedTimeMs = Date.now() - startTime;
 
         if (elapsedTimeMs >= MAX_SHIFT_MS) {
-          alert('⏰ Servicio finalizado automáticamente al alcanzar el tiempo límite máximo de 9 horas continuas.');
+          alert('⏰ Servicio finalizado por límite de 9 horas.');
           const forcedEndTime = startTime + MAX_SHIFT_MS;
-
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           clearInterval(shiftInterval);
           shiftInterval = null;
-
           processAndSaveSplitShift(startTime, forcedEndTime);
           return;
         }
@@ -2262,15 +2293,13 @@
         
         if (colombiaDate.getHours() >= 2 && colombiaDate.getHours() < 17) {
           if (localStorage.getItem(`shiftStart_${currentUser.username}`)) {
-            alert('El servicio se ha cerrado automáticamente por horario (02:00 am).');
+            alert('El servicio se cerró automáticamente por horario (02:00 am).');
             const cutTime = new Date(colombiaDate);
             cutTime.setHours(2, 0, 0, 0);
             const forcedEndTime = cutTime.getTime();
-
             localStorage.removeItem(`shiftStart_${currentUser.username}`);
             clearInterval(shiftInterval);
             shiftInterval = null;
-
             processAndSaveSplitShift(startTime, forcedEndTime);
             return;
           }
@@ -2358,7 +2387,7 @@
           await saveShiftLog(hoursPart2, msgPart2, endDateStr, midnightStartStr, horaFinStr);
         }
 
-        alert(`✔ Turno dividido por medianoche registrado con éxito en ambos días.`);
+        alert(`✔ Turno dividido registrado con éxito.`);
         loadSession();
       }
     }
@@ -2383,14 +2412,14 @@
         if (result.status === 'success') {
           currentUser.hours = result.total;
           localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
-          alert(`✔ ¡Turno finalizado con éxito!\nTiempo registrado: ${timeSpentMsg}`);
+          alert(`✔ ¡Turno finalizado!\nTiempo: ${timeSpentMsg}`);
           loadSession();
         } else {
-          alert("⚠ " + (result.message || "Error al registrar el turno."));
+          alert("⚠ " + (result.message || "Error al registrar."));
         }
       } catch (err) { 
         document.getElementById('loadingOverlay').classList.add('hidden'); 
-        alert('Error de conexión al guardar el turno.'); 
+        alert('Error de conexión.'); 
       }
     }
 
@@ -2497,7 +2526,7 @@
         const pendingPollsList = document.getElementById('pendingPollsList');
         if (pendingPollsList && (isSuperAdmin || isCoronel)) {
           const pendingPolls = polls ? polls.filter(item => item.estado && item.estado.toLowerCase() === 'pending') : [];
-          pendingPollsList.innerHTML = pendingPolls.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay encuestas pendientes de aprobación.</p>' : '';
+          pendingPollsList.innerHTML = pendingPolls.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay encuestas pendientes.</p>' : '';
           pendingPollsMap = {};
           pendingPolls.forEach((item, index) => {
             pendingPollsMap[index] = item.titulo;
@@ -2711,7 +2740,7 @@
         summaryArray.sort((a, b) => b.totalHours - a.totalHours);
         currentRankedExportArray = summaryArray;
 
-        container.innerHTML = summaryArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros en este rango de fechas.</p>' : '';
+        container.innerHTML = summaryArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros.</p>' : '';
         
         summaryArray.forEach((item, index) => {
           const div = document.createElement('div');
@@ -2730,7 +2759,7 @@
         filtered.sort((a, b) => parseFloat(b.horas || 0) - parseFloat(a.horas || 0));
         currentRankedExportArray = filtered;
 
-        container.innerHTML = filtered.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros en este rango de fechas.</p>' : '';
+        container.innerHTML = filtered.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros.</p>' : '';
         
         filtered.forEach((h) => {
           const div = document.createElement('div');
