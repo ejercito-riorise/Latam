@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intranet EB - Ejército RioRise</title>
   
-  <!-- FAVICON -->
+  <!-- FAVICON & OPEN GRAPH (VISTA PREVIA CON ICONO AZUL) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3C/svg%3E">
 
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
-  <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos y órdenes del día.">
+  <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos, normativas y órdenes del día.">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3C/svg%3E">
 
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b0f19">
@@ -241,7 +242,7 @@
               <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
               <div>
                 <h3 class="font-bold text-white text-xs">Academia Táctica y Manuales</h3>
-                <p class="text-[9px] text-slate-400">Normativa, Horarios, Acciones EB, Rangos y Códigos Q</p>
+                <p class="text-[9px] text-slate-400">Normativa Completa (Cap 1 al 7), Horarios, Acciones, Rangos y Códigos Q</p>
               </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -269,7 +270,7 @@
           <div class="grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[9px]">
             <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">📖 Cap 1-2</button>
             <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📜 Cap 3-4</button>
-            <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⚔️ Acciones</button>
+            <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⚖️ Cap 5-7</button>
             <button id="regTab4Btn" onclick="switchRegTab(4)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⭐ Rangos</button>
             <button id="regTab5Btn" onclick="switchRegTab(5)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📻 Q & RP</button>
             <button id="regTab6Btn" onclick="switchRegTab(6)" class="py-1 font-bold rounded text-slate-400 hover:text-white">🗺️ Mapa</button>
@@ -371,8 +372,47 @@
             </div>
           </div>
 
-          <!-- BLOQUE 3: ACCIONES EB, PACIFICACIONES E INVASIONES -->
+          <!-- BLOQUE 3: CAPÍTULOS 5, 6 Y 7 (FALTAS, SANCIONES Y DISPOSICIONES) + ACCIONES EB -->
           <div id="regView3" class="space-y-3 hidden">
+            
+            <!-- CAPÍTULOS 5, 6 Y 7 -->
+            <div class="space-y-2">
+              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                <button onclick="toggleChapter('cap5')" class="w-full flex justify-between items-center text-xs font-bold text-amber-400">
+                  <span><i class="fa-solid fa-triangle-exclamation mr-1.5"></i> CAPÍTULO 5: De las Faltas Leves y Graves</span>
+                  <i id="chevron_cap5" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
+                </button>
+                <div id="cap5" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>5.1.</strong> Faltas leves: impuntualidad en formaciones, descuidos menores en uniforme o vocabulario inapropiado menor en radio.</div>
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>5.2.</strong> Faltas graves: insubordinación directa a superiores, abandono de puesto en horario crítico, uso indebido de armamento oficial o filtración de información confidencial.</div>
+                </div>
+              </div>
+
+              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                <button onclick="toggleChapter('cap6')" class="w-full flex justify-between items-center text-xs font-bold text-orange-400">
+                  <span><i class="fa-solid fa-gavel mr-1.5"></i> CAPÍTULO 6: Régimen de Sanciones</span>
+                  <i id="chevron_cap6" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
+                </button>
+                <div id="cap6" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>6.1.</strong> Llamado de atención verbal o escrita en registro de personal por acumulación de faltas leves.</div>
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>6.2.</strong> Suspensión temporal de funciones o degradación de rango según gravedad de la falta evaluada por el Alto Mando.</div>
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>6.3.</strong> Expulsión definitiva de la institución e inclusión en lista negra (Blacklist) en casos de traición o delitos graves.</div>
+                </div>
+              </div>
+
+              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                <button onclick="toggleChapter('cap7')" class="w-full flex justify-between items-center text-xs font-bold text-blue-400">
+                  <span><i class="fa-solid fa-clipboard-check mr-1.5"></i> CAPÍTULO 7: Disposiciones Finales</span>
+                  <i id="chevron_cap7" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
+                </button>
+                <div id="cap7" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>7.1.</strong> Cualquier modificación a este reglamento es facultad exclusiva del General y los Coroneles del Estado Mayor.</div>
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>7.2.</strong> Desconocer las normas descritas en esta academia no exime a ningún miembro de su cumplimiento estricto.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ACCIONES EB, PACIFICACIONES E INVASIONES -->
             <div class="bg-slate-950 p-3 rounded-xl border border-blue-500/50 space-y-3">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
                 <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-shield-dog mr-1"></i> Acciones, Pacificaciones e Invasiones EB</h4>
@@ -400,7 +440,7 @@
                   <p class="text-slate-300 text-[10px]"><strong>Dinámica:</strong> Patrullaje en la ciudad con 3 o más vehículos militares controlando el orden. Obligatoriamente supervisado por un <strong>General o Coronel</strong>.</p>
                 </div>
 
-                <!-- Acción 3: Pacificaciones (Sábado, Domingo y Lunes) -->
+                <!-- Acción 3: Pacificaciones -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
                   <div class="flex justify-between items-center font-bold text-red-400 text-xs">
                     <span>🎯 3. Pacificaciones y Operaciones</span>
@@ -410,7 +450,7 @@
                   <p class="text-slate-300 text-[10px]">🗓️ <strong>Domingo y Lunes (21:00 a 00:00):</strong> Operación conjunta de la EB y la Policía Federal contra las facciones.</p>
                 </div>
 
-                <!-- Acción 4: Invasiones (Martes y Jueves) -->
+                <!-- Acción 4: Invasiones -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
                   <div class="flex justify-between items-center font-bold text-purple-400 text-xs">
                     <span>⚔️ 4. Invasiones del EB (Martes y Jueves)</span>
