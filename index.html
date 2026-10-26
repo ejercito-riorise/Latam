@@ -241,7 +241,7 @@
               <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
               <div>
                 <h3 class="font-bold text-white text-xs">Academia Táctica y Manuales</h3>
-                <p class="text-[9px] text-slate-400">Normativa, Biblia RP, Códigos Q y Mapa Base</p>
+                <p class="text-[9px] text-slate-400">Normativa, Jerarquía EB, Códigos Q y Mapa Base</p>
               </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -257,7 +257,7 @@
               </div>
               <div>
                 <h4 class="text-xs font-bold text-blue-300">Desafío de Tropa (Quiz)</h4>
-                <p class="text-[10px] text-slate-300">Evalúa reglamento, Biblia RP y códigos Q</p>
+                <p class="text-[10px] text-slate-300">Evalúa reglamento, rangos y códigos Q</p>
               </div>
             </div>
             <button onclick="openReglasQuizModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-2 rounded-lg shadow-lg transition flex items-center gap-1 shrink-0">
@@ -265,13 +265,14 @@
             </button>
           </div>
 
-          <!-- SUB-PESTAÑAS DE ACADEMIA ORDENADAS -->
-          <div class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
+          <!-- SUB-PESTAÑAS DE ACADEMIA ORDENADAS (6 OPCIONES: 1-3, 4, 5-7, RANGOS, Q, RP) -->
+          <div class="grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
             <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🪖 1-3</button>
             <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ 4</button>
             <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📡 5-7</button>
-            <button id="regTab4Btn" onclick="switchRegTab(4)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📻 Q</button>
-            <button id="regTab5Btn" onclick="switchRegTab(5)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📖 RP</button>
+            <button id="regTab4Btn" onclick="switchRegTab(4)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⭐ Rangos</button>
+            <button id="regTab5Btn" onclick="switchRegTab(5)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📻 Q</button>
+            <button id="regTab6Btn" onclick="switchRegTab(6)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📖 RP</button>
           </div>
 
           <!-- BLOQUE 1: GENERAL, DEBERES Y PERMISOS (Capítulos 1, 2 y 3) -->
@@ -373,8 +374,76 @@
             </div>
           </div>
 
-          <!-- BLOQUE 4: CÓDIGOS Q OFICIALES -->
-          <div id="regView4" class="space-y-2 hidden">
+          <!-- BLOQUE 4: RANGOS DE LAS FUERZAS ARMADAS DE BRASIL (EB) -->
+          <div id="regView4" class="space-y-3 hidden">
+            <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/50 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-900 pb-2">
+                <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-ranking-star mr-1"></i> Rangos de las Fuerzas Armadas de Brasil (EB)</h4>
+                <span class="text-[9px] text-emerald-400 font-bold">Jerarquía Oficial</span>
+              </div>
+              <p class="text-[10px] text-slate-300">Conoce los rangos, funciones específicas y autorizaciones de cada nivel dentro de la organización:</p>
+              
+              <div class="space-y-3 pt-1 text-[11px]">
+                <!-- Rango 1 -->
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
+                  <div class="flex justify-between items-center font-bold text-amber-400 text-xs">
+                    <span>⭐ RANGO 1 / PRIVADO</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Nuevos Reclutas</span>
+                  </div>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a nuevos reclutas con poco conocimiento de la organización[cite: 5].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Obedecer órdenes de todos los superiores. Cuida ubicaciones específicas de la base como guardia vigilando que nadie entre[cite: 5].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Equipo:</strong> Se le otorga armamento para defender la base, chalecos antibalas y armas deaser (pistolas de bajo calibre)[cite: 5].</p>
+                </div>
+
+                <!-- Rango 2 -->
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
+                  <div class="flex justify-between items-center font-bold text-blue-400 text-xs">
+                    <span>⭐⭐ RANGO 2 / SARGENTO</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Intermedio</span>
+                  </div>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Para quienes tienen leve experiencia, compromiso y estudio[cite: 5].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Encargados de la enseñanza, educación, manejo y control de los privados (como profesores que ayudan a los nuevos)[cite: 5].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Acciones:</strong> Participan de las acciones siempre que estén autorizados. Son soldados de rendimiento intermedio y ejemplo de comportamiento[cite: 5].</p>
+                </div>
+
+                <!-- Rango 3 -->
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
+                  <div class="flex justify-between items-center font-bold text-cyan-400 text-xs">
+                    <span>⭐⭐⭐ RANGO 3 / TENIENTES</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Amplitud Mental</span>
+                  </div>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a quienes demostraron amplitud mental, compromiso, actividad, estudio y conocimiento[cite: 4].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Conocen las normas y manejo de base. Verifican el aprendizaje de sargentos a privados y que todo esté en orden[cite: 4].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Acciones y Vehículos:</strong> Participan en las acciones y tienen permitido el uso de vehículos militares para movilización en base y control[cite: 4].</p>
+                </div>
+
+                <!-- Rango 4 -->
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
+                  <div class="flex justify-between items-center font-bold text-orange-400 text-xs">
+                    <span>⭐⭐⭐⭐ RANGO 4 / MAYOR</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Soldados Élite</span>
+                  </div>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Solo para los más destacados de la base (soldados élite con tiempo, experiencia, estudio y actividad)[cite: 4].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Garantizar el bien de la base militar. Lideran rangos anteriores, organizan, enseñan y verifican el orden[cite: 4].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Acciones:</strong> Participan en todas las acciones (lo mejor de lo mejor). Se les permite utilizar <strong>toda arma de fuego</strong>[cite: 4].</p>
+                </div>
+
+                <!-- Rango 5 -->
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
+                  <div class="flex justify-between items-center font-bold text-red-400 text-xs">
+                    <span>⭐⭐⭐⭐⭐ RANGO 5 / CORONEL</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Jefes / Vice-líderes</span>
+                  </div>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado por el General a sus soldados de confianza. Son jefes y vice-líderes de las fuerzas armadas[cite: 4].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Totalmente responsables de todo lo que pasa en la base. Pendientes de todas las acciones y situaciones de la organización[cite: 4].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Mando:</strong> Dan las órdenes y mandan cuando el General no está. Sus órdenes **no se cuestionan, se cumplen**[cite: 4].</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 5: CÓDIGOS Q OFICIALES -->
+          <div id="regView5" class="space-y-2 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
                 <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-tower-broadcast mr-1"></i> Manual de Códigos Q de Facciones</h4>
@@ -388,8 +457,8 @@
             </div>
           </div>
 
-          <!-- BLOQUE 5: BIBLIA RP Y MAPA TÁCTICO INTERACTIVO -->
-          <div id="regView5" class="space-y-3 hidden">
+          <!-- BLOQUE 6: BIBLIA RP Y MAPA TÁCTICO INTERACTIVO -->
+          <div id="regView6" class="space-y-3 hidden">
             <!-- Biblia RP -->
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
@@ -440,7 +509,7 @@
         </h4>
       </div>
       <p class="text-[11px] text-slate-300">
-        Debes aprobar obligatoriamente la evaluación táctica de la Biblia RP y códigos de radio para desbloquear tu acceso.
+        Debes aprobar obligatoriamente la evaluación táctica de rangos, Biblia RP y códigos de radio para desbloquear tu acceso.
       </p>
       <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
         <p id="examQuestion" class="text-xs font-bold text-white"></p>
@@ -450,12 +519,12 @@
     </div>
   </div>
 
-  <!-- MODAL QUIZ INTERACTIVO DE REGLAMENTO Y CÓDIGOS -->
+  <!-- MODAL QUIZ INTERACTIVO DE REGLAMENTO, RANGOS Y CÓDIGOS -->
   <div id="reglasQuizModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[120] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-blue-500/60 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
         <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento, Biblia RP y Códigos Q
+          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento, Rangos y Códigos
         </h4>
         <button onclick="closeReglasQuizModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -758,17 +827,18 @@
       { code: "FLAMING RP", meaning: "Ofensa contra jugadores" }
     ];
 
-    // QUIZ DE REGLAMENTO, CÓDIGOS Q Y BIBLIA RP INTERACTIVO PRO
+    // QUIZ DE REGLAMENTO, RANGOS, CÓDIGOS Q Y BIBLIA RP INTERACTIVO PRO
     const reglamentoQuizPool = [
+      { q: "¿Qué función principal tiene el Rango 1 / Privado?", options: ["A) Mandar la base", "B) Obedecer órdenes y cuidar ubicaciones como guardia", "C) Usar vehículos aéreos"], a: 1 },
+      { q: "¿A qué rango se le permite utilizar toda arma de fuego y liderar las acciones?", options: ["A) Rango 1 / Privado", "B) Rango 2 / Sargento", "C) Rango 4 / Mayor"], a: 2 },
+      { q: "¿Quiénes son los encargados de la enseñanza y educación de los Privados (como profesores)?", options: ["A) Rango 2 / Sargentos", "B) Rango 5 / Coroneles", "C) Nuevos Reclutas"], a: 0 },
+      { q: "¿Qué rango utiliza vehículos militares para movilización en base y verificación?", options: ["A) Rango 3 / Tenientes", "B) Rango 1 / Privado", "C) Rango 2 / Sargento"], a: 0 },
+      { q: "¿Cuál es la característica del Rango 5 / Coronel?", options: ["A) Son soldados rasos", "B) Dan las órdenes y sus órdenes no se cuestionan, se cumplen", "C) Solo cuidan la puerta"], a: 1 },
       { q: "¿Qué significa RDM según la Biblia RP?", options: ["A) Reparar de inmediato", "B) Entrar en una acción sin estar involucrado", "C) Retirarse de base"], a: 1 },
       { q: "¿Cuál es el significado del Código Q: QRR?", options: ["A) Espere", "B) Refuerzo", "C) Dirección"], a: 1 },
       { q: "¿Qué significa MG en las normas del servidor?", options: ["A) Matar gente", "B) Usar información de fuera del juego", "C) Manejar guardias"], a: 1 },
       { q: "¿Qué significa el código QSL en radiofonía?", options: ["A) Entendido", "B) Dinero", "C) Fuera del aire"], a: 0 },
-      { q: "¿Cuál es el código Q para indicar que estás 'En camino'?", options: ["A) QTI", "B) QAP", "C) QTH"], a: 0 },
-      { q: "¿Qué significa SAAV en la Biblia RP?", options: ["A) Sistema Aéreo", "B) Sin amor a la vida", "C) Soldado Activo"], a: 1 },
-      { q: "¿Qué significa KOS?", options: ["A) Matar al visualizar objetivo autorizado", "B) Kidnapping o secuestro", "C) Kilos de suministros"], a: 0 },
-      { q: "¿Cuál es el horario de trabajo obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00", "C) Libre las 24 horas"], a: 1 },
-      { q: "¿Está permitido vender uniformes militares?", options: ["A) Sí", "B) No, está estrictamente prohibido (Art. 4.1)", "C) Solo a amigos"], a: 1 }
+      { q: "¿Cuál es el horario de trabajo obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00", "C) Libre las 24 horas"], a: 1 }
     ];
     let currentQuizIndex = 0;
     let quizScore = 0;
@@ -801,19 +871,21 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // CONTROL DE SUB-PESTAÑAS DE ACADEMIA
+    // CONTROL DE SUB-PESTAÑAS DE ACADEMIA (6 VISTAS)
     function switchRegTab(tabNum) {
       document.getElementById('regView1').classList.toggle('hidden', tabNum !== 1);
       document.getElementById('regView2').classList.toggle('hidden', tabNum !== 2);
       document.getElementById('regView3').classList.toggle('hidden', tabNum !== 3);
       document.getElementById('regView4').classList.toggle('hidden', tabNum !== 4);
       document.getElementById('regView5').classList.toggle('hidden', tabNum !== 5);
+      document.getElementById('regView6').classList.toggle('hidden', tabNum !== 6);
 
       document.getElementById('regTab1Btn').className = tabNum === 1 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab2Btn').className = tabNum === 2 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab3Btn').className = tabNum === 3 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab4Btn').className = tabNum === 4 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab5Btn').className = tabNum === 5 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
+      document.getElementById('regTab6Btn').className = tabNum === 6 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
     }
 
     function renderQCodes(list) {
@@ -921,7 +993,7 @@
           loadQuizQuestion();
         } else {
           closeReglasQuizModal();
-          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 7 ? '🏆 ¡Excelente dominio del reglamento, Biblia RP y códigos Q!' : '⚠ Te sugerimos repasar la academia completa.'}`);
+          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 8 ? '🏆 ¡Excelente dominio de la jerarquía, reglamento y códigos!' : '⚠ Te sugerimos repasar la academia completa.'}`);
         }
       }, 1200);
     }
