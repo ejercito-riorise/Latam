@@ -234,14 +234,14 @@
           </div>
         </div>
 
-        <!-- SECCIÓN ACADEMIA, REGLAMENTO, CÓDIGOS Q, BIBLIA RP Y MAPA TÁCTICO INTERACTIVO -->
+        <!-- SECCIÓN ACADEMIA, REGLAMENTO, ACCIONES, RANGOS, CÓDIGOS Q Y BIBLIA RP -->
         <div id="sectionDoctrina" class="military-card p-3 rounded-xl space-y-3 hidden">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
               <div>
                 <h3 class="font-bold text-white text-xs">Academia Táctica y Manuales</h3>
-                <p class="text-[9px] text-slate-400">Normativa, Jerarquía EB, Códigos Q y Mapa Base</p>
+                <p class="text-[9px] text-slate-400">Normativa, Horarios, Acciones EB, Rangos y Códigos Q</p>
               </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -257,7 +257,7 @@
               </div>
               <div>
                 <h4 class="text-xs font-bold text-blue-300">Desafío de Tropa (Quiz)</h4>
-                <p class="text-[10px] text-slate-300">Evalúa reglamento, rangos y códigos Q</p>
+                <p class="text-[10px] text-slate-300">Evalúa reglamento, rangos, acciones y códigos Q</p>
               </div>
             </div>
             <button onclick="openReglasQuizModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-2 rounded-lg shadow-lg transition flex items-center gap-1 shrink-0">
@@ -265,22 +265,24 @@
             </button>
           </div>
 
-          <!-- SUB-PESTAÑAS DE ACADEMIA ORDENADAS (6 OPCIONES: 1-3, 4, 5-7, RANGOS, Q, RP) -->
-          <div class="grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
-            <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🪖 1-3</button>
-            <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ 4</button>
-            <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📡 5-7</button>
+          <!-- SUB-PESTAÑAS DE ACADEMIA (7 OPCIONES: HORARIO Y REGLAS, ACCIONES EB, 4-7, RANGOS, CÓDIGOS Q, BIBLIA RP, MAPA) -->
+          <div class="grid grid-cols-7 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[9px]">
+            <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🕒 1-3</button>
+            <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⚔️ Acciones</button>
+            <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ 4</button>
             <button id="regTab4Btn" onclick="switchRegTab(4)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⭐ Rangos</button>
             <button id="regTab5Btn" onclick="switchRegTab(5)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📻 Q</button>
             <button id="regTab6Btn" onclick="switchRegTab(6)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📖 RP</button>
+            <button id="regTab7Btn" onclick="switchRegTab(7)" class="py-1 font-bold rounded text-slate-400 hover:text-white">🗺️ Mapa</button>
           </div>
 
-          <!-- BLOQUE 1: GENERAL, DEBERES Y PERMISOS (Capítulos 1, 2 y 3) -->
+          <!-- BLOQUE 1: HORARIO DE SERVICIO, GENERAL Y DEBERES (Capítulos 1, 2 y 3) -->
           <div id="regView1" class="space-y-2">
             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <div class="bg-amber-950/40 border border-amber-800/60 p-2 rounded text-amber-300 text-[10px] mb-2 space-y-1">
-                <p><strong>🕒 Horario de trabajo:</strong> De 17:00 a 02:00 (Obligatorio uniforme y servicio).</p>
-                <p><strong>⚠️ Nota General:</strong> El General y los Coroneles aplican medidas disciplinarias independientes ante infracciones.</p>
+              <div class="bg-amber-950/40 border border-amber-800/60 p-2.5 rounded text-amber-300 text-[11px] mb-2 space-y-1.5">
+                <p><strong class="text-white text-xs">🕒 Horario de Servicio:</strong> De 17:00 a 02:00 /TIME.</p>
+                <p class="text-[10px] text-amber-200/90">El horario <code>/TIME</code> es el horario oficial del servidor (no la hora del país en que te encuentres). Puedes verificar qué hora es en el juego utilizando el comando <code>/TIME</code> en el chat del juego.</p>
+                <p class="text-[10px]"><strong>⚠️ Nota General:</strong> El General y los Coroneles aplican medidas disciplinarias independientes ante infracciones.</p>
               </div>
               
               <button onclick="toggleChapter('cap1')" class="w-full flex justify-between items-center text-xs font-bold text-amber-400 py-1">
@@ -304,11 +306,11 @@
                 <p><strong>2.1.</strong> Obedecer leyes del estado y estatutos de la organización.</p>
                 <p><strong>2.2.</strong> Proteger la vida de los ciudadanos por cualquier medio.</p>
                 <p><strong>2.3.</strong> Obedecer órdenes de superiores sin cuestionar (marco legal).</p>
-                <p><strong>2.4.</strong> Respetar la cadena de mando y orden interno (2.4, 2.5).</p>
-                <p><strong>2.5.</strong> Ser cortés y diplomático con los ciudadanos (2.6).</p>
-                <p><strong>2.6.</strong> Reparar vehículos de trabajo por daños (2.7) y conocer superiores por rostro/nombre (2.8).</p>
-                <p><strong>2.7.</strong> Proteger bienes, presentar documentos a guardia y verificar civiles (2.9 a 2.12).</p>
-                <p><strong>2.8.</strong> Vigilar territorio diariamente según distribución del ayudante/líder (2.13).</p>
+                <p><strong>2.4.</strong> Respetar la cadena de mando y orden interno.</p>
+                <p><strong>2.5.</strong> Ser cortés y diplomático con los ciudadanos.</p>
+                <p><strong>2.6.</strong> Reparar vehículos de trabajo por daños y conocer superiores por rostro/nombre.</p>
+                <p><strong>2.7.</strong> Proteger bienes, presentar documentos a guardia y verificar civiles.</p>
+                <p><strong>2.8.</strong> Vigilar territorio diariamente según distribución del ayudante/líder.</p>
               </div>
             </div>
 
@@ -320,13 +322,58 @@
               <div id="cap3" class="hidden mt-2 pt-2 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
                 <p><strong>3.1 a 3.4.</strong> Disparar a ingresos ilegales, ayudar a facciones, verificar documentos e interrogar.</p>
                 <p><strong>3.5 a 3.8.</strong> Practicar tiro fuera de hora, pedir radio, disparar ante amenazas directas a civiles/policía y tomar licencias de hasta 2 semanas (aprobación de General/Coroneles).</p>
-                <p><strong>3.9 a 3.12.</strong> Bloquear caminos/chocar autos para evitar delitos (ej. guaraná de mafia), transportar armas y estacionar vehículos personales en base.</p>
+                <p><strong>3.9 a 3.12.</strong> Bloquear caminos/chocar autos para evitar delitos, transportar armas y estacionar vehículos personales en base.</p>
               </div>
             </div>
           </div>
 
-          <!-- BLOQUE 2: PROHIBICIONES (Capítulo 4) -->
-          <div id="regView2" class="space-y-2 hidden">
+          <!-- BLOQUE 2: ACCIONES PRINCIPALES DE LA EB EN EL ROL (NUEVA INFORMACIÓN DE IMÁGENES) -->
+          <div id="regView2" class="space-y-3 hidden">
+            <div class="bg-slate-950 p-3 rounded-xl border border-blue-500/50 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-900 pb-2">
+                <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-shield-dog mr-1"></i> Acciones Principales de la EB en el Rol</h4>
+                <span class="text-[9px] text-emerald-400 font-bold">Operativa Oficial</span>
+              </div>
+              <p class="text-[10px] text-slate-300">Las Fuerzas Armadas de Brasil (EB) participan y lideran diversas acciones clave en el servidor:</p>
+
+              <div class="space-y-3 pt-1 text-[11px]">
+                <!-- Acción 1: Cargamento -->
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+                  <div class="flex justify-between items-center font-bold text-amber-400 text-xs">
+                    <span>🚚 1. CRM (Cargamento)</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">17:00 / 19:00 /TIME</span>
+                  </div>
+                  <p class="text-slate-300 text-[10px]"><strong>Horarios:</strong> Primer cargamento: 17:00 /TIME | Segundo cargamento: 19:00 /TIME (Se realiza todos los días, 2 veces al día).</p>
+                  <p class="text-slate-300 text-[10px]"><strong>¿En qué consiste?:</strong> La organización EB utiliza un camión para transportar material desde un puerto y traerlo a la base militar. Con ese material se fabrican armas. En esta acción la PF (Policía Federal) interviene ayudando a la EB a traer el camión cargado a la base.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Amenaza de Mafias:</strong> Las mafias de la ciudad intentarán robar el camión en el transcurso del viaje de regreso a base; pueden chocarlo, voltearlo, robarlo e intentarán llevarlo a la mansión de la mafia para usarlo en su beneficio.</p>
+                </div>
+
+                <!-- Acción 2: Patrullaje -->
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+                  <div class="flex justify-between items-center font-bold text-cyan-400 text-xs">
+                    <span>🚙 2. Patrullaje Táctico</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">3+ Vehículos</span>
+                  </div>
+                  <p class="text-slate-300 text-[10px]"><strong>¿En qué consiste?:</strong> La EB realiza una actividad donde sale a patrullar la ciudad con 3 o más vehículos militares por las calles, controlando el orden y realizando procedimientos de detención.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Supervisión:</strong> Obligatoriamente esta acción debe estar supervisada por un <strong>General o un Coronel</strong>.</p>
+                </div>
+
+                <!-- Acción 3: Pacificaciones -->
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+                  <div class="flex justify-between items-center font-bold text-red-400 text-xs">
+                    <span>🎯 3. Pacificaciones (Invasiones)</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Guerra de Territorio</span>
+                  </div>
+                  <p class="text-slate-300 text-[10px]"><strong>¿Qué es?:</strong> Momento donde una organización invade el territorio de otra; la organización que logre eliminar a todos los participantes de la facción enemiga gana y es recompensada.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Mafia hacia EB:</strong> Una organización enemiga (mafia) invade la base militar; si eliminan a toda la base ganan y son recompensados (también puede ganar la EB eliminando a todos los participantes de la mafia).</p>
+                  <p class="text-slate-300 text-[10px]"><strong>EB hacia Mafia:</strong> La EB realiza una acción donde toda la base militar invade las favelas o territorios de las mafias en la ciudad para ganar eliminando a todo el personal de la mafia.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 3: PROHIBICIONES (Capítulo 4) -->
+          <div id="regView3" class="space-y-2 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-red-900/60 space-y-2">
               <div class="flex items-center gap-1.5 text-xs font-bold text-red-400 border-b border-slate-900 pb-1">
                 <i class="fa-solid fa-ban"></i> CAPÍTULO 4: Prohibido para Empleados
@@ -340,36 +387,6 @@
                 <p><strong>4.14 - 4.16.</strong> Manejar asuntos personales en servicio, poseer/consumir drogas o alcohol, y usar vehículos oficiales para fines personales.</p>
                 <p><strong>4.17 - 4.21.</strong> Conducta inapropiada, actividades ilícitas, mal uso de megáfono, empleos secundarios en servicio y aceptar sobornos.</p>
                 <p><strong>4.22 - 4.25.</strong> Uso de armas personal, abandonar puestos sin radio, cambiar puestos sin autorización y usar la radio/chat para fines ajenos al trabajo.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- BLOQUE 3: ENTRENAMIENTO Y COMUNICACIÓN (Capítulos 5, 6 y 7) -->
-          <div id="regView3" class="space-y-2 hidden">
-            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <button onclick="toggleChapter('cap5')" class="w-full flex justify-between items-center text-xs font-bold text-purple-400">
-                <span><i class="fa-solid fa-person-running mr-1.5"></i> CAPÍTULO 5: Reglas de Entrenamiento</span>
-                <i id="chevron_cap5" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
-              </button>
-              <div id="cap5" class="hidden mt-2 pt-2 border-t border-slate-900 text-[11px] text-slate-300 space-y-1">
-                <p><strong>5.1.</strong> Duración exacta: 5 minutos.</p>
-                <p><strong>5.2.</strong> Prohibidos gestos (excepto levantar la mano).</p>
-                <p><strong>5.3 a 5.7.</strong> Prohibido quebrantar disciplina, usar radio, hablar (ni susurrar), usar teléfono o portar armas.</p>
-              </div>
-            </div>
-
-            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <button onclick="toggleChapter('cap6')" class="w-full flex justify-between items-center text-xs font-bold text-cyan-400">
-                <span><i class="fa-solid fa-tower-broadcast mr-1.5"></i> CAPÍTULO 6 y 7: Comunicación y Jornada</span>
-                <i id="chevron_cap5_extra" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
-              </button>
-              <div id="cap6" class="hidden mt-2 pt-2 border-t border-slate-900 text-[11px] text-slate-300 space-y-2">
-                <p><strong>6.1.</strong> Trato cortés a todos los ciudadanos sin importar estatus.</p>
-                <p><strong>6.2.</strong> Prohibidos asuntos personales, insultos y discusiones por radio o chat departamental.</p>
-                <div class="bg-cyan-950/40 border border-cyan-800/60 p-2 rounded text-cyan-300 space-y-1">
-                  <p><strong>7.1. Mínimo diario:</strong> 4 horas de juego para el personal.</p>
-                  <p><strong>7.2. Ausencia máxima:</strong> 3 días sin reportar.</p>
-                </div>
               </div>
             </div>
           </div>
@@ -390,9 +407,9 @@
                     <span>⭐ RANGO 1 / PRIVADO</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Nuevos Reclutas</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a nuevos reclutas con poco conocimiento de la organización[cite: 5].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Obedecer órdenes de todos los superiores. Cuida ubicaciones específicas de la base como guardia vigilando que nadie entre[cite: 5].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Equipo:</strong> Se le otorga armamento para defender la base, chalecos antibalas y armas deaser (pistolas de bajo calibre)[cite: 5].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a nuevos reclutas con poco conocimiento de la organización.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Obedecer órdenes de todos los superiores. Cuida ubicaciones específicas de la base como guardia vigilando que nadie entre.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Equipo:</strong> Se le otorga armamento para defender la base, chalecos antibalas y armas deaser (pistolas de bajo calibre).</p>
                 </div>
 
                 <!-- Rango 2 -->
@@ -401,9 +418,9 @@
                     <span>⭐⭐ RANGO 2 / SARGENTO</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Intermedio</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Para quienes tienen leve experiencia, compromiso y estudio[cite: 5].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Encargados de la enseñanza, educación, manejo y control de los privados (como profesores que ayudan a los nuevos)[cite: 5].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Acciones:</strong> Participan de las acciones siempre que estén autorizados. Son soldados de rendimiento intermedio y ejemplo de comportamiento[cite: 5].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Para quienes tienen leve experiencia, compromiso y estudio.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Encargados de la enseñanza, educación, manejo y control de los privados (como profesores que ayudan a los nuevos).</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Acciones:</strong> Participan de las acciones siempre que estén autorizados. Son soldados de rendimiento intermedio y ejemplo de comportamiento.</p>
                 </div>
 
                 <!-- Rango 3 -->
@@ -412,9 +429,9 @@
                     <span>⭐⭐⭐ RANGO 3 / TENIENTES</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Amplitud Mental</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a quienes demostraron amplitud mental, compromiso, actividad, estudio y conocimiento[cite: 4].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Conocen las normas y manejo de base. Verifican el aprendizaje de sargentos a privados y que todo esté en orden[cite: 4].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Acciones y Vehículos:</strong> Participan en las acciones y tienen permitido el uso de vehículos militares para movilización en base y control[cite: 4].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a quienes demostraron amplitud mental, compromiso, actividad, estudio y conocimiento.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Conocen las normas y manejo de base. Verifican el aprendizaje de sargentos a privados y que todo esté en orden.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Acciones y Vehículos:</strong> Participan en las acciones y tienen permitido el uso de vehículos militares para movilización en base y control.</p>
                 </div>
 
                 <!-- Rango 4 -->
@@ -423,9 +440,9 @@
                     <span>⭐⭐⭐⭐ RANGO 4 / MAYOR</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Soldados Élite</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Solo para los más destacados de la base (soldados élite con tiempo, experiencia, estudio y actividad)[cite: 4].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Garantizar el bien de la base militar. Lideran rangos anteriores, organizan, enseñan y verifican el orden[cite: 4].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Acciones:</strong> Participan en todas las acciones (lo mejor de lo mejor). Se les permite utilizar <strong>toda arma de fuego</strong>[cite: 4].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Solo para los más destacados de la base (soldados élite con tiempo, experiencia, estudio y actividad).</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Garantizar el bien de la base militar. Lideran rangos anteriores, organizan, enseñan y verifican el orden.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Acciones:</strong> Participan en todas las acciones (lo mejor de lo mejor). Se les permite utilizar <strong>toda arma de fuego</strong>.</p>
                 </div>
 
                 <!-- Rango 5 -->
@@ -434,9 +451,9 @@
                     <span>⭐⭐⭐⭐⭐ RANGO 5 / CORONEL</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Jefes / Vice-líderes</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado por el General a sus soldados de confianza. Son jefes y vice-líderes de las fuerzas armadas[cite: 4].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Totalmente responsables de todo lo que pasa en la base. Pendientes de todas las acciones y situaciones de la organización[cite: 4].</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Mando:</strong> Dan las órdenes y mandan cuando el General no está. Sus órdenes **no se cuestionan, se cumplen**[cite: 4].</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado por el General a sus soldados de confianza. Son jefes y vice-líderes de las fuerzas armadas.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Totalmente responsables de todo lo que pasa en la base. Pendientes de todas las acciones y situaciones de la organización.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Mando:</strong> Dan las órdenes y mandan cuando el General no está. Sus órdenes <strong>no se cuestionan, se cumplen</strong>.</p>
                 </div>
               </div>
             </div>
@@ -457,9 +474,8 @@
             </div>
           </div>
 
-          <!-- BLOQUE 6: BIBLIA RP Y MAPA TÁCTICO INTERACTIVO -->
+          <!-- BLOQUE 6: BIBLIA RP OFICIAL -->
           <div id="regView6" class="space-y-3 hidden">
-            <!-- Biblia RP -->
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
                 <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-book-bible mr-1"></i> Biblia RP Oficial - Rio Rise</h4>
@@ -469,10 +485,12 @@
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
                 <input type="text" id="rpSearch" oninput="filterRpRules()" placeholder="Busca un concepto (Ej: RDM, MG, KOS)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
               </div>
-              <div id="rpContainer" class="grid grid-cols-1 gap-1.5 max-h-48 overflow-y-auto pr-1 text-[11px]"></div>
+              <div id="rpContainer" class="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto pr-1 text-[11px]"></div>
             </div>
+          </div>
 
-            <!-- MAPA TÁCTICO INTERACTIVO DE LA BASE -->
+          <!-- BLOQUE 7: MAPA TÁCTICO INTERACTIVO -->
+          <div id="regView7" class="space-y-3 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/50 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
                 <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-map-location-dot mr-1"></i> Mapa Táctico Interactivo de la Base</h4>
@@ -509,7 +527,7 @@
         </h4>
       </div>
       <p class="text-[11px] text-slate-300">
-        Debes aprobar obligatoriamente la evaluación táctica de rangos, Biblia RP y códigos de radio para desbloquear tu acceso.
+        Debes aprobar obligatoriamente la evaluación táctica de rangos, acciones, Biblia RP y códigos de radio para desbloquear tu acceso.
       </p>
       <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
         <p id="examQuestion" class="text-xs font-bold text-white"></p>
@@ -519,12 +537,12 @@
     </div>
   </div>
 
-  <!-- MODAL QUIZ INTERACTIVO DE REGLAMENTO, RANGOS Y CÓDIGOS -->
+  <!-- MODAL QUIZ INTERACTIVO DE REGLAMENTO, RANGOS Y ACCIONES -->
   <div id="reglasQuizModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[120] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-blue-500/60 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
         <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento, Rangos y Códigos
+          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Tropa y Acciones EB
         </h4>
         <button onclick="closeReglasQuizModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -755,7 +773,6 @@
     let pendingDoctrinaMap = {};
     let pendingPollsMap = {};
 
-    let practiceHonorPoints = 0;
     let currentTriviaIndex = 0;
     let examQuestionsPool = [];
     let currentExamIndex = 0;
@@ -827,18 +844,19 @@
       { code: "FLAMING RP", meaning: "Ofensa contra jugadores" }
     ];
 
-    // QUIZ DE REGLAMENTO, RANGOS, CÓDIGOS Q Y BIBLIA RP INTERACTIVO PRO
+    // QUIZ DE REGLAMENTO, RANGOS, ACCIONES Y CÓDIGOS INTERACTIVO
     const reglamentoQuizPool = [
+      { q: "¿A qué hora inician los cargamentos (CRM) oficiales de la EB?", options: ["A) 12:00 y 15:00 /TIME", "B) 17:00 y 19:00 /TIME", "C) 20:00 y 22:00 /TIME"], a: 1 },
+      { q: "¿Qué organización interviene ayudando a la EB a traer el camión de cargamento (CRM)?", options: ["A) La PF (Policía Federal)", "B) Los Civiles", "C) Los Paramédicos"], a: 0 },
+      { q: "¿Cuántos vehículos militares como mínimo se requieren para realizar un Patrullaje Táctico?", options: ["A) 1 vehículo", "B) 2 vehículos", "C) 3 o más vehículos"], a: 2 },
+      { q: "¿Quién debe supervisar obligatoriamente una acción de Patrullaje?", options: ["A) Un Privado", "B) Un General o un Coronel", "C) Un Sargento"], a: 1 },
       { q: "¿Qué función principal tiene el Rango 1 / Privado?", options: ["A) Mandar la base", "B) Obedecer órdenes y cuidar ubicaciones como guardia", "C) Usar vehículos aéreos"], a: 1 },
       { q: "¿A qué rango se le permite utilizar toda arma de fuego y liderar las acciones?", options: ["A) Rango 1 / Privado", "B) Rango 2 / Sargento", "C) Rango 4 / Mayor"], a: 2 },
-      { q: "¿Quiénes son los encargados de la enseñanza y educación de los Privados (como profesores)?", options: ["A) Rango 2 / Sargentos", "B) Rango 5 / Coroneles", "C) Nuevos Reclutas"], a: 0 },
-      { q: "¿Qué rango utiliza vehículos militares para movilización en base y verificación?", options: ["A) Rango 3 / Tenientes", "B) Rango 1 / Privado", "C) Rango 2 / Sargento"], a: 0 },
+      { q: "¿Quiénes son los encargados de la enseñanza y educación de los Privados?", options: ["A) Rango 2 / Sargentos", "B) Rango 5 / Coroneles", "C) Nuevos Reclutas"], a: 0 },
       { q: "¿Cuál es la característica del Rango 5 / Coronel?", options: ["A) Son soldados rasos", "B) Dan las órdenes y sus órdenes no se cuestionan, se cumplen", "C) Solo cuidan la puerta"], a: 1 },
       { q: "¿Qué significa RDM según la Biblia RP?", options: ["A) Reparar de inmediato", "B) Entrar en una acción sin estar involucrado", "C) Retirarse de base"], a: 1 },
       { q: "¿Cuál es el significado del Código Q: QRR?", options: ["A) Espere", "B) Refuerzo", "C) Dirección"], a: 1 },
-      { q: "¿Qué significa MG en las normas del servidor?", options: ["A) Matar gente", "B) Usar información de fuera del juego", "C) Manejar guardias"], a: 1 },
-      { q: "¿Qué significa el código QSL en radiofonía?", options: ["A) Entendido", "B) Dinero", "C) Fuera del aire"], a: 0 },
-      { q: "¿Cuál es el horario de trabajo obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00", "C) Libre las 24 horas"], a: 1 }
+      { q: "¿Cuál es el horario de servicio obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00 /TIME", "C) Libre las 24 horas"], a: 1 }
     ];
     let currentQuizIndex = 0;
     let quizScore = 0;
@@ -871,7 +889,7 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // CONTROL DE SUB-PESTAÑAS DE ACADEMIA (6 VISTAS)
+    // CONTROL DE SUB-PESTAÑAS DE ACADEMIA (7 VISTAS)
     function switchRegTab(tabNum) {
       document.getElementById('regView1').classList.toggle('hidden', tabNum !== 1);
       document.getElementById('regView2').classList.toggle('hidden', tabNum !== 2);
@@ -879,6 +897,7 @@
       document.getElementById('regView4').classList.toggle('hidden', tabNum !== 4);
       document.getElementById('regView5').classList.toggle('hidden', tabNum !== 5);
       document.getElementById('regView6').classList.toggle('hidden', tabNum !== 6);
+      document.getElementById('regView7').classList.toggle('hidden', tabNum !== 7);
 
       document.getElementById('regTab1Btn').className = tabNum === 1 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab2Btn').className = tabNum === 2 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
@@ -886,6 +905,7 @@
       document.getElementById('regTab4Btn').className = tabNum === 4 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab5Btn').className = tabNum === 5 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab6Btn').className = tabNum === 6 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
+      document.getElementById('regTab7Btn').className = tabNum === 7 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
     }
 
     function renderQCodes(list) {
@@ -993,7 +1013,7 @@
           loadQuizQuestion();
         } else {
           closeReglasQuizModal();
-          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 8 ? '🏆 ¡Excelente dominio de la jerarquía, reglamento y códigos!' : '⚠ Te sugerimos repasar la academia completa.'}`);
+          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 9 ? '🏆 ¡Excelente dominio del reglamento, rangos y acciones!' : '⚠ Te sugerimos repasar la academia completa.'}`);
         }
       }, 1200);
     }
@@ -1289,7 +1309,7 @@
       const indicator = document.getElementById('scheduleStatusIndicator');
       if (!indicator) return;
       const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-      const isAllowedHour = (currentHour >= 18 || currentHour < 3);
+      const isAllowedHour = (currentHour >= 17 || currentHour < 2);
       if (isAllowedHour) {
         indicator.innerText = "🟢 Servicio Habilitado";
         indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
@@ -2186,9 +2206,9 @@
         const colombiaDate = new Date(colombiaTimeStr);
         const currentHour = colombiaDate.getHours();
 
-        if (currentHour >= 3 && currentHour < 18) {
+        if (currentHour >= 2 && currentHour < 17) {
           const cutTime = new Date(colombiaDate);
-          cutTime.setHours(3, 0, 0, 0);
+          cutTime.setHours(2, 0, 0, 0);
           const forcedEndTime = cutTime.getTime();
 
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
@@ -2240,11 +2260,11 @@
         const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colombiaDate = new Date(colombiaTimeStr);
         
-        if (colombiaDate.getHours() >= 3 && colombiaDate.getHours() < 18) {
+        if (colombiaDate.getHours() >= 2 && colombiaDate.getHours() < 17) {
           if (localStorage.getItem(`shiftStart_${currentUser.username}`)) {
-            alert('El servicio se ha cerrado automáticamente por horario (03:00 am).');
+            alert('El servicio se ha cerrado automáticamente por horario (02:00 am).');
             const cutTime = new Date(colombiaDate);
-            cutTime.setHours(3, 0, 0, 0);
+            cutTime.setHours(2, 0, 0, 0);
             const forcedEndTime = cutTime.getTime();
 
             localStorage.removeItem(`shiftStart_${currentUser.username}`);
@@ -2268,8 +2288,8 @@
 
       if (!savedStart) {
         const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-        if (!(currentHour >= 18 || currentHour < 3)) {
-          alert('El Ejército no se encuentra habilitado en este horario.');
+        if (!(currentHour >= 17 || currentHour < 2)) {
+          alert('El Ejército no se encuentra habilitado en este horario (17:00 a 02:00 /TIME).');
           return;
         }
 
@@ -2568,7 +2588,7 @@
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
       const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-      const isAllowedNight = (currentHour >= 18 || currentHour < 3);
+      const isAllowedNight = (currentHour >= 17 || currentHour < 2);
       const todayStr = getColombiaDateString();
 
       let dailyTotals = {};
