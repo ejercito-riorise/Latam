@@ -234,19 +234,160 @@
           </div>
         </div>
 
-        <!-- SECCIÓN DOCTRINA -->
-        <div id="sectionDoctrina" class="military-card p-3 rounded-xl space-y-2.5 hidden">
+        <!-- SECCIÓN DOCTRINA (REGLAMENTO INTERACTIVO PRO) -->
+        <div id="sectionDoctrina" class="military-card p-3 rounded-xl space-y-3 hidden">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-book-open text-blue-400 text-sm"></i>
-              <h3 class="font-bold text-white text-xs">Temas de Estudio y Normas Oficiales</h3>
+              <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
+              <div>
+                <h3 class="font-bold text-white text-xs">Academia Táctica y Reglamento</h3>
+                <p class="text-[9px] text-slate-400">Lectura obligatoria y quiz de retención</p>
+              </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
-              <i class="fa-solid fa-plus"></i> Publicar / Proponer
+              <i class="fa-solid fa-plus"></i> Publicar
             </button>
           </div>
-          <div id="doctrinaFeedContainer" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-            <p class="text-[11px] text-slate-400 italic">Cargando manuales...</p>
+
+          <!-- ACADEMIA: BOTÓN PARA LANZAR EL QUIZ INTERACTIVO -->
+          <div class="bg-gradient-to-r from-blue-950/80 to-slate-900 p-3 rounded-xl border border-blue-500/40 flex items-center justify-between shadow-md">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-lg bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400 text-base">
+                <i class="fa-solid fa-brain"></i>
+              </div>
+              <div>
+                <h4 class="text-xs font-bold text-blue-300">Examen de Reglamento EB</h4>
+                <p class="text-[10px] text-slate-300">Pon a prueba tu conocimiento táctico</p>
+              </div>
+            </div>
+            <button onclick="openReglasQuizModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-2 rounded-lg shadow-lg transition flex items-center gap-1 shrink-0">
+              <i class="fa-solid fa-play"></i> Iniciar Quiz
+            </button>
+          </div>
+
+          <!-- CONTENEDOR DE MANUALES O REGLAMENTOS DINÁMICOS -->
+          <div id="doctrinaFeedContainer" class="space-y-2.5">
+            
+            <!-- CAPÍTULO 1 -->
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <button onclick="toggleChapter('cap1')" class="w-full flex justify-between items-center text-xs font-bold text-amber-400">
+                <span><i class="fa-solid fa-shield-halved mr-1.5"></i> CAPÍTULO 1: Disposiciones Generales</span>
+                <i id="chevron_cap1" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
+              </button>
+              <div id="cap1" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-2">
+                <p><strong>🕒 Horario de trabajo:</strong> De 17:00 a 02:00. Durante este periodo, todos los empleados deben estar de servicio y uniformados.</p>
+                <div class="bg-amber-950/40 border border-amber-800/60 p-2 rounded text-amber-300">
+                  <strong>⚠️ Nota importante:</strong> El General y los Coroneles tienen derecho a informar a la administración o aplicar medidas disciplinarias de forma independiente si detectan una infracción.
+                </div>
+                <p><strong>1.1.</strong> Todos los empleados del ejército deben conocer y cumplir este reglamento.</p>
+                <p><strong>1.2.</strong> Por infracciones a los artículos, pueden sufrir medidas disciplinarias: advertencia, amonestación, despido o despido con inclusión en la lista negra.</p>
+                <p><strong>1.3.</strong> Todo empleado tiene derecho a apelar una medida disciplinaria.</p>
+                <p><strong>1.4.</strong> Durante el horario laboral, todos los empleados deben estar uniformados. Permiso especial al General o Coroneles.</p>
+              </div>
+            </div>
+
+            <!-- CAPÍTULO 2 -->
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <button onclick="toggleChapter('cap2')" class="w-full flex justify-between items-center text-xs font-bold text-blue-400">
+                <span><i class="fa-solid fa-user-tie mr-1.5"></i> CAPÍTULO 2: Deberes Principales de Oficiales</span>
+                <i id="chevron_cap2" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
+              </button>
+              <div id="cap2" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
+                <p><strong>2.1.</strong> Conocer y obedecer las leyes del estado, los estatutos y asegurar su cumplimiento.</p>
+                <p><strong>2.2.</strong> Proteger la vida de los ciudadanos por cualquier medio necesario.</p>
+                <p><strong>2.3.</strong> Obedecer las órdenes de los oficiales superiores sin cuestionarlas (marco legal).</p>
+                <p><strong>2.4.</strong> Respetar la cadena de mando estrictamente.</p>
+                <p><strong>2.5.</strong> Seguir el orden interno de la organización.</p>
+                <p><strong>2.6.</strong> Ser cortes y diplomático al comunicarse con los ciudadanos.</p>
+                <p><strong>2.7.</strong> En caso de daños intencionales o accidentales, el oficial debe reparar el vehículo de trabajo.</p>
+                <p><strong>2.8.</strong> Los soldados deben conocer a sus oficiales superiores por su rostro y nombre.</p>
+                <p><strong>2.9.</strong> Proteger los bienes y objetos de valor del ejército.</p>
+                <p><strong>2.10.</strong> Presentar los documentos al oficial de guardia en los puestos de control.</p>
+                <p><strong>2.11.</strong> En los puestos de control, verificar documentos de todos los civiles que lleguen.</p>
+                <p><strong>2.12.</strong> Los soldados deben presentarse antes de verificar los documentos.</p>
+                <p><strong>2.13.</strong> Vigilar el territorio del ejército diariamente (distribución por el ayudante o líder).</p>
+              </div>
+            </div>
+
+            <!-- CAPÍTULO 3 -->
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <button onclick="toggleChapter('cap3')" class="w-full flex justify-between items-center text-xs font-bold text-emerald-400">
+                <span><i class="fa-solid fa-person-military-rifle mr-1.5"></i> CAPÍTULO 3: El Personal Puede</span>
+                <i id="chevron_cap3" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
+              </button>
+              <div id="cap3" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
+                <p><strong>3.1.</strong> Disparar a los civiles que ingresen ilegalmente al territorio del ejército.</p>
+                <p><strong>3.2.</strong> Prestar asistencia a otras facciones gubernamentales durante eventos.</p>
+                <p><strong>3.3.</strong> Verificar los documentos de identidad de civiles y personal.</p>
+                <p><strong>3.4.</strong> Hacer preguntas a los oficiales superiores.</p>
+                <p><strong>3.5.</strong> Practicar tiro fuera del horario laboral.</p>
+                <p><strong>3.6.</strong> Solicitar asistencia por radio.</p>
+                <p><strong>3.7.</strong> Disparar a los civiles que apunten con un arma a otro civil o agente de policía.</p>
+                <p><strong>3.8.</strong> Tomar licencia o vacaciones con aprobación del General o Coroneles (hasta por 2 semanas).</p>
+                <p><strong>3.9.</strong> Bloquear caminos para prevenir delitos (ej. entrega de guaraná por la mafia).</p>
+                <p><strong>3.10.</strong> Chocar o disparar contra vehículos para prevenir delitos.</p>
+                <p><strong>3.11.</strong> Transportar y almacenar armas en cualquier lugar.</p>
+                <p><strong>3.12.</strong> Estacionar vehículos personales en el territorio de la organización.</p>
+              </div>
+            </div>
+
+            <!-- CAPÍTULO 4 -->
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <button onclick="toggleChapter('cap4')" class="w-full flex justify-between items-center text-xs font-bold text-red-400">
+                <span><i class="fa-solid fa-ban mr-1.5"></i> CAPÍTULO 4: Prohibido para Empleados</span>
+                <i id="chevron_cap4" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
+              </button>
+              <div id="cap4" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
+                <p><strong>4.1.</strong> Vender o ceder uniformes militares.</p>
+                <p><strong>4.2.</strong> Vender cualquier propiedad del gobierno.</p>
+                <p><strong>4.3.</strong> Solicitar ascensos de rango o puesto.</p>
+                <p><strong>4.4.</strong> Abandonar la base sin permiso (nota: considerarse ausencia no autorizada).</p>
+                <p><strong>4.5.</strong> Permanecer solo en barrios marginales innecesariamente.</p>
+                <p><strong>4.6.</strong> Causar daño físico a compañeros, civiles, empleados o propiedad sin motivo.</p>
+                <p><strong>4.7.</strong> Engañar a soldados o civiles.</p>
+                <p><strong>4.8.</strong> Discutir, ignorar o cuestionar órdenes de oficiales superiores.</p>
+                <p><strong>4.9.</strong> Usar lenguaje obsceno, insultar o humillar a alguien.</p>
+                <p><strong>4.10.</strong> Colaborar con grupos criminales o mafias.</p>
+                <p><strong>4.11.</strong> Abusar de autoridad.</p>
+                <p><strong>4.12.</strong> Usar máscara innecesariamente (uso debe reportarse por radio indicando el motivo).</p>
+                <p><strong>4.13.</strong> Acompañar a civiles o miembros de pandillas en la base.</p>
+                <p><strong>4.14.</strong> Manejar asuntos personales durante el trabajo.</p>
+                <p><strong>4.15.</strong> Poseer o consumir drogas o alcohol para fines personales.</p>
+                <p><strong>4.16.</strong> Usar vehículos oficiales para fines personales.</p>
+                <p><strong>4.17.</strong> Realizar actividades ilícitas o comportamiento inapropiado.</p>
+                <p><strong>4.18.</strong> Hacer mal uso del megáfono.</p>
+                <p><strong>4.19.</strong> Trabajar en empleos secundarios durante el servicio o estando de uniforme.</p>
+                <p><strong>4.20.</strong> Aceptar sobornos.</p>
+                <p><strong>4.21.</strong> Uso de armas para fines personales.</p>
+                <p><strong>4.22.</strong> Ocupar o abandonar puestos sin reportarlo por radio.</p>
+                <p><strong>4.23.</strong> Cambiar o elegir puestos sin autorización.</p>
+                <p><strong>4.24.</strong> Usar la radio y chat del departamento para fines ajenos al trabajo.</p>
+              </div>
+            </div>
+
+            <!-- CAPÍTULO 5, 6 y 7 -->
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <button onclick="toggleChapter('cap5')" class="w-full flex justify-between items-center text-xs font-bold text-purple-400">
+                <span><i class="fa-solid fa-book-bookmark mr-1.5"></i> CAPÍTULO 5, 6 y 7: Entrenamiento y Normas</span>
+                <i id="chevron_cap5" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
+              </button>
+              <div id="cap5" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-2">
+                <p class="font-bold text-amber-300">⚔️ Reglas de Entrenamiento (Cap. 5):</p>
+                <p><strong>5.1.</strong> El tiempo de entrenamiento es de 5 minutos exactos.</p>
+                <p><strong>5.2.</strong> Se prohíbe el uso de gestos (excepto levantar la mano).</p>
+                <p><strong>5.3.</strong> Se prohíbe quebrantar la disciplina o usar la radio/teléfono.</p>
+                <p><strong>5.4.</strong> Se prohíbe hablar (incluso susurrar) o portar armas durante el entrenamiento.</p>
+                
+                <p class="font-bold text-cyan-300 pt-1">📡 Comunicación y Subordinación (Cap. 6 y 7):</p>
+                <p><strong>6.1.</strong> Comunicarse cortésmente con todos los ciudadanos.</p>
+                <p><strong>6.2.</strong> Prohibidos asuntos personales, insultos y discusiones por radio.</p>
+                <div class="bg-cyan-950/40 border border-cyan-800/60 p-2 rounded text-cyan-300">
+                  <p><strong>7.1. Horas mínimas semanales:</strong> 7 horas obligatorias.</p>
+                  <p><strong>7.2. Ausencia máxima:</strong> 3 días sin previo aviso.</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -334,6 +475,24 @@
         <div id="examOptions" class="space-y-1.5"></div>
       </div>
       <p id="examFeedback" class="text-[10px] font-bold hidden text-center"></p>
+    </div>
+  </div>
+
+  <!-- MODAL EXAMEN REGLAMENTO INTERACTIVO -->
+  <div id="reglasQuizModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[120] hidden flex items-center justify-center p-3">
+    <div class="military-card w-full max-w-sm p-4 rounded-xl border border-blue-500/60 shadow-2xl space-y-3">
+      <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
+        <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-brain animate-pulse"></i> Quiz Oficial de Reglamento
+        </h4>
+        <button onclick="closeReglasQuizModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p id="quizProgress" class="text-[10px] text-slate-400 font-semibold"></p>
+      <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
+        <p id="quizQuestion" class="text-xs font-bold text-white min-h-[36px]"></p>
+        <div id="quizOptions" class="space-y-1.5"></div>
+      </div>
+      <p id="quizFeedback" class="text-[10px] font-bold hidden text-center"></p>
     </div>
   </div>
 
@@ -565,6 +724,18 @@
     let examQuestionsPool = [];
     let currentExamIndex = 0;
 
+    // QUIZ DE REGLAMENTO INTERACTIVO
+    const reglamentoQuizPool = [
+      { q: "Según el Capítulo 1, ¿cuál es el horario de trabajo obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00", "C) Libre las 24 horas"], a: 1 },
+      { q: "Según el Capítulo 2 (Deberes), ¿qué debe hacer un oficial en caso de dañar un vehículo?", options: ["A) Dejarlo abandonado", "B) Reparar el vehículo de trabajo", "C) Comprar uno personal"], a: 1 },
+      { q: "Según el Capítulo 3, ¿cuánto tiempo máximo de licencia o vacaciones se puede aprobar?", options: ["A) Hasta por dos semanas", "B) 1 mes", "C) 3 días máximo"], a: 0 },
+      { q: "Según el Capítulo 4 (Prohibiciones), ¿está permitido vender uniformes militares?", options: ["A) Sí, si necesito dinero", "B) No, está estrictamente prohibido (Art. 4.1)", "C) Solo a amigos cercanos"], a: 1 },
+      { q: "Según el Capítulo 5, ¿cuánto dura exactamente un entrenamiento oficial?", options: ["A) 15 minutos", "B) 5 minutos exactos", "C) Lo que decida el soldado"], a: 1 },
+      { q: "Según el Capítulo 7, ¿cuántas horas mínimas semanales debe cumplir un soldado?", options: ["A) 7 horas", "B) 14 horas", "C) 20 horas"], a: 0 }
+    ];
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+
     const MAX_SHIFT_MS = 9 * 60 * 60 * 1000;
 
     const fullTriviaQuestionsBank = [
@@ -601,6 +772,68 @@
       else if (themeName === 'desierto') document.body.classList.add('theme-desierto');
       else if (themeName === 'chicas') document.body.classList.add('theme-chicas');
       if (save) localStorage.setItem('rioRiseTheme', themeName);
+    }
+
+    // INTERACTIVIDAD CAPÍTULOS DE REGLAMENTO
+    function toggleChapter(id) {
+      const el = document.getElementById(id);
+      const chevron = document.getElementById(`chevron_${id}`);
+      const isHidden = el.classList.contains('hidden');
+      el.classList.toggle('hidden', !isHidden);
+      if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    // ACADEMIA QUIZ INTERACTIVO
+    function openReglasQuizModal() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      document.getElementById('reglasQuizModal').classList.remove('hidden');
+      loadQuizQuestion();
+    }
+    function closeReglasQuizModal() {
+      document.getElementById('reglasQuizModal').classList.add('hidden');
+    }
+
+    function loadQuizQuestion() {
+      const qObj = reglamentoQuizPool[currentQuizIndex];
+      document.getElementById('quizProgress').innerText = `Pregunta ${currentQuizIndex + 1} de ${reglamentoQuizPool.length}`;
+      document.getElementById('quizQuestion').innerText = qObj.q;
+      const optsContainer = document.getElementById('quizOptions');
+      optsContainer.innerHTML = '';
+      document.getElementById('quizFeedback').classList.add('hidden');
+
+      qObj.options.forEach((optText, i) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left bg-slate-900 hover:bg-slate-800 p-2.5 rounded text-[11px] text-slate-200 border border-slate-800 font-semibold transition";
+        btn.innerText = optText;
+        btn.onclick = () => answerQuiz(i);
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function answerQuiz(selectedIndex) {
+      const qObj = reglamentoQuizPool[currentQuizIndex];
+      const feedbackEl = document.getElementById('quizFeedback');
+      feedbackEl.classList.remove('hidden');
+
+      if (selectedIndex === qObj.a) {
+        quizScore += 1;
+        feedbackEl.className = "text-[10px] font-bold text-emerald-400";
+        feedbackEl.innerText = "🎯 ¡Correcto!";
+      } else {
+        feedbackEl.className = "text-[10px] font-bold text-red-400";
+        feedbackEl.innerText = "❌ Incorrecto.";
+      }
+
+      setTimeout(() => {
+        currentQuizIndex++;
+        if (currentQuizIndex < reglamentoQuizPool.length) {
+          loadQuizQuestion();
+        } else {
+          closeReglasQuizModal();
+          alert(`🎓 ¡Quiz de Reglamento Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 5 ? '🏆 ¡Excelente dominio del reglamento!' : '⚠ Te sugerimos repasar los capítulos de la academia.'}`);
+        }
+      }, 1200);
     }
 
     function toggleTrainingAccordion() {
@@ -1269,7 +1502,6 @@
           cachedData = await response.json();
           globalHistoryCache = cachedData.history || [];
           renderNewsFeed(cachedData.news, cachedData.polls);
-          renderDoctrinaFeed(cachedData.doctrina);
           checkAuthorNotifications(cachedData.news, cachedData.doctrina, cachedData.polls);
           updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina, cachedData.polls);
           checkMandatoryPoll(cachedData.polls || []);
@@ -1304,7 +1536,6 @@
 
       globalHistoryCache = resData.history || [];
       renderNewsFeed(resData.news, resData.polls);
-      renderDoctrinaFeed(resData.doctrina);
       checkAuthorNotifications(resData.news, resData.doctrina, resData.polls);
       updateCommandAlertBadges(resData.users, resData.news, resData.doctrina, resData.polls);
       checkMandatoryPoll(resData.polls || []);
@@ -1326,7 +1557,6 @@
           cachedData = resData;
           globalHistoryCache = resData.history || [];
           renderNewsFeed(resData.news, resData.polls);
-          renderDoctrinaFeed(resData.doctrina);
           checkAuthorNotifications(resData.news, resData.doctrina, resData.polls);
           updateCommandAlertBadges(resData.users, resData.news, resData.doctrina, resData.polls);
           checkMandatoryPoll(resData.polls || []);
@@ -1580,44 +1810,6 @@
       loadComments(index);
     }
 
-    function renderDoctrinaFeed(doctrina) {
-      const feed = document.getElementById('doctrinaFeedContainer');
-      const approvedDoctrina = doctrina ? doctrina.filter(item => !item.estado || item.estado.toLowerCase() === 'approved') : [];
-      if (approvedDoctrina.length === 0) {
-        feed.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay manuales publicados.</p>';
-        return;
-      }
-
-      const rankLower = (currentUser.rank || '').toLowerCase();
-      const isCoronelOrAbove = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel'].includes(rankLower);
-
-      let htmlContent = '';
-      doctrinaStorageMap = {};
-
-      [...approvedDoctrina].reverse().forEach((item, index) => {
-        doctrinaStorageMap[index] = item;
-        const cleanDate = normalizeDate(item.fecha);
-        const cleanTime = normalizeTime(item.hora);
-        const timeStr = cleanTime !== "N/D" ? ` • ${cleanTime}` : '';
-
-        let imageHtml = item.imagen ? `<div class="mt-2 rounded overflow-hidden border border-slate-800 bg-slate-900 flex justify-center cursor-pointer" onclick="openImageModal('${fixImageUrl(item.imagen)}')"><img src="${fixImageUrl(item.imagen)}" class="w-full h-auto object-cover max-h-60" loading="lazy"></div>` : '';
-        let adminActions = isCoronelOrAbove ? `<div class="flex gap-1.5"><button onclick="triggerEditDoctrina(${index})" class="text-blue-400 text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800" title="Editar"><i class="fa-solid fa-pen"></i></button><button onclick="deleteDoctrina('${item.titulo.replace(/'/g, "\\'")}')" class="text-red-400 text-[10px] bg-red-950 px-1.5 py-0.5 rounded border border-red-800" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
-
-        htmlContent += `
-          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
-            <div class="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-900 pb-1">
-              <span class="font-bold text-blue-400"><i class="fa-solid fa-graduation-cap mr-1"></i>Enviado por: <span class="text-white">${item.autor}</span></span>
-              <div class="flex items-center gap-2"><span>${cleanDate}${timeStr}</span>${adminActions}</div>
-            </div>
-            <h4 class="font-bold text-white text-xs">${item.titulo}</h4>
-            <p class="text-[11px] text-slate-300 whitespace-pre-wrap">${item.mensaje}</p>
-            ${imageHtml}
-          </div>
-        `;
-      });
-      feed.innerHTML = htmlContent;
-    }
-
     function openDoctrinaModal() {
       editingDoctrinaOldTitle = null;
       document.getElementById('doctrinaTitle').value = '';
@@ -1654,27 +1846,6 @@
         document.getElementById('loadingOverlay').classList.add('hidden');
         alert(isHigherRank ? '✔ Publicado con éxito.' : '✔ Propuesta enviada a revisión del Alto Mando.');
         closeDoctrinaModal();
-        loadSession();
-      } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error.'); }
-    }
-
-    function triggerEditDoctrina(index) {
-      const item = doctrinaStorageMap[index];
-      if (!item) return;
-      editingDoctrinaOldTitle = item.titulo;
-      document.getElementById('doctrinaTitle').value = item.titulo;
-      document.getElementById('doctrinaMessage').value = item.mensaje;
-      document.getElementById('doctrinaImage').value = item.imagen || '';
-      document.getElementById('doctrinaModal').classList.remove('hidden');
-    }
-
-    async function deleteDoctrina(title) {
-      if (!confirm(`¿Eliminar la doctrina "${title}"?`)) return;
-      document.getElementById('loadingOverlay').classList.remove('hidden');
-      try {
-        await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteDoctrina', titulo: title }) });
-        document.getElementById('loadingOverlay').classList.add('hidden');
-        alert('✔ Eliminado.');
         loadSession();
       } catch (err) { document.getElementById('loadingOverlay').classList.add('hidden'); alert('Error.'); }
     }
@@ -2286,9 +2457,6 @@
       loadControlPanelData();
     }
 
-    // ==========================================
-    // CORRECCIÓN: FILTRA TURNOS MAYORES A 9 HORAS (EVITA 24H FALSAS)
-    // ==========================================
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
@@ -2326,7 +2494,6 @@
           
           if (shiftStartDateStr === todayStr) {
             const elapsed = Date.now() - startTime;
-            // Si supera las 9 horas (MAX_SHIFT_MS), no se cuenta como activo en vivo para evitar bug
             if (elapsed < MAX_SHIFT_MS) {
               const liveHours = elapsed / 3600000;
               u.totalHours += liveHours;
