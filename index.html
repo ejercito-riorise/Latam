@@ -240,8 +240,8 @@
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
               <div>
-                <h3 class="font-bold text-white text-xs">Academia Táctica y Manual de Códigos Q</h3>
-                <p class="text-[9px] text-slate-400">Normativa oficial y radiofonía Ejército RioRise</p>
+                <h3 class="font-bold text-white text-xs">Academia Táctica y Manuales</h3>
+                <p class="text-[9px] text-slate-400">Normativa, Biblia RP y Códigos Q</p>
               </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -257,7 +257,7 @@
               </div>
               <div>
                 <h4 class="text-xs font-bold text-blue-300">Desafío de Tropa (Quiz)</h4>
-                <p class="text-[10px] text-slate-300">Gana puntos evaluando el reglamento y códigos</p>
+                <p class="text-[10px] text-slate-300">Evalúa reglamento, Biblia RP[cite: 2] y códigos Q</p>
               </div>
             </div>
             <button onclick="openReglasQuizModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] px-3 py-2 rounded-lg shadow-lg transition flex items-center gap-1 shrink-0">
@@ -265,12 +265,13 @@
             </button>
           </div>
 
-          <!-- SUB-PESTAÑAS DE ACADEMIA (REGLAMENTO + CÓDIGOS Q) -->
-          <div class="grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
-            <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🪖 1 al 3</button>
+          <!-- SUB-PESTAÑAS DE ACADEMIA (REGLAMENTO + CÓDIGOS Q + BIBLIA RP) -->
+          <div class="grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
+            <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">🪖 1-3</button>
             <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">⛔ 4</button>
-            <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📡 5 al 7</button>
-            <button id="regTab4Btn" onclick="switchRegTab(4)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📻 Códigos Q</button>
+            <button id="regTab3Btn" onclick="switchRegTab(3)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📡 5-7</button>
+            <button id="regTab4Btn" onclick="switchRegTab(4)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📻 Q</button>
+            <button id="regTab5Btn" onclick="switchRegTab(5)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📖 RP</button>
           </div>
 
           <!-- BLOQUE 1: GENERAL, DEBERES Y PERMISOS (Capítulos 1, 2 y 3) -->
@@ -372,24 +373,33 @@
             </div>
           </div>
 
-          <!-- BLOQUE 4: CÓDIGOS Q OFICIALES (NUEVO) -->
+          <!-- BLOQUE 4: CÓDIGOS Q OFICIALES -->
           <div id="regView4" class="space-y-2 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
                 <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-tower-broadcast mr-1"></i> Manual de Códigos Q de Facciones</h4>
                 <span class="text-[9px] text-slate-400">Uso Obligatorio en Radio</span>
               </div>
-              
-              <!-- Buscador de Códigos Q -->
               <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
                 <input type="text" id="qCodeSearch" oninput="filterQCodes()" placeholder="Busca un código (Ej: QRR, dirección, etc.)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
               </div>
+              <div id="qCodesContainer" class="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto pr-1 text-[11px]"></div>
+            </div>
+          </div>
 
-              <!-- Lista de Códigos Q en Grid / Tarjetas limpias -->
-              <div id="qCodesContainer" class="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto pr-1 text-[11px]">
-                <!-- Se inyecta por JS o HTML estático optimizado -->
+          <!-- BLOQUE 5: BIBLIA RP DE RIO RISE (NUEVO)[cite: 2] -->
+          <div id="regView5" class="space-y-2 hidden">
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-900 pb-2">
+                <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-book-bible mr-1"></i> Biblia RP Oficial - Rio Rise[cite: 2]</h4>
+                <span class="text-[9px] text-slate-400">Normativa del Servidor</span>
               </div>
+              <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+                <input type="text" id="rpSearch" oninput="filterRpRules()" placeholder="Busca un concepto (Ej: RDM, MG, KOS)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+              </div>
+              <div id="rpContainer" class="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto pr-1 text-[11px]"></div>
             </div>
           </div>
 
@@ -402,7 +412,7 @@
               <i class="fa-solid fa-crosshairs text-amber-400 text-sm animate-pulse"></i>
               <div>
                 <h4 class="text-xs font-bold text-amber-300">Mapa Real y Entrenamiento Táctico</h4>
-                <p class="text-[10px] text-slate-400">Mapa base, examen RP y operaciones</p>
+                <p class="text-[10px] text-slate-400">Mapa base, examen RP[cite: 2] y operaciones</p>
               </div>
             </div>
             <i id="trainingChevron" class="fa-solid fa-chevron-down text-amber-400 text-xs transition-transform"></i>
@@ -426,7 +436,7 @@
               <p id="triviaFeedback" class="text-[10px] font-bold hidden"></p>
             </div>
 
-            <!-- MAPA REAL DE LA BASE DE GOOGLE DRIVE -->
+            <!-- MAPA REAL -->
             <div id="trainMapView" class="hidden space-y-2 bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-center">
               <p class="text-[10px] text-slate-300 font-semibold mb-1">Mapa Oficial de la Base Militar Rio Rise:</p>
               <div class="rounded overflow-hidden border border-slate-700 bg-slate-950 cursor-pointer group relative" onclick="openImageModal('https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9')">
@@ -472,7 +482,7 @@
         </h4>
       </div>
       <p class="text-[11px] text-slate-300">
-        Debes aprobar obligatoriamente la evaluación táctica de la Biblia RP y códigos de radio para desbloquear tu acceso.
+        Debes aprobar obligatoriamente la evaluación táctica de la Biblia RP[cite: 2] y códigos de radio para desbloquear tu acceso.
       </p>
       <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
         <p id="examQuestion" class="text-xs font-bold text-white"></p>
@@ -487,7 +497,7 @@
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-blue-500/60 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
         <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento y Códigos Q
+          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Reglamento, Biblia RP[cite: 2] y Códigos Q
         </h4>
         <button onclick="closeReglasQuizModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -547,7 +557,6 @@
           <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando...</p></div>
         </div>
         
-        <!-- VISTA FILTROS CON RANGO DE FECHAS Y MODO DE VISTA -->
         <div id="viewFilters" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
             <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Rendimiento e Historial:</h4>
@@ -579,14 +588,12 @@
           <div id="filteredHistoryList" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
         </div>
         
-        <!-- VISTA PUBLICAR (COMUNICADO / ENCUESTA) -->
         <div id="viewNewsAdmin" class="space-y-3 hidden">
           <div class="grid grid-cols-2 bg-slate-950 p-1 rounded border border-slate-800 mb-2">
             <button type="button" onclick="switchPublishSubTab('comunicado')" id="pubSubNewsBtn" class="py-1 text-[10px] font-bold rounded bg-blue-600 text-white">📢 Comunicado</button>
             <button type="button" onclick="switchPublishSubTab('encuesta')" id="pubSubPollBtn" class="py-1 text-[10px] font-bold rounded text-slate-400">📊 Encuesta</button>
           </div>
 
-          <!-- FORMULARIO COMUNICADO -->
           <form id="formPublishNews" onsubmit="handlePublishNews(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800">
             <div class="flex items-center justify-between">
               <h4 id="newsFormTitle" class="text-xs font-bold text-amber-400"><i class="fa-solid fa-bullhorn"></i> Redactar Orden / Comunicado</h4>
@@ -609,7 +616,6 @@
             </button>
           </form>
 
-          <!-- FORMULARIO ENCUESTA -->
           <form id="formPublishPoll" onsubmit="handlePublishPoll(event)" class="space-y-2.5 bg-slate-900 p-3 rounded-lg border border-slate-800 hidden">
             <h4 class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-square-poll-vertical"></i> Proponer / Crear Encuesta</h4>
             <div>
@@ -626,7 +632,6 @@
           </form>
         </div>
 
-        <!-- BANDEJA UNIFICADA DE APROBACIÓN -->
         <div id="viewApproveNews" class="space-y-3 hidden">
           <div>
             <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-bullhorn"></i> Comunicados Pendientes:</h4>
@@ -763,17 +768,49 @@
       { code: "TKS", meaning: "Gracias" }
     ];
 
-    // QUIZ DE REGLAMENTO Y CÓDIGOS Q INTERACTIVO PRO
+    // BIBLIA RP OFICIAL DE RIO RISE (EXTRAÍDA DE LA FOTO)[cite: 2]
+    const rpRulesData = [
+      { code: "MDM", meaning: "Matar a más de 3 personas" },
+      { code: "RDM", meaning: "Entrar en una acción sin estar involucrado" },
+      { code: "VDM", meaning: "Atropellar a otros jugadores" },
+      { code: "MG", meaning: "Usar información de fuera del juego (MetaGaming)" },
+      { code: "CL", meaning: "Salir del juego para beneficio (Combat Log)" },
+      { code: "DM", meaning: "Dañar a otro sin motivo" },
+      { code: "RK", meaning: "Muerte vengativa (Revenge Kill)" },
+      { code: "SK", meaning: "Matar en territorio de facción (Spawn/Faction Kill)" },
+      { code: "TK", meaning: "Matar o causar daño a un compañero (Team Kill)" },
+      { code: "COP-BAIT", meaning: "Provocar acción policial" },
+      { code: "SAAV", meaning: "Sin amor a la vida" },
+      { code: "PG", meaning: "Acciones imposibles en la vida real (PowerGaming)" },
+      { code: "BUNNY-HOP / BH", meaning: "Correr y saltar de forma no realista" },
+      { code: "IFP", meaning: "Información fuera del personaje" },
+      { code: "ZZ", meaning: "Correr en zig zag para evitar disparos" },
+      { code: "KOS", meaning: "Matar al visualizar (ej. matar a alguien de otra organización, facción o familia)" },
+      { code: "PK", meaning: "Muerte del jugador (ej. pierde toda la memoria de la persona que te mató)" },
+      { code: "RPFW", meaning: "Crear un rol donde solo tú ganas" },
+      { code: "MIX", meaning: "Mezclar temas fuera del RP" },
+      { code: "APP", meaning: "Interrumpir acción a propósito" },
+      { code: "DMA", meaning: "Causar daños a vehículos" },
+      { code: "NRA", meaning: "Usar armas en lugares públicos" },
+      { code: "AI", meaning: "Acción irregular" },
+      { code: "INA", meaning: "Invasión no autorizada" },
+      { code: "FAIL", meaning: "Acción fallida (Fail RP)" },
+      { code: "TSC", meaning: "Transferir items al administrador" },
+      { code: "CC", meaning: "Cortar camino" },
+      { code: "FLAMING RP", meaning: "Ofensa contra jugadores" }
+    ];
+
+    // QUIZ DE REGLAMENTO, CÓDIGOS Q Y BIBLIA RP INTERACTIVO PRO
     const reglamentoQuizPool = [
+      { q: "¿Qué significa RDM según la Biblia RP?", options: ["A) Reparar de inmediato", "B) Entrar en una acción sin estar involucrado", "C) Retirarse de base"], a: 1 },
       { q: "¿Cuál es el significado del Código Q: QRR?", options: ["A) Espere", "B) Refuerzo", "C) Dirección"], a: 1 },
+      { q: "¿Qué significa MG en las normas del servidor?", options: ["A) Matar gente", "B) Usar información de fuera del juego", "C) Manejar guardias"], a: 1 },
       { q: "¿Qué significa el código QSL en radiofonía?", options: ["A) Entendido", "B) Dinero", "C) Fuera del aire"], a: 0 },
       { q: "¿Cuál es el código Q para indicar que estás 'En camino'?", options: ["A) QTI", "B) QAP", "C) QTH"], a: 0 },
-      { q: "¿Qué significa el código QTH?", options: ["A) Hora exacta", "B) Dirección / Ubicación", "C) Conductor"], a: 1 },
+      { q: "¿Qué significa SAAV en la Biblia RP?", options: ["A) Sistema Aéreo", "B) Sin amor a la vida", "C) Soldado Activo"], a: 1 },
+      { q: "¿Qué significa KOS?", options: ["A) Matar al visualizar objetivo autorizado", "B) Kidnapping o secuestro", "C) Kilos de suministros"], a: 0 },
       { q: "¿Cuál es el horario de trabajo obligatorio del ejército?", options: ["A) De 12:00 a 18:00", "B) De 17:00 a 02:00", "C) Libre las 24 horas"], a: 1 },
-      { q: "¿Qué debe hacer un oficial en caso de dañar un vehículo?", options: ["A) Dejarlo abandonado", "B) Reparar el vehículo de trabajo", "C) Comprar uno personal"], a: 1 },
-      { q: "¿Cuánto tiempo máximo de licencia o vacaciones se puede aprobar?", options: ["A) Hasta por dos semanas", "B) 1 mes", "C) 3 días máximo"], a: 0 },
-      { q: "¿Está permitido vender uniformes militares?", options: ["A) Sí, si necesito dinero", "B) No, está estrictamente prohibido (Art. 4.1)", "C) Solo a amigos cercanos"], a: 1 },
-      { q: "¿Cuánto dura exactamente un entrenamiento oficial?", options: ["A) 15 minutos", "B) 5 minutos exactos", "C) Lo que decida el soldado"], a: 1 }
+      { q: "¿Está permitido vender uniformes militares?", options: ["A) Sí", "B) No, está estrictamente prohibido (Art. 4.1)", "C) Solo a amigos"], a: 1 }
     ];
     let currentQuizIndex = 0;
     let quizScore = 0;
@@ -781,14 +818,14 @@
     const MAX_SHIFT_MS = 9 * 60 * 60 * 1000;
 
     const fullTriviaQuestionsBank = [
-      { q: "¿Qué significa VDM en las normas del servidor?", options: ["A) Vehículo de Milicia", "B) Atropellar a otros jugadores sin motivo", "C) Vender armas de la base"], a: 1 },
-      { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos", "C) Retirarse de base"], a: 0 },
+      { q: "¿Qué significa VDM en las normas del servidor?", options: ["A) Vehículo de Milicia", "B) Atropellar a otros jugadores", "C) Vender armas"], a: 1 },
+      { q: "Según la Biblia RP, ¿Qué es RDM?", options: ["A) Entrar en una acción sin estar involucrado", "B) Reparar vehículos", "C) Retirarse"], a: 0 },
       { q: "¿Qué significa el Código Q: QAP?", options: ["A) ¿Dónde te encuentras?", "B) ¿Estás escuchando / en frecuencia?", "C) Solicito refuerzos"], a: 1 },
       { q: "¿Cuál es el significado de QTH?", options: ["A) Ubicación / Dirección", "B) Hora del servidor", "C) Conductor"], a: 0 },
-      { q: "En la Biblia RP, ¿Significado de SAAV?", options: ["A) Sistema Aéreo", "B) Sin Amor a la Vida (no valorar la vida)", "C) Soldado Vigilante"], a: 1 },
+      { q: "En la Biblia RP, ¿Significado de SAAV?", options: ["A) Sistema Aéreo", "B) Sin amor a la vida", "C) Soldado Vigilante"], a: 1 },
       { q: "¿Qué código Q se utiliza para solicitar REFUERZOS urgentes?", options: ["A) QRR", "B) QTH", "C) QAP"], a: 0 },
-      { q: "Según el Reglamento, ¿Qué función principal tiene el Rango 1 / PRIVADO?", options: ["A) Dirigir la base militar", "B) Obedecer a superiores y vigilar / cuidar la base", "C) Autorizar licencias"], a: 1 },
-      { q: "¿Cuál es la norma sobre el valor de la vida en el servidor?", options: ["A) Correr hacia un arma apuntándome", "B) Valorar mi vida ante cualquier amenaza (No SAAV)", "C) Disparar sin mediar palabra"], a: 1 }
+      { q: "¿Qué significa MG en el servidor?", options: ["A) Movimiento General", "B) Usar información de fuera del juego", "C) Munición gruesa"], a: 1 },
+      { q: "¿Qué indica el término KOS?", options: ["A) Matar al visualizar", "B) Kiosco oficial", "C) Código de salida"], a: 0 }
     ];
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -797,6 +834,7 @@
       document.getElementById('themeSelector').value = savedTheme;
       loadTriviaQuestion();
       renderQCodes(qCodesData);
+      renderRpRules(rpRulesData);
     });
 
     document.addEventListener('visibilitychange', () => {
@@ -817,17 +855,19 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // CONTROL DE SUB-PESTAÑAS DE REGLAMENTO Y CÓDIGOS Q
+    // CONTROL DE SUB-PESTAÑAS DE ACADEMIA
     function switchRegTab(tabNum) {
       document.getElementById('regView1').classList.toggle('hidden', tabNum !== 1);
       document.getElementById('regView2').classList.toggle('hidden', tabNum !== 2);
       document.getElementById('regView3').classList.toggle('hidden', tabNum !== 3);
       document.getElementById('regView4').classList.toggle('hidden', tabNum !== 4);
+      document.getElementById('regView5').classList.toggle('hidden', tabNum !== 5);
 
       document.getElementById('regTab1Btn').className = tabNum === 1 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab2Btn').className = tabNum === 2 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab3Btn').className = tabNum === 3 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
       document.getElementById('regTab4Btn').className = tabNum === 4 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
+      document.getElementById('regTab5Btn').className = tabNum === 5 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
     }
 
     function renderQCodes(list) {
@@ -855,7 +895,31 @@
       renderQCodes(filtered);
     }
 
-    // INTERACTIVIDAD ACORDEÓN DE CAPÍTULOS
+    function renderRpRules(list) {
+      const container = document.getElementById('rpContainer');
+      if (!container) return;
+      if (list.length === 0) {
+        container.innerHTML = '<p class="text-slate-500 italic text-center py-2">No se encontraron conceptos.</p>';
+        return;
+      }
+      let html = '';
+      list.forEach(item => {
+        html += `
+          <div class="bg-slate-900 p-2 rounded border border-slate-800 flex items-center justify-between">
+            <span class="font-mono font-bold text-blue-400">${item.code}</span>
+            <span class="text-slate-200 text-right">${item.meaning}</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function filterRpRules() {
+      const query = document.getElementById('rpSearch').value.toLowerCase().trim();
+      const filtered = rpRulesData.filter(item => item.code.toLowerCase().includes(query) || item.meaning.toLowerCase().includes(query));
+      renderRpRules(filtered);
+    }
+
     function toggleChapter(id) {
       const el = document.getElementById(id);
       const chevron = document.getElementById(`chevron_${id}`);
@@ -864,7 +928,6 @@
       if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
     }
 
-    // QUIZ INTERACTIVO REGLAMENTO
     function openReglasQuizModal() {
       currentQuizIndex = 0;
       quizScore = 0;
@@ -912,7 +975,7 @@
           loadQuizQuestion();
         } else {
           closeReglasQuizModal();
-          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 7 ? '🏆 ¡Excelente dominio del reglamento y códigos Q!' : '⚠ Te sugerimos repasar la academia y códigos Q.'}`);
+          alert(`🎓 ¡Desafío Táctico Finalizado!\nAciertos: ${quizScore} / ${reglamentoQuizPool.length}\n${quizScore >= 7 ? '🏆 ¡Excelente dominio del reglamento, Biblia RP y códigos Q!' : '⚠ Te sugerimos repasar la academia completa.'}`);
         }
       }, 1200);
     }
