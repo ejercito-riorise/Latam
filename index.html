@@ -920,7 +920,7 @@
     let currentQuizIndex = 0;
     let quizScore = 0;
 
-    const MAX_SHIFT_MS = 9 * 60 * 60 * 1000; // TOPE DE 9 HORAS MÁXIMAS POR TURNO CONTINUO
+    const MAX_SHIFT_MS = 9 * 60 * 60 * 1000; // TOPE ABSOLUTO DE 9 HORAS
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('rioRiseTheme') || 'noche';
@@ -1376,7 +1376,7 @@
       const indicator = document.getElementById('scheduleStatusIndicator');
       if (!indicator) return;
       const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-      const isAllowedHour = (currentHour >= 17 || currentHour < 3); // ACTUALIZADO CORTE A LAS 03:00 AM
+      const isAllowedHour = (currentHour >= 17 || currentHour < 3);
       if (isAllowedHour) {
         indicator.innerText = "🟢 Servicio Habilitado";
         indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
@@ -1815,7 +1815,7 @@
     }
 
     function updateActiveShiftVisualCounter(startTime) {
-      const diffMs = Math.max(0, Date.now() - startTime);
+      const diffMs = Math.min(MAX_SHIFT_MS, Math.max(0, Date.now() - startTime));
       const totalSecs = Math.floor(diffMs / 1000);
       const hours = String(Math.floor(totalSecs / 3600)).padStart(2, '0');
       const mins = String(Math.floor((totalSecs % 3600) / 60)).padStart(2, '0');
@@ -2266,8 +2266,9 @@
         const startTime = parseInt(activeShiftStart);
         const elapsedTimeMs = Date.now() - startTime;
 
+        // CORRECCIÓN 1: Si pasaron más de 9 horas absolutas, cerrar de golpe
         if (elapsedTimeMs >= MAX_SHIFT_MS) {
-          alert('⏰ Tu servicio superó el límite de 9 horas y fue finalizado.');
+          alert('⏰ Tu servicio superó el límite absoluto de 9 horas y fue finalizado.');
           const forcedEndTime = startTime + MAX_SHIFT_MS;
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           currentUser.activeShiftStart = null;
@@ -2279,25 +2280,31 @@
         const colombiaDate = new Date(colombiaTimeStr);
         const currentHour = colombiaDate.getHours();
 
-        // CORTE AUTOMÁTICO A LAS 03:00 AM HORA COLOMBIA
-        if (currentHour >= 3 && currentHour < 17) {
+        // CORRECCIÓN 2: Si el turno viene de un día anterior (fecha distinta) o entró la madrugada (> 03:00 am)
+        const startDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+        const currentDateStr = colombiaDate.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
+
+        if (startDateStr !== currentDateStr || (currentHour >= 3 && currentHour < 17)) {
+          alert('⏰ El turno anterior quedó colgado de otro día y fue cerrado automáticamente.');
           const cutTime = new Date(colombiaDate);
           cutTime.setHours(3, 0, 0, 0);
-          const forcedEndTime = cutTime.getTime();
+          const forcedEndTime = cutTime.getTime() > startTime ? cutTime.getTime() : (startTime + (3600000 * 2));
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           currentUser.activeShiftStart = null;
           processAndSaveSplitShift(startTime, forcedEndTime);
           return;
         }
+
         activateShiftUI(startTime);
       }
     }
 
     function updateTimerDisplayLive(startTime) {
-      const diffSeconds = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
-      const hours = String(Math.floor(diffSeconds / 3600)).padStart(2, '0');
-      const mins = String(Math.floor((diffSeconds % 3600) / 60)).padStart(2, '0');
-      const secs = String(Math.floor(diffSeconds % 60)).padStart(2, '0');
+      const diffMs = Math.min(MAX_SHIFT_MS, Math.max(0, Date.now() - startTime));
+      const totalSeconds = Math.floor(diffMs / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const secs = String(Math.floor(totalSeconds % 60)).padStart(2, '0');
       document.getElementById('stopwatch').innerText = `${hours}:${mins}:${secs}`;
     }
 
@@ -2318,7 +2325,7 @@
         const elapsedTimeMs = Date.now() - startTime;
 
         if (elapsedTimeMs >= MAX_SHIFT_MS) {
-          alert('⏰ Servicio finalizado por límite de 9 horas.');
+          alert('⏰ Servicio finalizado por límite absoluto de 9 horas.');
           const forcedEndTime = startTime + MAX_SHIFT_MS;
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           clearInterval(shiftInterval);
@@ -2330,7 +2337,6 @@
         const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colombiaDate = new Date(colombiaTimeStr);
         
-        // CORTE EN VIVO A LAS 03:00 AM HORA COLOMBIA
         if (colombiaDate.getHours() >= 3 && colombiaDate.getHours() < 17) {
           if (localStorage.getItem(`shiftStart_${currentUser.username}`)) {
             alert('El servicio se cerró automáticamente por horario oficial de cierre (03:00 am).');
@@ -2373,7 +2379,7 @@
         shiftInterval = null;
 
         const startTime = parseInt(savedStart);
-        const endTime = Date.now();
+        const endTime = Math.min(Date.now(), startTime + MAX_SHIFT_MS);
         localStorage.removeItem(activeShiftKey);
         currentUser.activeShiftStart = null;
 
@@ -2388,6 +2394,10 @@
     }
 
     async function processAndSaveSplitShift(startTimeMs, endTimeMs) {
+      if (endTimeMs - startTimeMs > MAX_SHIFT_MS) {
+        endTimeMs = startTimeMs + MAX_SHIFT_MS;
+      }
+
       const startColStr = new Date(startTimeMs).toLocaleString("en-US", { timeZone: "America/Bogota" });
       const endColStr = new Date(endTimeMs).toLocaleString("en-US", { timeZone: "America/Bogota" });
       
@@ -2690,7 +2700,7 @@
           const shiftStartDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
           
           if (shiftStartDateStr === todayStr) {
-            const elapsed = Date.now() - startTime;
+            const elapsed = Math.min(MAX_SHIFT_MS, Date.now() - startTime);
             if (elapsed < MAX_SHIFT_MS) {
               const liveHours = elapsed / 3600000;
               u.totalHours += liveHours;
@@ -2702,12 +2712,11 @@
 
       const dailyArray = Object.values(dailyTotals);
 
-      // ORDENAMIENTO ESTRICTO: 1° EN SERVICIO (DE MAYOR A MENOR), 2° DESCONECTADOS (DE MAYOR A MENOR)
       dailyArray.sort((a, b) => {
         if (a.isConnected !== b.isConnected) {
-          return a.isConnected ? -1 : 1; // Primero los conectados
+          return a.isConnected ? -1 : 1;
         }
-        return b.totalHours - a.totalHours; // Si ambos tienen el mismo estado, mayor a menor horas
+        return b.totalHours - a.totalHours;
       });
 
       dailyReportList.innerHTML = dailyArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros hoy.</p>' : '';
@@ -2746,7 +2755,6 @@
       });
     }
 
-    // FILTROS Y RENDIMIENTO HISTÓRICO: ESTRICTAMENTE ORDENADO DE MAYOR A MENOR
     function applyHistoryFilter() {
       const startVal = document.getElementById('filterDateStart').value;
       const endVal = document.getElementById('filterDateEnd').value;
@@ -2779,8 +2787,6 @@
         });
 
         let summaryArray = Object.values(summaryMap);
-        
-        // ORDENAMIENTO ESTRICTO DE MAYOR A MENOR EN RESUMEN
         summaryArray.sort((a, b) => b.totalHours - a.totalHours);
         currentRankedExportArray = summaryArray;
 
@@ -2800,7 +2806,6 @@
         });
 
       } else {
-        // ORDENAMIENTO ESTRICTO DE MAYOR A MENOR EN DETALLADO POR HORAS TRABAJADAS
         filtered.sort((a, b) => parseFloat(b.horas || 0) - parseFloat(a.horas || 0));
         currentRankedExportArray = filtered;
 
