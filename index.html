@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intranet EB - Ejército RioRise</title>
   
-  <!-- FAVICON & OPEN GRAPH (VISTA PREVIA CON ICONO AZUL) -->
+  <!-- FAVICON & OPEN GRAPH -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 Z' fill='%2360a5fa' opacity='0.5'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3C/svg%3E">
 
@@ -269,7 +269,7 @@
             </button>
           </div>
 
-          <!-- SUB-PESTAÑAS DE ACADEMIA REORGANIZADAS Y LIMPIAS (6 Pestañas ágiles) -->
+          <!-- SUB-PESTAÑAS DE ACADEMIA REORGANIZADAS -->
           <div class="grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[9px]">
             <button id="regTab1Btn" onclick="switchRegTab(1)" class="py-1 font-bold rounded text-white bg-blue-600 shadow">📖 Cap 1-2</button>
             <button id="regTab2Btn" onclick="switchRegTab(2)" class="py-1 font-bold rounded text-slate-400 hover:text-white">📜 Cap 3-4</button>
@@ -282,24 +282,22 @@
           <!-- BLOQUE 1: CAPÍTULOS 1 Y 2 + HORARIOS / WHATSAPP INTERACTIVOS -->
           <div id="regView1" class="space-y-2.5">
             
-            <!-- Alerta WhatsApp con diseño moderno -->
             <div class="bg-gradient-to-r from-amber-950/60 to-slate-900 p-3 rounded-xl border border-amber-800/60 flex items-start gap-2.5 shadow">
               <div class="w-8 h-8 rounded-lg bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 text-sm mt-0.5">
                 <i class="fa-brands fa-whatsapp"></i>
               </div>
               <div class="space-y-1">
                 <p class="font-bold text-white text-xs">Regla de Etiqueta Obligatoria (WhatsApp)</p>
-                <p class="text-[10px] text-amber-200/90 leading-relaxed">Todo integrante debe llevar estrictamente en su perfil el formato: <code class="bg-slate-900 px-1.5 py-0.5 rounded text-amber-300 font-mono font-bold">Rango + Nombre</code>. De lo contrario, será expulsado del grupo.</p>
+                <p class="text-[10px] text-amber-200/90 leading-relaxed">Todo integrante debe llevar strictly en su perfil el formato: <code class="bg-slate-900 px-1.5 py-0.5 rounded text-amber-300 font-mono font-bold">Rango + Nombre</code>. De lo contrario, será expulsado del grupo.</p>
               </div>
             </div>
 
-            <!-- Horarios y Conversor Interactivo LATAM -->
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-1.5">
                 <div class="flex items-center gap-1.5 font-bold text-xs text-blue-400">
                   <i class="fa-solid fa-clock"></i> Horario Oficial & Conversor LATAM
                 </div>
-                <span class="text-[9px] bg-blue-950 text-blue-300 px-2 py-0.5 rounded border border-blue-800">17:00 - 02:00 /TIME</span>
+                <span class="text-[9px] bg-blue-950 text-blue-300 px-2 py-0.5 rounded border border-blue-800">18:00 - 03:00 /TIME</span>
               </div>
               <p class="text-[10px] text-slate-300">Selecciona tu país para conocer tu hora exacta de ingreso al servidor:</p>
               
@@ -317,7 +315,6 @@
               </div>
             </div>
 
-            <!-- Capítulos 1 y 2 en tarjetas desplegables limpias -->
             <div class="space-y-2">
               <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
                 <button onclick="toggleChapter('cap1')" class="w-full flex justify-between items-center text-xs font-bold text-amber-400">
@@ -349,7 +346,7 @@
             </div>
           </div>
 
-          <!-- BLOQUE 2: CAPÍTULOS 3 Y 4 (DERECHOS Y PROHIBICIONES) -->
+          <!-- BLOQUE 2: CAPÍTULOS 3 Y 4 -->
           <div id="regView2" class="space-y-2 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2.5">
               <button onclick="toggleChapter('cap3')" class="w-full flex justify-between items-center text-xs font-bold text-emerald-400">
@@ -375,10 +372,8 @@
             </div>
           </div>
 
-          <!-- BLOQUE 3: CAPÍTULOS 5, 6 Y 7 (FALTAS, SANCIONES Y DISPOSICIONES) + ACCIONES EB -->
+          <!-- BLOQUE 3: CAPÍTULOS 5, 6 Y 7 + ACCIONES -->
           <div id="regView3" class="space-y-3 hidden">
-            
-            <!-- CAPÍTULOS 5, 6 Y 7 -->
             <div class="space-y-2">
               <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
                 <button onclick="toggleChapter('cap5')" class="w-full flex justify-between items-center text-xs font-bold text-amber-400">
@@ -415,7 +410,6 @@
               </div>
             </div>
 
-            <!-- ACCIONES EB, PACIFICACIONES E INVASIONES -->
             <div class="bg-slate-950 p-3 rounded-xl border border-blue-500/50 space-y-3">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
                 <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-shield-dog mr-1"></i> Acciones, Pacificaciones e Invasiones EB</h4>
@@ -424,7 +418,6 @@
               <p class="text-[10px] text-slate-300">Cronograma oficial de operaciones especiales y patrullaje:</p>
 
               <div class="space-y-3 pt-1 text-[11px]">
-                <!-- Acción 1: Cargamento -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-amber-400 text-xs">
                     <span>🚚 1. CRM (Cargamento)</span>
@@ -434,7 +427,6 @@
                   <p class="text-slate-300 text-[10px]"><strong>Dinámica:</strong> La EB transporta material desde el puerto con un camión para fabricar armas, apoyados por la Policía Federal (PF). Las mafias intentarán interceptarlo y robarlo para llevarlo a su mansión.</p>
                 </div>
 
-                <!-- Acción 2: Patrullaje -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-cyan-400 text-xs">
                     <span>🚙 2. Patrullaje Táctico</span>
@@ -443,7 +435,6 @@
                   <p class="text-slate-300 text-[10px]"><strong>Dinámica:</strong> Patrullaje en la ciudad con 3 o más vehículos militares controlando el orden. Obligatoriamente supervisado por un <strong>General o Coronel</strong>.</p>
                 </div>
 
-                <!-- Acción 3: Pacificaciones -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
                   <div class="flex justify-between items-center font-bold text-red-400 text-xs">
                     <span>🎯 3. Pacificaciones y Operaciones</span>
@@ -453,7 +444,6 @@
                   <p class="text-slate-300 text-[10px]">🗓️ <strong>Domingo y Lunes (21:00 a 00:00):</strong> Operación conjunta de la EB y la Policía Federal contra las facciones.</p>
                 </div>
 
-                <!-- Acción 4: Invasiones -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
                   <div class="flex justify-between items-center font-bold text-purple-400 text-xs">
                     <span>⚔️ 4. Invasiones del EB (Martes y Jueves)</span>
@@ -471,7 +461,7 @@
             </div>
           </div>
 
-          <!-- BLOQUE 4: RANGOS DE LAS FUERZAS ARMADAS DE BRASIL (EB) -->
+          <!-- BLOQUE 4: RANGOS -->
           <div id="regView4" class="space-y-3 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/50 space-y-3">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
@@ -481,7 +471,6 @@
               <p class="text-[10px] text-slate-300">Conoce los rangos, funciones específicas y autorizaciones de cada nivel dentro de la organización:</p>
               
               <div class="space-y-3 pt-1 text-[11px]">
-                <!-- Rango 1 -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-amber-400 text-xs">
                     <span>⭐ RANGO 1 / PRIVADO</span>
@@ -489,10 +478,9 @@
                   </div>
                   <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a nuevos reclutas con poco conocimiento de la organización.</p>
                   <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Obedecer órdenes de todos los superiores. Cuida ubicaciones específicas de la base como guardia vigilando que nadie entre.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Equipo:</strong> Se le otorga armamento para defender la base, chalecos antibalas y armas deaser (pistolas de bajo calibre).</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Equipo:</strong> Se le otorga armamento para defender la base, chalecos antibalas y armas taser (pistolas de bajo calibre).</p>
                 </div>
 
-                <!-- Rango 2 -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-blue-400 text-xs">
                     <span>⭐⭐ RANGO 2 / SARGENTO</span>
@@ -503,7 +491,6 @@
                   <p class="text-slate-300 text-[10px]"><strong>Acciones:</strong> Participan de las acciones siempre que estén autorizados. Son soldados de rendimiento intermedio y ejemplo de comportamiento.</p>
                 </div>
 
-                <!-- Rango 3 -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-cyan-400 text-xs">
                     <span>⭐⭐⭐ RANGO 3 / TENIENTES</span>
@@ -514,7 +501,6 @@
                   <p class="text-slate-300 text-[10px]"><strong>Acciones y Vehículos:</strong> Participan en las acciones y tienen permitido el uso de vehículos militares para movilización en base y control.</p>
                 </div>
 
-                <!-- Rango 4 -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-orange-400 text-xs">
                     <span>⭐⭐⭐⭐ RANGO 4 / MAYOR</span>
@@ -525,7 +511,6 @@
                   <p class="text-slate-300 text-[10px]"><strong>Armamento y Acciones:</strong> Participan en todas las acciones (lo mejor de lo mejor). Se les permite utilizar <strong>toda arma de fuego</strong>.</p>
                 </div>
 
-                <!-- Rango 5 -->
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-red-400 text-xs">
                     <span>⭐⭐⭐⭐⭐ RANGO 5 / CORONEL</span>
@@ -539,7 +524,7 @@
             </div>
           </div>
 
-          <!-- BLOQUE 5: CÓDIGOS Q Y BIBLIA RP (COMBINADOS) -->
+          <!-- BLOQUE 5: CÓDIGOS Q Y BIBLIA RP -->
           <div id="regView5" class="space-y-3 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
@@ -566,7 +551,7 @@
             </div>
           </div>
 
-          <!-- BLOQUE 6: MAPA TÁCTICO Y UBICACIÓN -->
+          <!-- BLOQUE 6: MAPA TÁCTICO -->
           <div id="regView6" class="space-y-3 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/50 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
@@ -595,7 +580,7 @@
     </main>
   </div>
 
-  <!-- MODAL DE EXAMEN OBLIGATORIO PARA NUEVOS PRIVADOS (BLOQUEANTE) -->
+  <!-- MODAL DE EXAMEN OBLIGATORIO PARA NUEVOS PRIVADOS -->
   <div id="privateExamModal" class="fixed inset-0 bg-slate-950/98 backdrop-blur-lg z-[100] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-red-500/80 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
@@ -614,7 +599,7 @@
     </div>
   </div>
 
-  <!-- MODAL QUIZ INTERACTIVO DE REGLAMENTO, RANGOS Y ACCIONES -->
+  <!-- MODAL QUIZ INTERACTIVO -->
   <div id="reglasQuizModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[120] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-blue-500/60 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
@@ -632,7 +617,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE ENCUESTA OBLIGATORIA (BLOQUEANTE) -->
+  <!-- MODAL DE ENCUESTA OBLIGATORIA -->
   <div id="mandatoryPollModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[110] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-amber-500/80 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
@@ -701,8 +686,8 @@
             <div>
               <label class="block text-[10px] text-slate-400 mb-1">Modo de Visualización:</label>
               <select id="filterMode" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
-                <option value="detailed">📋 Historial Detallado (Registro por registro)</option>
                 <option value="summary">📊 Resumen General (Suma total por soldado)</option>
+                <option value="detailed">📋 Historial Detallado (Registro por registro)</option>
               </select>
             </div>
           </div>
@@ -772,7 +757,7 @@
     </div>
   </div>
 
-  <!-- MODAL EXPLICATIVO DE RANGOS Y NIVELES -->
+  <!-- MODAL RANGOS Y NIVELES -->
   <div id="rankInfoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-amber-500/40 shadow-2xl space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
@@ -855,7 +840,6 @@
     let examQuestionsPool = [];
     let currentExamIndex = 0;
 
-    // LISTADO OFICIAL DE CÓDIGOS Q DE FACCIONES
     const qCodesData = [
       { code: "QAP", meaning: "¿Estás escuchando?" },
       { code: "QAR", meaning: "Desconectar" },
@@ -890,7 +874,6 @@
       { code: "TKS", meaning: "Gracias" }
     ];
 
-    // BIBLIA RP OFICIAL DE RIO RISE
     const rpRulesData = [
       { code: "MDM", meaning: "Matar a más de 3 personas" },
       { code: "RDM", meaning: "Entrar en una acción sin estar involucrado" },
@@ -922,7 +905,6 @@
       { code: "FLAMING RP", meaning: "Ofensa contra jugadores" }
     ];
 
-    // QUIZ INTERACTIVO
     const reglamentoQuizPool = [
       { q: "¿A qué hora inician los cargamentos (CRM) oficiales de la EB?", options: ["A) 12:00 y 15:00 /TIME", "B) 17:00 y 19:00 /TIME", "C) 20:00 y 22:00 /TIME"], a: 1 },
       { q: "¿Qué organización interviene ayudando a la EB a traer el camión de cargamento (CRM)?", options: ["A) La PF (Policía Federal)", "B) Los Civiles", "C) Los Paramédicos"], a: 0 },
@@ -938,7 +920,7 @@
     let currentQuizIndex = 0;
     let quizScore = 0;
 
-    const MAX_SHIFT_MS = 9 * 60 * 60 * 1000;
+    const MAX_SHIFT_MS = 9 * 60 * 60 * 1000; // TOPE DE 9 HORAS MÁXIMAS POR TURNO CONTINUO
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('rioRiseTheme') || 'noche';
@@ -967,7 +949,6 @@
       if (save) localStorage.setItem('rioRiseTheme', themeName);
     }
 
-    // CONVERSOR INTERACTIVO LATAM
     function updateLatamCountryTime() {
       const country = document.getElementById('latamCountrySelect').value;
       const display = document.getElementById('latamTimeDisplay');
@@ -978,7 +959,6 @@
       else if (country === 'mexico') display.innerText = "17:00 (5:00 PM)";
     }
 
-    // CONTROL DE SUB-PESTAÑAS DE ACADEMIA REORGANIZADAS (6 PESTAÑAS)
     function switchRegTab(tabNum) {
       document.getElementById('regView1').classList.toggle('hidden', tabNum !== 1);
       document.getElementById('regView2').classList.toggle('hidden', tabNum !== 2);
@@ -1396,7 +1376,7 @@
       const indicator = document.getElementById('scheduleStatusIndicator');
       if (!indicator) return;
       const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-      const isAllowedHour = (currentHour >= 17 || currentHour < 2);
+      const isAllowedHour = (currentHour >= 17 || currentHour < 3); // ACTUALIZADO CORTE A LAS 03:00 AM
       if (isAllowedHour) {
         indicator.innerText = "🟢 Servicio Habilitado";
         indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
@@ -2299,9 +2279,10 @@
         const colombiaDate = new Date(colombiaTimeStr);
         const currentHour = colombiaDate.getHours();
 
-        if (currentHour >= 2 && currentHour < 17) {
+        // CORTE AUTOMÁTICO A LAS 03:00 AM HORA COLOMBIA
+        if (currentHour >= 3 && currentHour < 17) {
           const cutTime = new Date(colombiaDate);
-          cutTime.setHours(2, 0, 0, 0);
+          cutTime.setHours(3, 0, 0, 0);
           const forcedEndTime = cutTime.getTime();
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           currentUser.activeShiftStart = null;
@@ -2349,11 +2330,12 @@
         const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colombiaDate = new Date(colombiaTimeStr);
         
-        if (colombiaDate.getHours() >= 2 && colombiaDate.getHours() < 17) {
+        // CORTE EN VIVO A LAS 03:00 AM HORA COLOMBIA
+        if (colombiaDate.getHours() >= 3 && colombiaDate.getHours() < 17) {
           if (localStorage.getItem(`shiftStart_${currentUser.username}`)) {
-            alert('El servicio se cerró automáticamente por horario (02:00 am).');
+            alert('El servicio se cerró automáticamente por horario oficial de cierre (03:00 am).');
             const cutTime = new Date(colombiaDate);
-            cutTime.setHours(2, 0, 0, 0);
+            cutTime.setHours(3, 0, 0, 0);
             const forcedEndTime = cutTime.getTime();
             localStorage.removeItem(`shiftStart_${currentUser.username}`);
             clearInterval(shiftInterval);
@@ -2375,8 +2357,8 @@
 
       if (!savedStart) {
         const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-        if (!(currentHour >= 17 || currentHour < 2)) {
-          alert('El Ejército no se encuentra habilitado en este horario (17:00 a 02:00 /TIME).');
+        if (!(currentHour >= 17 || currentHour < 3)) {
+          alert('El Ejército no se encuentra habilitado en este horario (18:00 a 03:00 /TIME).');
           return;
         }
 
@@ -2671,11 +2653,12 @@
       loadControlPanelData();
     }
 
+    // MONITOREO EN TIEMPO REAL CON ORDENAMIENTO ESTRICTO DE MAYOR A MENOR
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
       const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-      const isAllowedNight = (currentHour >= 17 || currentHour < 2);
+      const isAllowedNight = (currentHour >= 17 || currentHour < 3);
       const todayStr = getColombiaDateString();
 
       let dailyTotals = {};
@@ -2719,11 +2702,8 @@
 
       const dailyArray = Object.values(dailyTotals);
 
-      dailyArray.sort((a, b) => {
-        if (a.isConnected && !b.isConnected) return -1;
-        if (!a.isConnected && b.isConnected) return 1;
-        return b.totalHours - a.totalHours;
-      });
+      // ORDENAMIENTO ESTRICTO DE MAYOR A MENOR TIEMPO (PUNTO CRÍTICO CORREGIDO)
+      dailyArray.sort((a, b) => b.totalHours - a.totalHours);
 
       dailyReportList.innerHTML = dailyArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros hoy.</p>' : '';
       
@@ -2763,6 +2743,7 @@
       });
     }
 
+    // APLICACIÓN DE FILTROS Y RENDIMIENTO HISTÓRICO
     function applyHistoryFilter() {
       const startVal = document.getElementById('filterDateStart').value;
       const endVal = document.getElementById('filterDateEnd').value;
@@ -2795,6 +2776,8 @@
         });
 
         let summaryArray = Object.values(summaryMap);
+        
+        // ORDENAMIENTO ESTRICTO DE MAYOR A MENOR EN RESUMEN
         summaryArray.sort((a, b) => b.totalHours - a.totalHours);
         currentRankedExportArray = summaryArray;
 
@@ -2814,6 +2797,7 @@
         });
 
       } else {
+        // ORDENAMIENTO ESTRICTO DE MAYOR A MENOR EN DETALLADO POR HORAS TRABAJADAS
         filtered.sort((a, b) => parseFloat(b.horas || 0) - parseFloat(a.horas || 0));
         currentRankedExportArray = filtered;
 
