@@ -2266,7 +2266,6 @@
         const startTime = parseInt(activeShiftStart);
         const elapsedTimeMs = Date.now() - startTime;
 
-        // CORRECCIÓN 1: Si pasaron más de 9 horas absolutas, cerrar de golpe
         if (elapsedTimeMs >= MAX_SHIFT_MS) {
           alert('⏰ Tu servicio superó el límite absoluto de 9 horas y fue finalizado.');
           const forcedEndTime = startTime + MAX_SHIFT_MS;
@@ -2280,7 +2279,6 @@
         const colombiaDate = new Date(colombiaTimeStr);
         const currentHour = colombiaDate.getHours();
 
-        // CORRECCIÓN 2: Si el turno viene de un día anterior (fecha distinta) o entró la madrugada (> 03:00 am)
         const startDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
         const currentDateStr = colombiaDate.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
 
@@ -2663,7 +2661,6 @@
       loadControlPanelData();
     }
 
-    // MONITOR DE TROPA (HOY): ORDENADO PRIMERO EN SERVICIO (DE MAYOR A MENOR) Y LUEGO DESCONECTADO (DE MAYOR A MENOR)
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
