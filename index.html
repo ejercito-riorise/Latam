@@ -12,7 +12,7 @@
   <meta property="og:title" content="Intranet EB - Ejército RioRise">
   <meta property="og:description" content="Portal interno oficial del Ejército RioRise. Control de turnos, normativas y órdenes del día.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3Cpath d='M50 25 L70 33 C70 52 60 67 50 75 C40 67 30 52 30 33 Z' fill='%233b82f6' opacity='0.9'/%3E%3C/svg%3E">
+  <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f172a' stroke='%233b82f6' stroke-width='6'/%3E%3C/svg%3E">
 
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b0f19">
@@ -2653,7 +2653,7 @@
       loadControlPanelData();
     }
 
-    // MONITOREO EN TIEMPO REAL CON ORDENAMIENTO ESTRICTO DE MAYOR A MENOR
+    // MONITOR DE TROPA (HOY): ORDENADO PRIMERO EN SERVICIO (DE MAYOR A MENOR) Y LUEGO DESCONECTADO (DE MAYOR A MENOR)
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
@@ -2702,8 +2702,13 @@
 
       const dailyArray = Object.values(dailyTotals);
 
-      // ORDENAMIENTO ESTRICTO DE MAYOR A MENOR TIEMPO (PUNTO CRÍTICO CORREGIDO)
-      dailyArray.sort((a, b) => b.totalHours - a.totalHours);
+      // ORDENAMIENTO ESTRICTO: 1° EN SERVICIO (DE MAYOR A MENOR), 2° DESCONECTADOS (DE MAYOR A MENOR)
+      dailyArray.sort((a, b) => {
+        if (a.isConnected !== b.isConnected) {
+          return a.isConnected ? -1 : 1; // Primero los conectados
+        }
+        return b.totalHours - a.totalHours; // Si ambos tienen el mismo estado, mayor a menor horas
+      });
 
       dailyReportList.innerHTML = dailyArray.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros hoy.</p>' : '';
       
@@ -2720,9 +2725,7 @@
         }
 
         let rankBadgeIcon = `<span class="font-mono font-bold text-slate-500 text-xs w-4 text-center">#${index + 1}</span>`;
-        if (index === 0) rankBadgeIcon = `<i class="fa-solid fa-trophy text-amber-400 text-sm" title="1° Lugar"></i>`;
-        else if (index === 1) rankBadgeIcon = `<i class="fa-solid fa-medal text-slate-300 text-sm" title="2° Lugar"></i>`;
-        else if (index === 2) rankBadgeIcon = `<i class="fa-solid fa-award text-amber-600 text-sm" title="3° Lugar"></i>`;
+        if (u.isConnected && index === 0) rankBadgeIcon = `<i class="fa-solid fa-trophy text-amber-400 text-sm" title="Destacado"></i>`;
 
         const item = document.createElement('div');
         item.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs gap-2';
@@ -2743,7 +2746,7 @@
       });
     }
 
-    // APLICACIÓN DE FILTROS Y RENDIMIENTO HISTÓRICO
+    // FILTROS Y RENDIMIENTO HISTÓRICO: ESTRICTAMENTE ORDENADO DE MAYOR A MENOR
     function applyHistoryFilter() {
       const startVal = document.getElementById('filterDateStart').value;
       const endVal = document.getElementById('filterDateEnd').value;
