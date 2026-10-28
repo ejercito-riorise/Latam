@@ -233,7 +233,7 @@
           </div>
         </div>
 
-        <!-- MÓDULO CONTROL DE SERVICIO -->
+        <!-- MÓDULO CONTROL DE SERVICIO (Validación 18:00 a 03:00 en código, limpio visualmente) -->
         <div class="military-card p-3 rounded-xl">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
@@ -331,7 +331,7 @@
               </div>
               <div class="space-y-1">
                 <p class="font-bold text-white text-xs">Regla de Etiqueta Obligatoria (WhatsApp)</p>
-                <p class="text-[10px] text-amber-200/90 leading-relaxed">Todo integrante debe llevar strictly en su perfil el formato: <code class="bg-slate-900 px-1.5 py-0.5 rounded text-amber-300 font-mono font-bold">Rango + Nombre</code>. De lo contrario, será expulsado del grupo.</p>
+                <p class="text-[10px] text-amber-200/90 leading-relaxed">Todo integrante debe llevar estrictamente en su perfil el formato: <code class="bg-slate-900 px-1.5 py-0.5 rounded text-amber-300 font-mono font-bold">Rango + Nombre</code>. De lo contrario, será expulsado del grupo.</p>
               </div>
             </div>
 
@@ -665,6 +665,23 @@
     </div>
   </div>
 
+  <!-- MODAL DE FORMACIÓN PERSONALIZADA EN VIVO (PARA TROPA) -->
+  <div id="customFormationModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[130] hidden flex items-center justify-center p-3">
+    <div class="military-card w-full max-w-sm p-4 rounded-xl border border-purple-500/80 shadow-2xl space-y-3">
+      <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
+        <h4 class="text-xs font-bold text-purple-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-clipboard-user animate-pulse"></i> Formación Activa en Curso
+        </h4>
+        <span id="formationTimerDisplay" class="text-[10px] font-mono font-bold text-cyan-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">00:30</span>
+      </div>
+      <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
+        <p id="formationQuestionText" class="text-xs font-bold text-white"></p>
+        <div id="formationOptionsContainer" class="space-y-1.5"></div>
+      </div>
+      <p id="formationFeedback" class="text-[10px] font-bold hidden text-center"></p>
+    </div>
+  </div>
+
   <!-- PANEL DE CONTROL -->
   <div id="controlPanelModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-md h-[85vh] flex flex-col p-4 rounded-xl border border-blue-500/40 shadow-2xl">
@@ -690,13 +707,39 @@
 
         <!-- PESTAÑA TROPA Y SANCIONES -->
         <div id="viewActive" class="space-y-3 hidden">
-          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa y Sanciones:</h4>
+          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa, Sanciones & Formaciones:</h4>
           
-          <!-- HERRAMIENTA DE FORMACIONES AQUÍ -->
-          <button onclick="registrarAsistenciaFormacion(); playSound('click');" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow flex items-center justify-center gap-1.5 my-1">
-            <i class="fa-solid fa-clipboard-user"></i> Registrar Formación Oficial
-          </button>
-          <div id="formacionesListContainer" class="space-y-1 mb-2"></div>
+          <!-- BOTÓN CREAR FORMACIÓN PERSONALIZADA (Sargentos en adelante) -->
+          <div id="creatorFormationSection" class="bg-purple-950/40 border border-purple-500/50 p-3 rounded-xl space-y-2">
+            <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-plus"></i> Abrir Formación Personalizada</h5>
+            <p class="text-[10px] text-slate-300">Crea una evaluación interactiva con preguntas, opciones y temporizador para la tropa:</p>
+            <input type="text" id="newFormTitle" placeholder="Pregunta (Ej: ¿Cuál es el protocolo de base?)" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
+            <input type="text" id="newFormOptions" placeholder="Opciones separadas por coma (Ej: Sí, No, Tal vez)" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
+            <div class="grid grid-cols-2 gap-2">
+              <select id="newFormCorrectIndex" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1.5 focus:outline-none">
+                <option value="0">Opción 1 es Correcta</option>
+                <option value="1">Opción 2 es Correcta</option>
+                <option value="2">Opción 3 es Correcta</option>
+                <option value="3">Opción 4 es Correcta</option>
+              </select>
+              <select id="newFormSeconds" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1.5 focus:outline-none">
+                <option value="20">20 Segundos</option>
+                <option value="30" selected>30 Segundos</option>
+                <option value="60">60 Segundos</option>
+              </select>
+            </div>
+            <button onclick="launchCustomFormation(); playSound('success');" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-satellite-dish"></i> Emitir Formación a la Tropa
+            </button>
+          </div>
+
+          <!-- PANEL DE AUDITORÍA EN TIEMPO REAL -->
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
+            <h5 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-clipboard-list"></i> Auditoría de Formaciones en Vivo</h5>
+            <div id="auditFormationsContainer" class="space-y-1.5 max-h-40 overflow-y-auto">
+              <p class="text-[10px] text-slate-500 italic">No hay registros de auditoría recientes.</p>
+            </div>
+          </div>
 
           <div id="activeList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
@@ -933,6 +976,9 @@
     let currentTriviaIndex = 0;
     let examQuestionsPool = [];
     let currentExamIndex = 0;
+
+    let activeFormationSession = null;
+    let formationCountdownInterval = null;
 
     function playSound(type) {
       try {
@@ -1403,54 +1449,176 @@
       container.innerHTML = html;
     }
 
-    // --- HERRAMIENTA DE FORMACIONES ---
-    function registrarAsistenciaFormacion() {
-      const tema = prompt("Indique el tema o motivo de la formación:", "Instrucción Táctica y Tiraeo");
-      if(!tema) return;
-      
-      let formaciones = JSON.parse(localStorage.getItem('rioRiseFormaciones') || '[]');
-      formaciones.push({
-        tema: tema,
-        organizador: `${currentUser.username} (${currentUser.rank})`,
-        fecha: getColombiaDateString(),
-        hora: new Date().toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' })
-      });
-      localStorage.setItem('rioRiseFormaciones', JSON.stringify(formaciones));
-      playSound('success');
-      alert("✔ Formación registrada y guardada en el historial táctico.");
-      renderFormacionesList();
-    }
+    // --- PUNTO 1 & 2: FORMACIONES PERSONALIZADAS PARA SARGENTOS EN ADELANTE Y AUDITORÍA EN TIEMPO REAL ---
+    function launchCustomFormation() {
+      const qText = document.getElementById('newFormTitle').value.trim();
+      const optsStr = document.getElementById('newFormOptions').value.trim();
+      const correctIdx = parseInt(document.getElementById('newFormCorrectIndex').value);
+      const seconds = parseInt(document.getElementById('newFormSeconds').value);
 
-    function renderFormacionesList() {
-      const container = document.getElementById('formacionesListContainer');
-      if(!container) return;
-      let formaciones = JSON.parse(localStorage.getItem('rioRiseFormaciones') || '[]');
-      if(formaciones.length === 0) {
-        container.innerHTML = '<p class="text-[10px] text-slate-500 italic">No hay formaciones registradas recientemente.</p>';
+      if(!qText || !optsStr) {
+        alert("Debes escribir la pregunta y las opciones.");
         return;
       }
-      let html = '<div class="space-y-1 mb-2 max-h-32 overflow-y-auto">';
-      formaciones.slice(-5).reverse().forEach((f, idx) => {
+
+      const optionsArr = optsStr.split(',').map(o => o.trim());
+      if(optionsArr.length < 2) {
+        alert("Ingresa al menos 2 opciones separadas por coma.");
+        return;
+      }
+
+      const formationData = {
+        question: qText,
+        options: optionsArr,
+        correctIndex: correctIdx,
+        duration: seconds,
+        organizer: `${currentUser.username} (${currentUser.rank})`,
+        timestamp: Date.now(),
+        date: getColombiaDateString(),
+        results: {}
+      };
+
+      localStorage.setItem('rioRiseActiveCustomFormation', JSON.stringify(formationData));
+      
+      // Registrar en historial de auditoría
+      let auditList = JSON.parse(localStorage.getItem('rioRiseFormationsAudit') || '[]');
+      auditList.push({
+        organizer: formationData.organizer,
+        question: qText,
+        date: formationData.date,
+        time: new Date().toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' }),
+        resultsSummary: "Emitida (Esperando respuestas)"
+      });
+      localStorage.setItem('rioRiseFormationsAudit', JSON.stringify(auditList));
+
+      document.getElementById('newFormTitle').value = '';
+      document.getElementById('newFormOptions').value = '';
+      playSound('success');
+      alert("✔ Formación personalizada emitida exitosamente a toda la tropa en línea.");
+      renderFormationsAuditLog();
+    }
+
+    function checkActiveCustomFormation() {
+      if(!currentUser) return;
+      const activeFormJson = localStorage.getItem('rioRiseActiveCustomFormation');
+      if(!activeFormJson) return;
+
+      const formation = JSON.parse(activeFormJson);
+      const userVotedKey = `answeredFormation_${currentUser.username}_${formation.timestamp}`;
+      if(localStorage.getItem(userVotedKey)) return; // Ya respondió
+
+      // Mostrar modal de formación a la tropa
+      activeFormationSession = formation;
+      document.getElementById('formationQuestionText').innerText = `[Instr: ${formation.organizer}]: ${formation.question}`;
+      
+      const optsContainer = document.getElementById('formationOptionsContainer');
+      optsContainer.innerHTML = '';
+      document.getElementById('formationFeedback').classList.add('hidden');
+
+      formation.options.forEach((optText, i) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left bg-slate-900 hover:bg-slate-800 p-2.5 rounded text-[11px] text-slate-200 border border-slate-800 font-semibold transition";
+        btn.innerText = optText;
+        btn.onclick = () => { playSound('click'); answerCustomFormation(i); };
+        optsContainer.appendChild(btn);
+      });
+
+      document.getElementById('customFormationModal').classList.remove('hidden');
+      
+      // Temporizador en vivo
+      let timeLeft = formation.duration;
+      document.getElementById('formationTimerDisplay').innerText = `00:${String(timeLeft).padStart(2, '0')}`;
+      
+      if(formationCountdownInterval) clearInterval(formationCountdownInterval);
+      formationCountdownInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('formationTimerDisplay').innerText = `00:${String(Math.max(0, timeLeft)).padStart(2, '0')}`;
+        if(timeLeft <= 0) {
+          clearInterval(formationCountdownInterval);
+          document.getElementById('customFormationModal').classList.add('hidden');
+          alert("⏰ El tiempo para responder la formación ha expirado.");
+        }
+      }, 1000);
+    }
+
+    function answerCustomFormation(selectedIndex) {
+      if(!activeFormationSession) return;
+      if(formationCountdownInterval) clearInterval(formationCountdownInterval);
+
+      const isCorrect = selectedIndex === activeFormationSession.correctIndex;
+      const feedbackEl = document.getElementById('formationFeedback');
+      feedbackEl.classList.remove('hidden');
+
+      if(isCorrect) {
+        playSound('success');
+        feedbackEl.className = "text-[10px] font-bold text-emerald-400";
+        feedbackEl.innerText = "🎯 ¡Respuesta Correcta!";
+      } else {
+        playSound('error');
+        feedbackEl.className = "text-[10px] font-bold text-red-400";
+        feedbackEl.innerText = "❌ Respuesta Incorrecta.";
+      }
+
+      // Guardar nota/resultado en la sesión activa
+      let formation = JSON.parse(localStorage.getItem('rioRiseActiveCustomFormation') || '{}');
+      if(formation.results) {
+        formation.results[currentUser.username] = {
+          grade: isCorrect ? "100 (Correcto)" : "0 (Incorrecto)",
+          answer: activeFormationSession.options[selectedIndex]
+        };
+        localStorage.setItem('rioRiseActiveCustomFormation', JSON.stringify(formation));
+      }
+
+      localStorage.setItem(`answeredFormation_${currentUser.username}_${activeFormationSession.timestamp}`, 'true');
+
+      setTimeout(() => {
+        document.getElementById('customFormationModal').classList.add('hidden');
+      }, 1500);
+    }
+
+    function renderFormationsAuditLog() {
+      const container = document.getElementById('auditFormationsContainer');
+      if(!container) return;
+      let auditList = JSON.parse(localStorage.getItem('rioRiseFormationsAudit') || '[]');
+      let activeForm = JSON.parse(localStorage.getItem('rioRiseActiveCustomFormation') || 'null');
+
+      if(auditList.length === 0 && !activeForm) {
+        container.innerHTML = '<p class="text-[10px] text-slate-500 italic">No hay registros de auditoría recientes.</p>';
+        return;
+      }
+
+      let html = '';
+      if(activeForm) {
+        let resultsCount = Object.keys(activeForm.results || {}).length;
         html += `
-          <div class="bg-slate-950 p-2 rounded border border-purple-900/40 text-[10px] flex justify-between items-center">
-            <div>
-              <span class="font-bold text-purple-300">🎓 ${f.tema}</span>
-              <div class="text-slate-400">Org: ${f.organizador} • 📅 ${f.fecha} ${f.hora}</div>
+          <div class="bg-purple-950/60 p-2.5 rounded border border-purple-500/60 text-[10px] space-y-1 mb-2">
+            <div class="flex justify-between items-center font-bold text-purple-300">
+              <span>⚡ Formación Activa: ${activeForm.question}</span>
+              <span class="text-cyan-400">Respuestas: ${resultsCount}</span>
             </div>
-            <button onclick="eliminarFormacion(${idx})" class="text-red-400 hover:text-red-300 p-1" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+            <div class="text-slate-300">Org: ${activeForm.organizer}</div>
+        `;
+        if(resultsCount > 0) {
+          html += `<div class="pt-1 border-t border-purple-900/40 text-[9px] space-y-0.5">`;
+          for(let user in activeForm.results) {
+            let res = activeForm.results[user];
+            html += `<div>• <span class="text-white font-bold">${user}</span>: <span class="${res.grade.includes('Correcto') ? 'text-emerald-400' : 'text-red-400'}">${res.grade}</span> (Eligió: ${res.answer})</div>`;
+          }
+          html += `</div>`;
+        }
+        html += `</div>`;
+      }
+
+      auditList.slice(-5).reverse().forEach(a => {
+        html += `
+          <div class="bg-slate-950 p-2 rounded border border-slate-800 text-[10px]">
+            <div class="font-bold text-cyan-300">${a.question}</div>
+            <div class="text-slate-400">Org: ${a.organizer} • 📅 ${a.date} ${a.time}</div>
           </div>
         `;
       });
-      html += '</div>';
-      container.innerHTML = html;
-    }
 
-    function eliminarFormacion(index) {
-      if(!confirm("¿Eliminar registro de formación?")) return;
-      let formaciones = JSON.parse(localStorage.getItem('rioRiseFormaciones') || '[]');
-      formaciones.splice(index, 1);
-      localStorage.setItem('rioRiseFormaciones', JSON.stringify(formaciones));
-      renderFormacionesList();
+      container.innerHTML = html;
     }
 
     async function handlePublishPoll(e) {
@@ -1762,6 +1930,8 @@
       const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
       const isCoronel = rankLower === 'coronel';
       const isMayor = rankLower === 'mayor';
+      const isSargentoOrAbove = isSuperAdmin || ['general', 'coronel', 'mayor', 'teniente', 'sargento'].includes(rankLower);
+      
       const tabsContainer = document.getElementById('adminTabsContainer');
 
       if (isSuperAdmin) {
@@ -1785,19 +1955,24 @@
           <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
         `;
         if (!editingOldTitle) switchAdminTab('active');
-      } else if (isMayor) {
-        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+      } else if (isMayor || rankLower === 'teniente' || rankLower === 'sargento') {
+        tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
+          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa & Formaciones</button>
           <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
           <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
-          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else {
         tabsContainer.className = "grid grid-cols-1 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `<button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>`;
         switchAdminTab('daily');
+      }
+
+      // Mostrar/Ocultar creador de formaciones según rango (Sargento en adelante)
+      const creatorSection = document.getElementById('creatorFormationSection');
+      if(creatorSection) {
+        creatorSection.classList.toggle('hidden', !isSargentoOrAbove);
       }
     }
 
@@ -1814,7 +1989,7 @@
       if (targetTab) targetTab.className = "py-1.5 text-[9px] font-bold rounded bg-blue-600 text-white shadow transition";
 
       if(tab === 'active') {
-        renderFormacionesList();
+        renderFormationsAuditLog();
       }
 
       const rankLower = (currentUser.rank || '').toLowerCase();
@@ -1999,6 +2174,7 @@
         checkActiveShiftOnLoad();
         updateScheduleIndicator();
         checkPrivateExamRequirement(currentUser);
+        checkActiveCustomFormation(); // Comprobar si hay formación activa en vivo
         startRealtimeSync();
         renderMapPins();
         checkEmergencyStatus();
@@ -2023,6 +2199,7 @@
       checkActiveShiftOnLoad();
       updateScheduleIndicator();
       checkPrivateExamRequirement(currentUser);
+      checkActiveCustomFormation();
       startRealtimeSync();
       renderMapPins();
       checkEmergencyStatus();
@@ -2034,6 +2211,7 @@
         try {
           updateScheduleIndicator();
           checkEmergencyStatus();
+          checkActiveCustomFormation();
           const response = await fetch(WEB_APP_URL);
           const resData = await response.json();
           cachedData = resData;
@@ -2632,7 +2810,19 @@
       const savedStart = localStorage.getItem(activeShiftKey);
 
       if (!savedStart) {
-        // [MODIFICADO] Ya no bloquea por hora visible en interfaz, pero calcula en base a la hora colombiana interna del sistema
+        // [PUNTO 3] Validación estricta en código de 18:00 a 03:00 Hora Colombia, sin texto visible en pantalla
+        const colDateStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
+        const colHour = new Date(colDateStr).getHours();
+        
+        // Rango permitido: 18 (6pm) hasta 3 (3am)
+        const isAllowedHour = colHour >= 18 || colHour < 3;
+        
+        if (!isAllowedHour && currentUser.username.toLowerCase() !== 'mike_covid') {
+          playSound('error');
+          alert("⚠ El servicio oficial solo puede iniciarse en el horario establecido (18:00 a 03:00 Hora Colombia).");
+          return;
+        }
+
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
         currentUser.activeShiftStart = startTime;
