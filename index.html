@@ -211,7 +211,7 @@
                   <span id="profileBadgeLevel" class="text-[9px] text-amber-300 font-bold">🔰 Soldado Raso</span>
                   <button onclick="openRankInfoModal(); playSound('click');" class="text-[10px] text-amber-400 hover:text-white transition" title="Ver tabla de rangos"><i class="fa-solid fa-circle-question"></i></button>
                 </div>
-                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Total acumulado hoy">Turno Hoy: 00:00</span>
+                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Tiempo de turno actual">Turno Hoy: 00:00</span>
               </div>
             </div>
           </div>
@@ -233,7 +233,7 @@
           </div>
         </div>
 
-        <!-- MÓDULO CONTROL DE SERVICIO (Validación 18:00 a 03:00 en código, limpio visualmente) -->
+        <!-- MÓDULO CONTROL DE SERVICIO -->
         <div class="military-card p-3 rounded-xl">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
@@ -710,7 +710,7 @@
         <div id="viewActive" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa, Sanciones & Formaciones:</h4>
           
-          <!-- BOTÓN CREAR FORMACIÓN MULTIPREGUNTA DINÁMICA (Sargentos en adelante) -->
+          <!-- BOTÓN CREAR FORMACIÓN MULTIPREGUNTA DINÁMICA -->
           <div id="creatorFormationSection" class="bg-purple-950/40 border border-purple-500/50 p-3 rounded-xl space-y-2.5">
             <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-plus"></i> Abrir Formación Multipregunta</h5>
             <p class="text-[10px] text-slate-300">Crea un cuestionario agregando varias preguntas paso a paso para la tropa:</p>
@@ -1103,7 +1103,7 @@
       { code: "BUNNY-HOP / BH", meaning: "Correr y saltar de forma no realista" },
       { code: "IFP", meaning: "Información fuera del personaje" },
       { code: "ZZ", meaning: "Correr en zig zag para evitar disparos" },
-      { code: "KOS", meaning: "Matar al visualizar (ej. matar a alguien de otra organización, facción o familia)" },
+      { code: "KOS", meaning: "Matar al visualizar (ej. matar a alguien de otra organización, facción or familia)" },
       { code: "PK", meaning: "Muerte del jugador (ej. pierde toda la memoria de la persona que te mató)" },
       { code: "RPFW", meaning: "Crear un rol donde solo tú ganas" },
       { code: "MIX", meaning: "Mezclar temas fuera del RP" },
@@ -2337,38 +2337,26 @@
       }, 5000);
     }
 
+    // [CORREGIDO: Muestra estrictamente el tiempo de tu turno actual en vivo]
     function updateTodayHoursLive() {
       const el = document.getElementById('profileTodayHours');
       if (!el) return;
 
-      const todayStr = getColombiaDateString();
+      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       let totalHoursToday = 0;
 
-      if (globalHistoryCache && globalHistoryCache.length > 0) {
-        globalHistoryCache.forEach(h => {
-          if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase()) {
-            if (normalizeDate(h.fecha) === todayStr) {
-              totalHoursToday += parseFloat(h.horas || 0);
-            }
-          }
-        });
-      }
-
-      const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       if (activeShiftStart) {
         const startTime = parseInt(activeShiftStart);
-        const startDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
-        if (startDateStr === todayStr) {
-          const elapsed = Date.now() - startTime;
-          if (elapsed < MAX_SHIFT_MS) {
-            totalHoursToday += elapsed / 3600000;
-          }
+        const elapsed = Math.min(MAX_SHIFT_MS, Date.now() - startTime);
+        if (elapsed > 0) {
+          totalHoursToday = elapsed / 3600000;
         }
       }
 
       el.innerText = `Turno Hoy: ${decimalToHM(totalHoursToday)}`;
 
       let weeklyTotalHours = 0;
+      const todayStr = getColombiaDateString();
       if (globalHistoryCache) {
         globalHistoryCache.forEach(h => {
           if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase()) {
@@ -2380,10 +2368,8 @@
         const startTime = parseInt(activeShiftStart);
         const startDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
         if (startDateStr === todayStr) {
-          const elapsed = Date.now() - startTime;
-          if (elapsed < MAX_SHIFT_MS) {
-            weeklyTotalHours += elapsed / 3600000;
-          }
+          const elapsed = Math.min(MAX_SHIFT_MS, Date.now() - startTime);
+          weeklyTotalHours += elapsed / 3600000;
         }
       }
       const badgeLvl = getCachedOrCurrentBadgeLevel(currentUser.username, weeklyTotalHours);
