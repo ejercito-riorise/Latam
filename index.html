@@ -728,9 +728,14 @@
                 <option value="60">60 Segundos</option>
               </select>
             </div>
-            <button onclick="launchCustomFormation(); playSound('success');" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-satellite-dish"></i> Emitir Formación a la Tropa
-            </button>
+            <div class="flex gap-2">
+              <button onclick="launchCustomFormation(); playSound('success');" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-satellite-dish"></i> Emitir Formación
+              </button>
+              <button onclick="deactivateCustomFormation(); playSound('error');" class="bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-2 rounded text-xs uppercase transition shadow" title="Desactivar formación activa">
+                <i class="fa-solid fa-stop"></i> Cerrar Activa
+              </button>
+            </div>
           </div>
 
           <!-- PANEL DE AUDITORÍA EN TIEMPO REAL -->
@@ -1449,7 +1454,7 @@
       container.innerHTML = html;
     }
 
-    // --- PUNTO 1 & 2: FORMACIONES PERSONALIZADAS PARA SARGENTOS EN ADELANTE Y AUDITORÍA EN TIEMPO REAL ---
+    // --- FORMACIONES PERSONALIZADAS Y DESACTIVACIÓN ---
     function launchCustomFormation() {
       const qText = document.getElementById('newFormTitle').value.trim();
       const optsStr = document.getElementById('newFormOptions').value.trim();
@@ -1480,7 +1485,6 @@
 
       localStorage.setItem('rioRiseActiveCustomFormation', JSON.stringify(formationData));
       
-      // Registrar en historial de auditoría
       let auditList = JSON.parse(localStorage.getItem('rioRiseFormationsAudit') || '[]');
       auditList.push({
         organizer: formationData.organizer,
@@ -1498,6 +1502,16 @@
       renderFormationsAuditLog();
     }
 
+    // [NUEVO] Función para desactivar / cerrar la formación activa de inmediato
+    function deactivateCustomFormation() {
+      localStorage.removeItem('rioRiseActiveCustomFormation');
+      document.getElementById('customFormationModal').classList.add('hidden');
+      if(formationCountdownInterval) clearInterval(formationCountdownInterval);
+      playSound('error');
+      alert("✔ Formación activa cerrada y desactivada por la Comandancia.");
+      renderFormationsAuditLog();
+    }
+
     function checkActiveCustomFormation() {
       if(!currentUser) return;
       const activeFormJson = localStorage.getItem('rioRiseActiveCustomFormation');
@@ -1505,9 +1519,8 @@
 
       const formation = JSON.parse(activeFormJson);
       const userVotedKey = `answeredFormation_${currentUser.username}_${formation.timestamp}`;
-      if(localStorage.getItem(userVotedKey)) return; // Ya respondió
+      if(localStorage.getItem(userVotedKey)) return;
 
-      // Mostrar modal de formación a la tropa
       activeFormationSession = formation;
       document.getElementById('formationQuestionText').innerText = `[Instr: ${formation.organizer}]: ${formation.question}`;
       
@@ -1525,7 +1538,6 @@
 
       document.getElementById('customFormationModal').classList.remove('hidden');
       
-      // Temporizador en vivo
       let timeLeft = formation.duration;
       document.getElementById('formationTimerDisplay').innerText = `00:${String(timeLeft).padStart(2, '0')}`;
       
@@ -1559,7 +1571,6 @@
         feedbackEl.innerText = "❌ Respuesta Incorrecta.";
       }
 
-      // Guardar nota/resultado en la sesión activa
       let formation = JSON.parse(localStorage.getItem('rioRiseActiveCustomFormation') || '{}');
       if(formation.results) {
         formation.results[currentUser.username] = {
@@ -1969,7 +1980,6 @@
         switchAdminTab('daily');
       }
 
-      // Mostrar/Ocultar creador de formaciones según rango (Sargento en adelante)
       const creatorSection = document.getElementById('creatorFormationSection');
       if(creatorSection) {
         creatorSection.classList.toggle('hidden', !isSargentoOrAbove);
@@ -2174,7 +2184,7 @@
         checkActiveShiftOnLoad();
         updateScheduleIndicator();
         checkPrivateExamRequirement(currentUser);
-        checkActiveCustomFormation(); // Comprobar si hay formación activa en vivo
+        checkActiveCustomFormation();
         startRealtimeSync();
         renderMapPins();
         checkEmergencyStatus();
@@ -2810,16 +2820,15 @@
       const savedStart = localStorage.getItem(activeShiftKey);
 
       if (!savedStart) {
-        // [PUNTO 3] Validación estricta en código de 18:00 a 03:00 Hora Colombia, sin texto visible en pantalla
+        // [MODIFICADO] Validación estricta en código (18:00 a 03:00) con aviso limpio sin horas visibles
         const colDateStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colHour = new Date(colDateStr).getHours();
         
-        // Rango permitido: 18 (6pm) hasta 3 (3am)
         const isAllowedHour = colHour >= 18 || colHour < 3;
         
         if (!isAllowedHour && currentUser.username.toLowerCase() !== 'mike_covid') {
           playSound('error');
-          alert("⚠ El servicio oficial solo puede iniciarse en el horario establecido (18:00 a 03:00 Hora Colombia).");
+          alert("⚠ No se puede iniciar servicio en este momento. Fuera del horario autorizado.");
           return;
         }
 
