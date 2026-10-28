@@ -288,7 +288,7 @@
               <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
               <div>
                 <h3 class="font-bold text-white text-xs">Academia Táctica y Manuales</h3>
-                <p class="text-[9px] text-slate-400">Normativa Completa (Cap 1 al 7), Horarios, Acciones, Rangos y Códigos Q</p>
+                <p class="text-[9px] text-slate-400">Normativa Completa, Rangos, Códigos Q, Biblia RP y Asistencia</p>
               </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal(); playSound('click');" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -710,6 +710,37 @@
           <div id="pendingList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
+        <!-- PESTAÑA HERRAMIENTA DE SARGENTO / ASISTENCIA Y CLASES -->
+        <div id="viewSargentoTool" class="space-y-3 hidden">
+          <div class="bg-blue-950/40 p-3 rounded-xl border border-blue-500/50 space-y-2">
+            <h4 class="text-xs font-bold text-blue-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-chalkboard-user"></i> Módulo de Asistencia & Instrucción (Sargentos)
+            </h4>
+            <p class="text-[10px] text-slate-300">Registra la asistencia de los privados a tus clases o entrenamientos tácticos:</p>
+            
+            <form onsubmit="handleSargentoAttendance(event)" class="space-y-2 pt-1">
+              <div>
+                <label class="block text-[10px] text-slate-300 mb-1">Tema / Clase Impartida</label>
+                <input type="text" id="sargentoClassTopic" required placeholder="Ej: Instrucción de Códigos Q y Formación" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-300 mb-1">Privados Asistentes (Separa los nicks con comas)</label>
+                <textarea id="sargentoAttendees" required rows="3" placeholder="Ej: Soldado_1, Soldado_2, Recluta_X" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none resize-none"></textarea>
+              </div>
+              <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow">
+                📝 Guardar Lista de Asistencia & Reporte
+              </button>
+            </form>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-list-check"></i> Historial de Clases & Asistencia Registradas:</h4>
+            <div id="sargentoAttendanceHistoryList" class="space-y-2 text-xs">
+              <p class="text-[11px] text-slate-500 italic">No hay registros de asistencia aún.</p>
+            </div>
+          </div>
+        </div>
+
         <!-- PESTAÑA TROPA Y SANCIONES -->
         <div id="viewActive" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa y Sanciones:</h4>
@@ -1005,68 +1036,68 @@
     }
 
     const qCodesData = [
-      { code: "QAP", meaning: "¿Estás escuchando?" },
-      { code: "QAR", meaning: "Desconectar" },
-      { code: "QRR", meaning: "Refuerzo" },
-      { code: "QTI", meaning: "En camino" },
-      { code: "QRN", meaning: "Interferencia" },
-      { code: "QRA", meaning: "Nombre del operador" },
-      { code: "QRL", meaning: "Estoy ocupado" },
-      { code: "QRM", meaning: "Interferencia humana" },
+      { code: "QAP", meaning: "¿Estás escuchando / Permanece en frecuencia?" },
+      { code: "QAR", meaning: "Desconectar / Apagar equipo de radio" },
+      { code: "QRR", meaning: "Se requiere refuerzo urgente en mi posición" },
+      { code: "QTI", meaning: "En camino hacia el objetivo / zona indicada" },
+      { code: "QRN", meaning: "Interferencia atmosférica o estática en radio" },
+      { code: "QRA", meaning: "¿Cuál es tu nombre de operador / indicativo?" },
+      { code: "QRL", meaning: "Estoy ocupado / No puedo atender en este momento" },
+      { code: "QRM", meaning: "Interferencia causada por otros operadores" },
       { code: "QRQ", meaning: "Transmite más rápido" },
-      { code: "QRS", meaning: "Transmite más despacio" },
-      { code: "QRT", meaning: "Fuera del aire" },
-      { code: "QRU", meaning: "Ocurrencia" },
-      { code: "QRV", meaning: "A sus órdenes" },
-      { code: "QRX", meaning: "Espere" },
-      { code: "QRY", meaning: "¿Cuándo podré transmitir?" },
-      { code: "QRZ", meaning: "¿Quién me llamó?" },
-      { code: "QSA", meaning: "¿Cómo estás recibiendo?" },
-      { code: "QSL", meaning: "Entendido" },
-      { code: "QSF", meaning: "¿Realizaste salvamento?" },
-      { code: "QSM", meaning: "¿Estás escuchando?" },
-      { code: "QSO", meaning: "Comunicado aviso" },
-      { code: "QSP", meaning: "Hacer puente" },
-      { code: "QTC", meaning: "Mensaje" },
-      { code: "QTH", meaning: "Dirección" },
-      { code: "QTR", meaning: "Hora exacta" },
-      { code: "QTU", meaning: "Hora" },
-      { code: "QTA", meaning: "Cancelar mensaje" },
-      { code: "QSV", meaning: "Vehículo" },
-      { code: "QSD", meaning: "Conductor" },
-      { code: "QSJ", meaning: "Dinero" },
-      { code: "TKS", meaning: "Gracias" }
+      { code: "QRS", meaning: "Transmite más despacio / Calma la velocidad" },
+      { code: "QRT", meaning: "Fuera del aire / Cierre total de transmisiones" },
+      { code: "QRU", meaning: "No hay más novedades / Todo bajo control" },
+      { code: "QRV", meaning: "Listos y a sus órdenes para operar" },
+      { code: "QRX", meaning: "Espere un momento en la frecuencia" },
+      { code: "QRY", meaning: "¿Cuál es mi turno para transmitir?" },
+      { code: "QRZ", meaning: "¿Quién me llama?" },
+      { code: "QSA", meaning: "¿Cómo se recibe mi señal?" },
+      { code: "QSL", meaning: "Entendido / Afirmativo" },
+      { code: "QSF", meaning: "¿Realizaste el rescate / salvamento?" },
+      { code: "QSM", meaning: "¿Repites el mensaje anterior?" },
+      { code: "QSO", meaning: "Comunicado directo establecido" },
+      { code: "QSP", meaning: "Hacer puente de comunicación con otra unidad" },
+      { code: "QTC", meaning: "Tengo un mensaje / comunicado para transmitir" },
+      { code: "QTH", meaning: "Ubicación actual / Dirección" },
+      { code: "QTR", meaning: "Hora exacta oficial" },
+      { code: "QTU", meaning: "Horario de servicio establecido" },
+      { code: "QTA", meaning: "Anular / Cancelar el último mensaje" },
+      { code: "QSV", meaning: "Vehículo oficial asignado" },
+      { code: "QSD", meaning: "Conductor / Piloto al mando" },
+      { code: "QSJ", meaning: "Fondos / Dinero / Efectivo" },
+      { code: "TKS", meaning: "Gracias por la colaboración" }
     ];
 
     const rpRulesData = [
-      { code: "MDM", meaning: "Matar a más de 3 personas" },
-      { code: "RDM", meaning: "Entrar en una acción sin estar involucrado" },
-      { code: "VDM", meaning: "Atropellar a otros jugadores" },
-      { code: "MG", meaning: "Usar información de fuera del juego (MetaGaming)" },
-      { code: "CL", meaning: "Salir del juego para beneficio (Combat Log)" },
-      { code: "DM", meaning: "Dañar a otro sin motivo" },
-      { code: "RK", meaning: "Muerte vengativa (Revenge Kill)" },
-      { code: "SK", meaning: "Matar en territorio de facción (Spawn/Faction Kill)" },
-      { code: "TK", meaning: "Matar o causar daño a un compañero (Team Kill)" },
-      { code: "COP-BAIT", meaning: "Provocar acción policial" },
-      { code: "SAAV", meaning: "Sin amor a la vida" },
-      { code: "PG", meaning: "Acciones imposibles en la vida real (PowerGaming)" },
-      { code: "BUNNY-HOP / BH", meaning: "Correr y saltar de forma no realista" },
-      { code: "IFP", meaning: "Información fuera del personaje" },
-      { code: "ZZ", meaning: "Correr en zig zag para evitar disparos" },
-      { code: "KOS", meaning: "Matar al visualizar (ej. matar a alguien de otra organización, facción o familia)" },
-      { code: "PK", meaning: "Muerte del jugador (ej. pierde toda la memoria de la persona que te mató)" },
-      { code: "RPFW", meaning: "Crear un rol donde solo tú ganas" },
-      { code: "MIX", meaning: "Mezclar temas fuera del RP" },
-      { code: "APP", meaning: "Interrumpir acción a propósito" },
-      { code: "DMA", meaning: "Causar daños a vehículos" },
-      { code: "NRA", meaning: "Usar armas en lugares públicos" },
-      { code: "AI", meaning: "Acción irregular" },
-      { code: "INA", meaning: "Invasión no autorizada" },
-      { code: "FAIL", meaning: "Acción fallida (Fail RP)" },
-      { code: "TSC", meaning: "Transferir items al administrador" },
-      { code: "CC", meaning: "Cortar camino" },
-      { code: "FLAMING RP", meaning: "Ofensa contra jugadores" }
+      { code: "MDM", meaning: "Matar masivo sin rol previo (Multi Death Match)" },
+      { code: "RDM", meaning: "Atacar o matar sin razón justificada en rol (Random Death Match)" },
+      { code: "VDM", meaning: "Atropellar intencionalmente con vehículos a jugadores (Vehicle Death Match)" },
+      { code: "MG", meaning: "Mezclar información de OOC a IC / Usar datos de fuera del juego (MetaGaming)" },
+      { code: "CL", meaning: "Desconectarse del servidor para evitar una situación de rol (Combat Log)" },
+      { code: "DM", meaning: "Causar daño físico sin motivo de rol válido" },
+      { code: "RK", meaning: "Regresar al lugar de tu muerte para vengarte (Revenge Kill)" },
+      { code: "SK", meaning: "Matar o acampar en zonas de aparición de facciones (Spawn Kill)" },
+      { code: "TK", meaning: "Atacar o matar a un compañero de tu misma facción (Team Kill)" },
+      { code: "COP-BAIT", meaning: "Provocar intencionalmente a la autoridad para iniciar persecución sin motivo" },
+      { code: "SAAV", meaning: "Nulidad del miedo a la muerte / Actuar sin valorar la vida (Sin Amor A la Vida)" },
+      { code: "PG", meaning: "Realizar acciones físicamente imposibles o sobrehumanas en la vida real (PowerGaming)" },
+      { code: "BUNNY-HOP / BH", meaning: "Saltar repetidamente mientras corres para moverte más rápido de forma irreal" },
+      { code: "IFP", meaning: "Interrumpir animaciones de rol de forma antirreclamatoria" },
+      { code: "ZZ", meaning: "Correr en zig-zag exagerado para esquivar disparos intencionalmente" },
+      { code: "KOS", meaning: "Matar al visualizar a miembros de organizaciones rivales sin previo diálogo" },
+      { code: "PK", meaning: "Muerte de personaje con pérdida parcial de memoria reciente de los hechos" },
+      { code: "RPFW", meaning: "Forzar rol a favor propio sin dar opciones de respuesta al oponente" },
+      { code: "MIX", meaning: "Mezclar canales de voz o chat IC y OOC constantemene" },
+      { code: "APP", meaning: "Interrumpir acciones de rol ajenas sin justificación lógica" },
+      { code: "DMA", meaning: "Daños masivos a vehículos sin razón de rol" },
+      { code: "NRA", meaning: "Portar o usar armas de fuego en zonas públicas sin motivo de rol" },
+      { code: "AI", meaning: "Acción irregular contraria a la normativa general" },
+      { code: "INA", meaning: "Invasión no autorizada a instalaciones restringidas" },
+      { code: "FAIL", meaning: "Incumplimiento general de normas de rol (Fail RP)" },
+      { code: "TSC", meaning: "Traspasar elementos u objetos para evitar incautación administrativa" },
+      { code: "CC", meaning: "Cortar camino por terrenos imposibles o mapeados irrealistas" },
+      { code: "FLAMING RP", meaning: "Insultos, toxicidad o faltas de respeto verbales OOC hacia otros usuarios" }
     ];
 
     const reglamentoQuizPool = [
@@ -1737,38 +1768,42 @@
       const isSuperAdmin = currentUser.username.toLowerCase() === 'mike_covid' || rankLower === 'general';
       const isCoronel = rankLower === 'coronel';
       const isMayor = rankLower === 'mayor';
+      const isSargentoOrAbove = isSuperAdmin || isCoronel || isMayor || rankLower === 'teniente' || rankLower === 'sargento';
       const tabsContainer = document.getElementById('adminTabsContainer');
 
       if (isSuperAdmin) {
-        tabsContainer.className = "grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-7 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center text-[9px]";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('pending'); playSound('click');" id="adminTabPending" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Solicitudes</button>
-          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa & Sanciones</button>
-          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
-          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
-          <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
+          <button onclick="switchAdminTab('pending'); playSound('click');" id="adminTabPending" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Solicitudes</button>
+          <button onclick="switchAdminTab('sargentoTool'); playSound('click');" id="adminTabSargentoTool" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Sargentos</button>
+          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
+          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
+          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
+          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
+          <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
         `;
-        if (!editingOldTitle) switchAdminTab('active');
+        if (!editingOldTitle) switchAdminTab('sargentoTool');
       } else if (isCoronel) {
-        tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center text-[9px]";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
-          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
-          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
-          <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
+          <button onclick="switchAdminTab('sargentoTool'); playSound('click');" id="adminTabSargentoTool" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Sargentos</button>
+          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
+          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
+          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
+          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
+          <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
         `;
-        if (!editingOldTitle) switchAdminTab('active');
-      } else if (isMayor) {
-        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        if (!editingOldTitle) switchAdminTab('sargentoTool');
+      } else if (isMayor || rankLower === 'teniente' || rankLower === 'sargento') {
+        tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center text-[9px]";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
-          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
-          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
+          <button onclick="switchAdminTab('sargentoTool'); playSound('click');" id="adminTabSargentoTool" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Sargentos</button>
+          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
+          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
+          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
+          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1 font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
         `;
-        if (!editingOldTitle) switchAdminTab('active');
+        if (!editingOldTitle) switchAdminTab('sargentoTool');
       } else {
         tabsContainer.className = "grid grid-cols-1 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `<button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[10px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>`;
@@ -1777,7 +1812,7 @@
     }
 
     function switchAdminTab(tab) {
-      ['pending', 'active', 'daily', 'filters', 'newsAdmin', 'approveNews'].forEach(v => {
+      ['pending', 'sargentoTool', 'active', 'daily', 'filters', 'newsAdmin', 'approveNews'].forEach(v => {
         const viewEl = document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`);
         const tabEl = document.getElementById(`adminTab${v.charAt(0).toUpperCase() + v.slice(1)}`);
         if (viewEl) viewEl.classList.add('hidden');
@@ -1818,6 +1853,57 @@
         }
         applyHistoryFilter();
       }
+
+      if (tab === 'sargentoTool') {
+        renderSargentoAttendanceHistory();
+      }
+    }
+
+    function handleSargentoAttendance(e) {
+      e.preventDefault();
+      const topic = document.getElementById('sargentoClassTopic').value.trim();
+      const attendees = document.getElementById('sargentoAttendees').value.trim();
+      if(!topic || !attendees) return;
+
+      let attendanceLogs = JSON.parse(localStorage.getItem('rioRiseAttendanceLogs') || '[]');
+      attendanceLogs.push({
+        instructor: `${currentUser.username} (${currentUser.rank})`,
+        topic: topic,
+        attendees: attendees,
+        fecha: getColombiaDateString(),
+        hora: new Date().toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' })
+      });
+      localStorage.setItem('rioRiseAttendanceLogs', JSON.stringify(attendanceLogs));
+
+      document.getElementById('sargentoClassTopic').value = '';
+      document.getElementById('sargentoAttendees').value = '';
+      playSound('success');
+      alert("✔ Lista de asistencia y reporte de clase guardados correctamente.");
+      renderSargentoAttendanceHistory();
+    }
+
+    function renderSargentoAttendanceHistory() {
+      const container = document.getElementById('sargentoAttendanceHistoryList');
+      if(!container) return;
+      let logs = JSON.parse(localStorage.getItem('rioRiseAttendanceLogs') || '[]');
+      if(logs.length === 0) {
+        container.innerHTML = '<p class="text-[11px] text-slate-500 italic">No hay registros de asistencia aún.</p>';
+        return;
+      }
+      let html = '';
+      [...logs].reverse().forEach((log, idx) => {
+        html += `
+          <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
+            <div class="flex justify-between items-center text-[10px] text-blue-400 font-bold">
+              <span>instructor: ${log.instructor}</span>
+              <span class="text-slate-400">📅 ${log.fecha} • ⏰ ${log.hora}</span>
+            </div>
+            <p class="text-xs font-bold text-white">📚 Tema: ${log.topic}</p>
+            <p class="text-[10px] text-slate-300">👥 Asistentes: ${log.attendees}</p>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
     }
 
     async function handleRegister(e) {
