@@ -665,7 +665,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE FORMACIÓN PERSONALIZADA EN VIVO (PARA TROPA) -->
+  <!-- MODAL DE FORMACIÓN MULTIPREGUNTA EN VIVO (PARA TROPA) -->
   <div id="customFormationModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[130] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-purple-500/80 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
@@ -675,6 +675,7 @@
         <span id="formationTimerDisplay" class="text-[10px] font-mono font-bold text-cyan-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">00:30</span>
       </div>
       <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
+        <p id="formationStepIndicator" class="text-[10px] text-amber-400 font-bold"></p>
         <p id="formationQuestionText" class="text-xs font-bold text-white"></p>
         <div id="formationOptionsContainer" class="space-y-1.5"></div>
       </div>
@@ -709,25 +710,37 @@
         <div id="viewActive" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa, Sanciones & Formaciones:</h4>
           
-          <!-- BOTÓN CREAR FORMACIÓN PERSONALIZADA (Sargentos en adelante) -->
-          <div id="creatorFormationSection" class="bg-purple-950/40 border border-purple-500/50 p-3 rounded-xl space-y-2">
-            <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-plus"></i> Abrir Formación Personalizada</h5>
-            <p class="text-[10px] text-slate-300">Crea una evaluación interactiva con preguntas, opciones y temporizador para la tropa:</p>
-            <input type="text" id="newFormTitle" placeholder="Pregunta (Ej: ¿Cuál es el protocolo de base?)" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
-            <input type="text" id="newFormOptions" placeholder="Opciones separadas por coma (Ej: Sí, No, Tal vez)" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
-            <div class="grid grid-cols-2 gap-2">
-              <select id="newFormCorrectIndex" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1.5 focus:outline-none">
-                <option value="0">Opción 1 es Correcta</option>
-                <option value="1">Opción 2 es Correcta</option>
-                <option value="2">Opción 3 es Correcta</option>
-                <option value="3">Opción 4 es Correcta</option>
-              </select>
-              <select id="newFormSeconds" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1.5 focus:outline-none">
-                <option value="20">20 Segundos</option>
-                <option value="30" selected>30 Segundos</option>
-                <option value="60">60 Segundos</option>
-              </select>
+          <!-- BOTÓN CREAR FORMACIÓN MULTIPREGUNTA DINÁMICA (Sargentos en adelante) -->
+          <div id="creatorFormationSection" class="bg-purple-950/40 border border-purple-500/50 p-3 rounded-xl space-y-2.5">
+            <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-plus"></i> Abrir Formación Multipregunta</h5>
+            <p class="text-[10px] text-slate-300">Crea un cuestionario agregando varias preguntas paso a paso para la tropa:</p>
+            
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-2">
+              <input type="text" id="newFormQuestion" placeholder="Pregunta (Ej: ¿Cuál es el código Q de refuerzo?)" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
+              <input type="text" id="newFormOptions" placeholder="Opciones (Separadas por coma: QRR, QAP, QTH)" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
+              <div class="grid grid-cols-2 gap-2">
+                <select id="newFormCorrectIndex" class="bg-slate-900 border border-slate-700 text-white text-[10px] rounded p-1.5 focus:outline-none">
+                  <option value="0">Opción 1 es Correcta</option>
+                  <option value="1">Opción 2 es Correcta</option>
+                  <option value="2">Opción 3 es Correcta</option>
+                  <option value="3">Opción 4 es Correcta</option>
+                </select>
+                <button type="button" onclick="addQuestionToBuilder(); playSound('click');" class="bg-slate-800 hover:bg-slate-700 text-purple-300 font-bold text-[10px] py-1.5 rounded border border-purple-500/40">
+                  ➕ Añadir Pregunta
+                </button>
+              </div>
             </div>
+
+            <div id="builderQuestionsList" class="space-y-1 max-h-28 overflow-y-auto text-[10px]">
+              <p class="text-slate-500 italic">No hay preguntas añadidas al cuestionario aún.</p>
+            </div>
+
+            <select id="newFormSeconds" class="w-full bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1.5 focus:outline-none">
+              <option value="30">30 Segundos por Pregunta</option>
+              <option value="45" selected>45 Segundos por Pregunta</option>
+              <option value="60">60 Segundos por Pregunta</option>
+            </select>
+
             <div class="flex gap-2">
               <button onclick="launchCustomFormation(); playSound('success');" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-satellite-dish"></i> Emitir Formación
@@ -984,6 +997,9 @@
 
     let activeFormationSession = null;
     let formationCountdownInterval = null;
+    let questionsBuilderArray = [];
+    let currentFormationStep = 0;
+    let userFormationAnswers = {};
 
     function playSound(type) {
       try {
@@ -1454,29 +1470,67 @@
       container.innerHTML = html;
     }
 
-    // --- FORMACIONES PERSONALIZADAS Y DESACTIVACIÓN ---
-    function launchCustomFormation() {
-      const qText = document.getElementById('newFormTitle').value.trim();
+    // --- FORMACIONES MULTIPREGUNTA AVANZADAS ---
+    function addQuestionToBuilder() {
+      const qText = document.getElementById('newFormQuestion').value.trim();
       const optsStr = document.getElementById('newFormOptions').value.trim();
       const correctIdx = parseInt(document.getElementById('newFormCorrectIndex').value);
-      const seconds = parseInt(document.getElementById('newFormSeconds').value);
 
       if(!qText || !optsStr) {
-        alert("Debes escribir la pregunta y las opciones.");
+        alert("Escribe la pregunta y las opciones separadas por coma.");
         return;
       }
 
       const optionsArr = optsStr.split(',').map(o => o.trim());
       if(optionsArr.length < 2) {
-        alert("Ingresa al menos 2 opciones separadas por coma.");
+        alert("Ingresa al menos 2 opciones.");
         return;
       }
 
-      const formationData = {
+      questionsBuilderArray.push({
         question: qText,
         options: optionsArr,
-        correctIndex: correctIdx,
-        duration: seconds,
+        correctIndex: correctIdx
+      });
+
+      document.getElementById('newFormQuestion').value = '';
+      document.getElementById('newFormOptions').value = '';
+      renderBuilderQuestionsList();
+    }
+
+    function renderBuilderQuestionsList() {
+      const container = document.getElementById('builderQuestionsList');
+      if(!container) return;
+      if(questionsBuilderArray.length === 0) {
+        container.innerHTML = '<p class="text-slate-500 italic">No hay preguntas añadidas al cuestionario aún.</p>';
+        return;
+      }
+      let html = '';
+      questionsBuilderArray.forEach((q, idx) => {
+        html += `<div class="bg-slate-900 p-1.5 rounded border border-slate-800 flex justify-between items-center">
+          <span class="text-white truncate"><strong>P${idx+1}:</strong> ${q.question}</span>
+          <button onclick="removeQuestionFromBuilder(${idx})" class="text-red-400 hover:text-red-300 px-1"><i class="fa-solid fa-trash"></i></button>
+        </div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function removeQuestionFromBuilder(idx) {
+      questionsBuilderArray.splice(idx, 1);
+      renderBuilderQuestionsList();
+    }
+
+    function launchCustomFormation() {
+      if(questionsBuilderArray.length === 0) {
+        alert("Debes añadir al menos una pregunta al cuestionario.");
+        return;
+      }
+
+      const seconds = parseInt(document.getElementById('newFormSeconds').value);
+
+      const formationData = {
+        questions: [...questionsBuilderArray],
+        durationPerQuestion: seconds,
         organizer: `${currentUser.username} (${currentUser.rank})`,
         timestamp: Date.now(),
         date: getColombiaDateString(),
@@ -1488,21 +1542,20 @@
       let auditList = JSON.parse(localStorage.getItem('rioRiseFormationsAudit') || '[]');
       auditList.push({
         organizer: formationData.organizer,
-        question: qText,
+        question: `${questionsBuilderArray.length} preguntas en cuestionario`,
         date: formationData.date,
         time: new Date().toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' }),
-        resultsSummary: "Emitida (Esperando respuestas)"
+        resultsSummary: "Emitida (Multipregunta)"
       });
       localStorage.setItem('rioRiseFormationsAudit', JSON.stringify(auditList));
 
-      document.getElementById('newFormTitle').value = '';
-      document.getElementById('newFormOptions').value = '';
+      questionsBuilderArray = [];
+      renderBuilderQuestionsList();
       playSound('success');
-      alert("✔ Formación personalizada emitida exitosamente a toda la tropa en línea.");
+      alert("✔ Formación multipregunta emitida con éxito a toda la tropa.");
       renderFormationsAuditLog();
     }
 
-    // [NUEVO] Función para desactivar / cerrar la formación activa de inmediato
     function deactivateCustomFormation() {
       localStorage.removeItem('rioRiseActiveCustomFormation');
       document.getElementById('customFormationModal').classList.add('hidden');
@@ -1518,73 +1571,116 @@
       if(!activeFormJson) return;
 
       const formation = JSON.parse(activeFormJson);
-      const userVotedKey = `answeredFormation_${currentUser.username}_${formation.timestamp}`;
-      if(localStorage.getItem(userVotedKey)) return;
+      const userCompletedKey = `completedFormation_${currentUser.username}_${formation.timestamp}`;
+      if(localStorage.getItem(userCompletedKey)) return;
 
       activeFormationSession = formation;
-      document.getElementById('formationQuestionText').innerText = `[Instr: ${formation.organizer}]: ${formation.question}`;
-      
+      currentFormationStep = 0;
+      userFormationAnswers = {};
+
+      loadFormationStep();
+      document.getElementById('customFormationModal').classList.remove('hidden');
+    }
+
+    function loadFormationStep() {
+      if(!activeFormationSession) return;
+      const questions = activeFormationSession.questions;
+      if(currentFormationStep >= questions.length) {
+        finishCustomFormationSubmission();
+        return;
+      }
+
+      const qObj = questions[currentFormationStep];
+      document.getElementById('formationStepIndicator').innerText = `[Pregunta ${currentFormationStep + 1} de ${questions.length}]`;
+      document.getElementById('formationQuestionText').innerText = qObj.question;
+
       const optsContainer = document.getElementById('formationOptionsContainer');
       optsContainer.innerHTML = '';
       document.getElementById('formationFeedback').classList.add('hidden');
 
-      formation.options.forEach((optText, i) => {
+      qObj.options.forEach((optText, i) => {
         const btn = document.createElement('button');
         btn.className = "w-full text-left bg-slate-900 hover:bg-slate-800 p-2.5 rounded text-[11px] text-slate-200 border border-slate-800 font-semibold transition";
         btn.innerText = optText;
-        btn.onclick = () => { playSound('click'); answerCustomFormation(i); };
+        btn.onclick = () => { playSound('click'); answerFormationStep(i); };
         optsContainer.appendChild(btn);
       });
 
-      document.getElementById('customFormationModal').classList.remove('hidden');
-      
-      let timeLeft = formation.duration;
+      let timeLeft = activeFormationSession.durationPerQuestion;
       document.getElementById('formationTimerDisplay').innerText = `00:${String(timeLeft).padStart(2, '0')}`;
-      
+
       if(formationCountdownInterval) clearInterval(formationCountdownInterval);
       formationCountdownInterval = setInterval(() => {
         timeLeft--;
         document.getElementById('formationTimerDisplay').innerText = `00:${String(Math.max(0, timeLeft)).padStart(2, '0')}`;
         if(timeLeft <= 0) {
           clearInterval(formationCountdownInterval);
-          document.getElementById('customFormationModal').classList.add('hidden');
-          alert("⏰ El tiempo para responder la formación ha expirado.");
+          userFormationAnswers[currentFormationStep] = { selected: -1, correct: false };
+          currentFormationStep++;
+          loadFormationStep();
         }
       }, 1000);
     }
 
-    function answerCustomFormation(selectedIndex) {
-      if(!activeFormationSession) return;
+    function answerFormationStep(selectedIndex) {
       if(formationCountdownInterval) clearInterval(formationCountdownInterval);
+      const qObj = activeFormationSession.questions[currentFormationStep];
+      const isCorrect = selectedIndex === qObj.correctIndex;
 
-      const isCorrect = selectedIndex === activeFormationSession.correctIndex;
+      userFormationAnswers[currentFormationStep] = {
+        selected: selectedIndex,
+        selectedText: qObj.options[selectedIndex],
+        correct: isCorrect
+      };
+
       const feedbackEl = document.getElementById('formationFeedback');
       feedbackEl.classList.remove('hidden');
 
       if(isCorrect) {
         playSound('success');
         feedbackEl.className = "text-[10px] font-bold text-emerald-400";
-        feedbackEl.innerText = "🎯 ¡Respuesta Correcta!";
+        feedbackEl.innerText = "🎯 ¡Correcto!";
       } else {
         playSound('error');
         feedbackEl.className = "text-[10px] font-bold text-red-400";
-        feedbackEl.innerText = "❌ Respuesta Incorrecta.";
+        feedbackEl.innerText = "❌ Incorrecto.";
       }
+
+      setTimeout(() => {
+        currentFormationStep++;
+        loadFormationStep();
+      }, 1200);
+    }
+
+    function finishCustomFormationSubmission() {
+      if(formationCountdownInterval) clearInterval(formationCountdownInterval);
+
+      let correctCount = 0;
+      let totalQ = activeFormationSession.questions.length;
+      let summaryDetails = [];
+
+      for(let step in userFormationAnswers) {
+        let ans = userFormationAnswers[step];
+        if(ans.correct) correctCount++;
+        summaryDetails.push(`P${parseInt(step)+1}: ${ans.correct ? '✔' : '❌'} (${ans.selectedText || 'Ninguna'})`);
+      }
+
+      let finalScore = Math.round((correctCount / totalQ) * 100);
 
       let formation = JSON.parse(localStorage.getItem('rioRiseActiveCustomFormation') || '{}');
       if(formation.results) {
         formation.results[currentUser.username] = {
-          grade: isCorrect ? "100 (Correcto)" : "0 (Incorrecto)",
-          answer: activeFormationSession.options[selectedIndex]
+          score: `${finalScore}% (${correctCount}/${totalQ} aciertos)`,
+          details: summaryDetails
         };
         localStorage.setItem('rioRiseActiveCustomFormation', JSON.stringify(formation));
       }
 
-      localStorage.setItem(`answeredFormation_${currentUser.username}_${activeFormationSession.timestamp}`, 'true');
+      localStorage.setItem(`completedFormation_${currentUser.username}_${activeFormationSession.timestamp}`, 'true');
 
-      setTimeout(() => {
-        document.getElementById('customFormationModal').classList.add('hidden');
-      }, 1500);
+      document.getElementById('customFormationModal').classList.add('hidden');
+      alert(`🎯 ¡Formación Finalizada!\nPuntuación: ${finalScore}% (${correctCount} de ${totalQ} aciertos).`);
+      activeFormationSession = null;
     }
 
     function renderFormationsAuditLog() {
@@ -1604,16 +1700,16 @@
         html += `
           <div class="bg-purple-950/60 p-2.5 rounded border border-purple-500/60 text-[10px] space-y-1 mb-2">
             <div class="flex justify-between items-center font-bold text-purple-300">
-              <span>⚡ Formación Activa: ${activeForm.question}</span>
+              <span>⚡ Formación Activa (${activeForm.questions.length} preguntas)</span>
               <span class="text-cyan-400">Respuestas: ${resultsCount}</span>
             </div>
             <div class="text-slate-300">Org: ${activeForm.organizer}</div>
         `;
         if(resultsCount > 0) {
-          html += `<div class="pt-1 border-t border-purple-900/40 text-[9px] space-y-0.5">`;
+          html += `<div class="pt-1 border-t border-purple-900/40 text-[9px] space-y-1">`;
           for(let user in activeForm.results) {
             let res = activeForm.results[user];
-            html += `<div>• <span class="text-white font-bold">${user}</span>: <span class="${res.grade.includes('Correcto') ? 'text-emerald-400' : 'text-red-400'}">${res.grade}</span> (Eligió: ${res.answer})</div>`;
+            html += `<div>• <span class="text-white font-bold">${user}</span>: <span class="text-emerald-400 font-bold">${res.score}</span><br><span class="text-slate-400">${res.details.join(' | ')}</span></div>`;
           }
           html += `</div>`;
         }
@@ -2820,13 +2916,14 @@
       const savedStart = localStorage.getItem(activeShiftKey);
 
       if (!savedStart) {
-        // [MODIFICADO] Validación estricta en código (18:00 a 03:00) con aviso limpio sin horas visibles
+        // [CORREGIDO] Validación estricta y absoluta en código (18:00 a 03:00 Hora Colombia)
         const colDateStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
         const colHour = new Date(colDateStr).getHours();
         
         const isAllowedHour = colHour >= 18 || colHour < 3;
+        const isMike = currentUser.username.toLowerCase() === 'mike_covid';
         
-        if (!isAllowedHour && currentUser.username.toLowerCase() !== 'mike_covid') {
+        if (!isAllowedHour && !isMike) {
           playSound('error');
           alert("⚠ No se puede iniciar servicio en este momento. Fuera del horario autorizado.");
           return;
