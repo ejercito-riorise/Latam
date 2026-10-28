@@ -238,10 +238,10 @@
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-clock text-blue-400 text-sm"></i>
-              <h3 class="font-bold text-white text-xs">Control de Servicio (18:00 - 03:00)</h3>
+              <h3 class="font-bold text-white text-xs">Control de Servicio Táctico</h3>
             </div>
             <div class="flex items-center gap-1.5">
-              <span id="scheduleStatusIndicator" class="text-[9px] px-2 py-0.5 rounded font-bold">Verificando...</span>
+              <span id="scheduleStatusIndicator" class="text-[9px] px-2 py-0.5 rounded font-bold">Sistema Activo</span>
               <span id="shiftStatusBadge" class="text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold">FUERA DE SERVICIO</span>
             </div>
           </div>
@@ -338,22 +338,22 @@
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
               <div class="flex items-center justify-between border-b border-slate-900 pb-1.5">
                 <div class="flex items-center gap-1.5 font-bold text-xs text-blue-400">
-                  <i class="fa-solid fa-clock"></i> Horario Oficial & Conversor LATAM
+                  <i class="fa-solid fa-clock"></i> Conversor LATAM de Horarios
                 </div>
-                <span class="text-[9px] bg-blue-950 text-blue-300 px-2 py-0.5 rounded border border-blue-800">18:00 - 03:00 /TIME</span>
+                <span class="text-[9px] bg-blue-950 text-blue-300 px-2 py-0.5 rounded border border-blue-800">LATAM</span>
               </div>
-              <p class="text-[10px] text-slate-300">Selecciona tu país para conocer tu hora exacta de ingreso al servidor:</p>
+              <p class="text-[10px] text-slate-300">Selecciona tu país para conocer la equivalencia de hora exacta en tu región:</p>
               
               <div class="grid grid-cols-2 gap-1.5">
                 <select id="latamCountrySelect" onchange="updateLatamCountryTime()" class="w-full bg-slate-900 border border-slate-700 text-white text-[11px] rounded p-1.5 focus:outline-none">
-                  <option value="colombia">🇨🇴 Colombia / Perú / Ecuador / Panamá (18:00)</option>
-                  <option value="arg">🇦🇷 Argentina / Chile / Uruguay / Paraguay (20:00)</option>
-                  <option value="venezuela">🇧🇴 Bolivia / Venezuela (19:00)</option>
-                  <option value="mexico">🇲🇽 México / C. Rica / Gtala / El Salvador (17:00)</option>
+                  <option value="colombia">🇨🇴 Colombia / Perú / Ecuador / Panamá</option>
+                  <option value="arg">🇦🇷 Argentina / Chile / Uruguay / Paraguay</option>
+                  <option value="venezuela">🇧🇴 Bolivia / Venezuela</option>
+                  <option value="mexico">🇲🇽 México / C. Rica / Gtala / El Salvador</option>
                 </select>
                 <div id="latamResultBox" class="bg-blue-600/20 border border-blue-500/40 rounded p-1.5 text-center flex flex-col justify-center">
-                  <span class="text-[9px] text-slate-300">Hora de inicio:</span>
-                  <span id="latamTimeDisplay" class="text-xs font-bold text-blue-300">18:00 (6:00 PM)</span>
+                  <span class="text-[9px] text-slate-300">Hora base:</span>
+                  <span id="latamTimeDisplay" class="text-xs font-bold text-blue-300">Referencia Oficial</span>
                 </div>
               </div>
             </div>
@@ -464,9 +464,8 @@
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
                   <div class="flex justify-between items-center font-bold text-amber-400 text-xs">
                     <span>🚚 1. CRM (Cargamento)</span>
-                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">17:00 / 19:00 /TIME</span>
+                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Operativa Diaria</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Horarios:</strong> 17:00 y 19:00 /TIME (Todos los días, 2 veces al día).</p>
                   <p class="text-slate-300 text-[10px]"><strong>Dinámica:</strong> La EB transporta material desde el puerto con un camión para fabricar armas, apoyados por la Policía Federal (PF). Las mafias intentarán interceptarlo y robarlo para llevarlo a su mansión.</p>
                 </div>
 
@@ -483,8 +482,8 @@
                     <span>🎯 3. Pacificaciones y Operaciones</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Guerra de Territorio</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Sábado (21:00 a 22:00):</strong> Operación de pacificación del Ejército contra las mafias.</p>
-                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Domingo y Lunes (21:00 a 00:00):</strong> Operación conjunta de la EB y la Policía Federal contra las facciones.</p>
+                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Sábado:</strong> Operación de pacificación del Ejército contra las mafias.</p>
+                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Domingo y Lunes:</strong> Operación conjunta de la EB y la Policía Federal contra las facciones.</p>
                 </div>
 
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
@@ -492,9 +491,8 @@
                     <span>⚔️ 4. Invasiones del EB (Martes y Jueves)</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Facciones y Mafias</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Martes:</strong> Facciones Morada y Verde de <strong>17:00 a 24:00</strong>.</p>
-                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Jueves:</strong> Mafia Blanca y Mafia Azul pueden programar una acción contra el EB entre las <strong>19:00 y las 23:00</strong>.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Regla de Intervalo:</strong> Es obligatorio un intervalo mínimo de <strong>2 horas</strong> entre acciones (no se permiten intervalos inferiores).</p>
+                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Martes:</strong> Facciones Morada y Verde.</p>
+                  <p class="text-slate-300 text-[10px]">🗓️ <strong>Jueves:</strong> Mafia Blanca y Mafia Azul pueden programar una acción contra el EB.</p>
                   <div class="bg-red-950/40 border border-red-800/60 p-2 rounded text-red-300 text-[10px] space-y-1 mt-1">
                     <p class="font-bold">🚨 Reglas Adicionales de Maletines:</p>
                     <p>Si una familia roba un maletín durante una acción de la mafia en el EB, la familia que conquiste la mafia en ausencia de la otra verá su mafia <strong>reiniciada y recibirá una advertencia</strong>. La mafia anterior recuperará su mafia.</p>
@@ -521,7 +519,6 @@
                   </div>
                   <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a nuevos reclutas con poco conocimiento de la organización.</p>
                   <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Obedecer órdenes de todos los superiores. Cuida ubicaciones específicas de la base como guardia vigilando que nadie entre.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Equipo:</strong> Se le otorga armamento para defender la base, chalecos antibalas y armas taser (pistolas de bajo calibre).</p>
                 </div>
 
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
@@ -530,8 +527,7 @@
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Intermedio</span>
                   </div>
                   <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Para quienes tienen leve experiencia, compromiso y estudio.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Encargados de la enseñanza, educación, manejo y control de los privados (como profesores que ayudan a los nuevos).</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Acciones:</strong> Participan de las acciones siempre que estén autorizados. Son soldados de rendimiento intermedio y ejemplo de comportamiento.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Encargados de la enseñanza, educación, manejo y control de los privados.</p>
                 </div>
 
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
@@ -540,8 +536,7 @@
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Amplitud Mental</span>
                   </div>
                   <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a quienes demostraron amplitud mental, compromiso, actividad, estudio y conocimiento.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Conocen las normas y manejo de base. Verifican el aprendizaje de sargentos a privados y que todo esté en orden.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Acciones y Vehículos:</strong> Participan en las acciones y tienen permitido el uso de vehículos militares para movilización en base y control.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Conocen las normas y manejo de base. Verifican el aprendizaje de sargentos a privados.</p>
                 </div>
 
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
@@ -549,9 +544,8 @@
                     <span>⭐⭐⭐⭐ RANGO 4 / MAYOR</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Soldados Élite</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Solo para los más destacados de la base (soldados élite con tiempo, experiencia, estudio y actividad).</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Garantizar el bien de la base militar. Lideran rangos anteriores, organizan, enseñan y verifican el orden.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Acciones:</strong> Participan en todas las acciones (lo mejor de lo mejor). Se les permite utilizar <strong>toda arma de fuego</strong>.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Solo para los más destacados de la base (soldados élite con tiempo, experiencia y estudio).</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Acciones:</strong> Participan en todas las acciones y se les permite utilizar <strong>toda arma de fuego</strong>.</p>
                 </div>
 
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
@@ -560,7 +554,6 @@
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Jefes / Vice-líderes</span>
                   </div>
                   <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado por el General a sus soldados de confianza. Son jefes y vice-líderes de las fuerzas armadas.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Totalmente responsables de todo lo que pasa en la base. Pendientes de todas las acciones y situaciones de la organización.</p>
                   <p class="text-slate-300 text-[10px]"><strong>Mando:</strong> Dan las órdenes y mandan cuando el General no está. Sus órdenes <strong>no se cuestionan, se cumplen</strong>.</p>
                 </div>
               </div>
@@ -603,25 +596,14 @@
               </div>
               <p class="text-[10px] text-slate-300">Toca el mapa para ampliarlo y revisa los puntos tácticos activos reportados por el Alto Mando:</p>
               
-              <!-- Contenedor Mapa con Marcadores Tácticos Dinámicos -->
               <div class="rounded-lg overflow-hidden border border-slate-700 bg-slate-900 cursor-pointer group relative text-center" onclick="openImageModal('https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9')">
                 <img src="https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9" alt="Mapa Base Rio Rise" class="w-full h-auto object-cover max-h-56 group-hover:scale-105 transition duration-300" loading="lazy">
                 
-                <!-- Capa de Marcadores en vivo -->
-                <div id="liveMapPinsContainer" class="absolute inset-0 pointer-events-none p-3 flex flex-wrap content-end gap-1">
-                  <!-- Se inyectan pines aquí -->
-                </div>
+                <div id="liveMapPinsContainer" class="absolute inset-0 pointer-events-none p-3 flex flex-wrap content-end gap-1"></div>
 
                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1.5">
                   <i class="fa-solid fa-magnifying-glass-plus text-amber-400"></i> Toca para ampliar mapa en alta resolución
                 </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-1.5 text-[10px] pt-1">
-                <div class="bg-slate-900 p-1.5 rounded border border-slate-800 text-slate-300">🛡️ <strong>Torres Tango:</strong> 1 al 8 perimetrales</div>
-                <div class="bg-slate-900 p-1.5 rounded border border-slate-800 text-slate-300">🚁 <strong>Helipuerto & Aéreo:</strong> Zona sur de despliegue</div>
-                <div class="bg-slate-900 p-1.5 rounded border border-slate-800 text-slate-300">🚗 <strong>Garajes:</strong> 1, 2 y 3 operativos</div>
-                <div class="bg-slate-900 p-1.5 rounded border border-slate-800 text-slate-300">⚡ <strong>Planta Eléctrica:</strong> Sector este protegido</div>
               </div>
             </div>
           </div>
@@ -640,9 +622,7 @@
           <i class="fa-solid fa-triangle-exclamation animate-bounce"></i> Examen Obligatorio de Privados
         </h4>
       </div>
-      <p class="text-[11px] text-slate-300">
-        Debes aprobar obligatoriamente la evaluación táctica de rangos, acciones, Biblia RP y códigos de radio para desbloquear tu acceso.
-      </p>
+      <p class="text-[11px] text-slate-300">Debes aprobar obligatoriamente la evaluación táctica para desbloquear tu acceso.</p>
       <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
         <p id="examQuestion" class="text-xs font-bold text-white"></p>
         <div id="examOptions" class="space-y-1.5"></div>
@@ -677,9 +657,7 @@
           <i class="fa-solid fa-square-poll-vertical animate-pulse"></i> Encuesta Oficial Obligatoria
         </h4>
       </div>
-      <p class="text-[11px] text-slate-300">
-        El Alto Mando requiere tu voto en la siguiente encuesta oficial para continuar operando en la intranet:
-      </p>
+      <p class="text-[11px] text-slate-300">El Alto Mando requiere tu voto en la siguiente encuesta oficial:</p>
       <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
         <p id="pollModalQuestion" class="text-xs font-bold text-white"></p>
         <div id="pollModalOptions" class="space-y-1.5"></div>
@@ -713,13 +691,18 @@
         <!-- PESTAÑA TROPA Y SANCIONES -->
         <div id="viewActive" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa y Sanciones:</h4>
+          
+          <!-- HERRAMIENTA DE FORMACIONES AQUÍ -->
+          <button onclick="registrarAsistenciaFormacion(); playSound('click');" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded text-xs uppercase transition shadow flex items-center justify-center gap-1.5 my-1">
+            <i class="fa-solid fa-clipboard-user"></i> Registrar Formación Oficial
+          </button>
+          <div id="formacionesListContainer" class="space-y-1 mb-2"></div>
+
           <div id="activeList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
         <!-- PESTAÑA HOY -->
         <div id="viewDaily" class="space-y-2 hidden">
-          
-          <!-- BOTÓN DE ALARMA ROJA PARA COMANDANCIA -->
           <div class="bg-red-950/60 border border-red-600/80 p-3 rounded-xl flex items-center justify-between shadow-lg mb-2">
             <div>
               <h4 class="text-xs font-bold text-red-400"><i class="fa-solid fa-triangle-exclamation"></i> Alarma de Base</h4>
@@ -951,7 +934,6 @@
     let examQuestionsPool = [];
     let currentExamIndex = 0;
 
-    // --- SINTETIZADOR DE AUDIO TÁCTICO (WEB AUDIO API) ---
     function playSound(type) {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1117,10 +1099,10 @@
       const country = document.getElementById('latamCountrySelect').value;
       const display = document.getElementById('latamTimeDisplay');
       if (!display) return;
-      if (country === 'colombia') display.innerText = "18:00 (6:00 PM)";
-      else if (country === 'arg') display.innerText = "20:00 (8:00 PM)";
-      else if (country === 'venezuela') display.innerText = "19:00 (7:00 PM)";
-      else if (country === 'mexico') display.innerText = "17:00 (5:00 PM)";
+      if (country === 'colombia') display.innerText = "Colombia (Base 18:00)";
+      else if (country === 'arg') display.innerText = "Argentina (+2h)";
+      else if (country === 'venezuela') display.innerText = "Venezuela (+1h)";
+      else if (country === 'mexico') display.innerText = "México (-1h)";
     }
 
     function switchRegTab(tabNum) {
@@ -1421,6 +1403,56 @@
       container.innerHTML = html;
     }
 
+    // --- HERRAMIENTA DE FORMACIONES ---
+    function registrarAsistenciaFormacion() {
+      const tema = prompt("Indique el tema o motivo de la formación:", "Instrucción Táctica y Tiraeo");
+      if(!tema) return;
+      
+      let formaciones = JSON.parse(localStorage.getItem('rioRiseFormaciones') || '[]');
+      formaciones.push({
+        tema: tema,
+        organizador: `${currentUser.username} (${currentUser.rank})`,
+        fecha: getColombiaDateString(),
+        hora: new Date().toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' })
+      });
+      localStorage.setItem('rioRiseFormaciones', JSON.stringify(formaciones));
+      playSound('success');
+      alert("✔ Formación registrada y guardada en el historial táctico.");
+      renderFormacionesList();
+    }
+
+    function renderFormacionesList() {
+      const container = document.getElementById('formacionesListContainer');
+      if(!container) return;
+      let formaciones = JSON.parse(localStorage.getItem('rioRiseFormaciones') || '[]');
+      if(formaciones.length === 0) {
+        container.innerHTML = '<p class="text-[10px] text-slate-500 italic">No hay formaciones registradas recientemente.</p>';
+        return;
+      }
+      let html = '<div class="space-y-1 mb-2 max-h-32 overflow-y-auto">';
+      formaciones.slice(-5).reverse().forEach((f, idx) => {
+        html += `
+          <div class="bg-slate-950 p-2 rounded border border-purple-900/40 text-[10px] flex justify-between items-center">
+            <div>
+              <span class="font-bold text-purple-300">🎓 ${f.tema}</span>
+              <div class="text-slate-400">Org: ${f.organizador} • 📅 ${f.fecha} ${f.hora}</div>
+            </div>
+            <button onclick="eliminarFormacion(${idx})" class="text-red-400 hover:text-red-300 p-1" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function eliminarFormacion(index) {
+      if(!confirm("¿Eliminar registro de formación?")) return;
+      let formaciones = JSON.parse(localStorage.getItem('rioRiseFormaciones') || '[]');
+      formaciones.splice(index, 1);
+      localStorage.setItem('rioRiseFormaciones', JSON.stringify(formaciones));
+      renderFormacionesList();
+    }
+
     async function handlePublishPoll(e) {
       e.preventDefault();
       const rankLower = (currentUser.rank || '').toLowerCase();
@@ -1595,15 +1627,8 @@
     function updateScheduleIndicator() {
       const indicator = document.getElementById('scheduleStatusIndicator');
       if (!indicator) return;
-      const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-      const isAllowedHour = (currentHour >= 17 || currentHour < 3);
-      if (isAllowedHour) {
-        indicator.innerText = "🟢 Servicio Habilitado";
-        indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
-      } else {
-        indicator.innerText = "🔴 Fuera de Horario";
-        indicator.className = "text-[9px] bg-red-950 text-red-400 border border-red-900 px-2 py-0.5 rounded font-bold";
-      }
+      indicator.innerText = "🟢 Sistema Operativo";
+      indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
     }
 
     function showAuthTab(tab) {
@@ -1787,6 +1812,10 @@
       const targetTab = document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       if (targetView) targetView.classList.remove('hidden');
       if (targetTab) targetTab.className = "py-1.5 text-[9px] font-bold rounded bg-blue-600 text-white shadow transition";
+
+      if(tab === 'active') {
+        renderFormacionesList();
+      }
 
       const rankLower = (currentUser.rank || '').toLowerCase();
       const isHigherOrMayor = currentUser.username.toLowerCase() === 'mike_covid' || ['general', 'coronel', 'mayor'].includes(rankLower);
@@ -2553,24 +2582,6 @@
           return;
         }
 
-        const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
-        const colombiaDate = new Date(colombiaTimeStr);
-        const currentHour = colombiaDate.getHours();
-
-        const startDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
-        const currentDateStr = colombiaDate.toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
-
-        if (startDateStr !== currentDateStr || (currentHour >= 3 && currentHour < 17)) {
-          alert('⏰ El turno anterior quedó colgado de otro día y fue cerrado automáticamente.');
-          const cutTime = new Date(colombiaDate);
-          cutTime.setHours(3, 0, 0, 0);
-          const forcedEndTime = cutTime.getTime() > startTime ? cutTime.getTime() : (startTime + (3600000 * 2));
-          localStorage.removeItem(`shiftStart_${currentUser.username}`);
-          currentUser.activeShiftStart = null;
-          processAndSaveSplitShift(startTime, forcedEndTime);
-          return;
-        }
-
         activateShiftUI(startTime);
       }
     }
@@ -2610,23 +2621,6 @@
           return;
         }
 
-        const colombiaTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
-        const colombiaDate = new Date(colombiaTimeStr);
-        
-        if (colombiaDate.getHours() >= 3 && colombiaDate.getHours() < 17) {
-          if (localStorage.getItem(`shiftStart_${currentUser.username}`)) {
-            alert('El servicio se cerró automáticamente por horario oficial de cierre (03:00 am).');
-            const cutTime = new Date(colombiaDate);
-            cutTime.setHours(3, 0, 0, 0);
-            const forcedEndTime = cutTime.getTime();
-            localStorage.removeItem(`shiftStart_${currentUser.username}`);
-            clearInterval(shiftInterval);
-            shiftInterval = null;
-            processAndSaveSplitShift(startTime, forcedEndTime);
-            return;
-          }
-        }
-
         updateTimerDisplayLive(startTime);
         updateActiveShiftVisualCounter(startTime);
         updateTodayHoursLive();
@@ -2638,12 +2632,7 @@
       const savedStart = localStorage.getItem(activeShiftKey);
 
       if (!savedStart) {
-        const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-        if (!(currentHour >= 17 || currentHour < 3)) {
-          alert('El Ejército no se encuentra habilitado en este horario (18:00 a 03:00 /TIME).');
-          return;
-        }
-
+        // [MODIFICADO] Ya no bloquea por hora visible en interfaz, pero calcula en base a la hora colombiana interna del sistema
         const startTime = Date.now();
         localStorage.setItem(activeShiftKey, startTime);
         currentUser.activeShiftStart = startTime;
@@ -3012,8 +3001,6 @@
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
-      const currentHour = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })).getHours();
-      const isAllowedNight = (currentHour >= 17 || currentHour < 3);
       const todayStr = getColombiaDateString();
 
       let dailyTotals = {};
@@ -3069,11 +3056,7 @@
       dailyArray.forEach((u, index) => {
         let statusBadge = '';
         if (u.isConnected) {
-          if (isAllowedNight) {
-            statusBadge = `<span class="inline-flex items-center justify-center gap-1 text-[8px] text-emerald-400 font-bold bg-emerald-950/90 border border-emerald-800 px-1.5 py-0.5 rounded whitespace-nowrap w-[95px] text-center"><i class="fa-solid fa-circle text-[5px] animate-ping"></i> EN SERVICIO</span>`;
-          } else {
-            statusBadge = `<span class="inline-flex items-center justify-center gap-1 text-[8px] text-amber-300 font-bold bg-amber-950/90 border border-amber-800 px-1.5 py-0.5 rounded whitespace-nowrap w-[95px] text-center"><i class="fa-solid fa-triangle-exclamation text-[7px]"></i> FUERA TURNO</span>`;
-          }
+          statusBadge = `<span class="inline-flex items-center justify-center gap-1 text-[8px] text-emerald-400 font-bold bg-emerald-950/90 border border-emerald-800 px-1.5 py-0.5 rounded whitespace-nowrap w-[95px] text-center"><i class="fa-solid fa-circle text-[5px] animate-ping"></i> EN SERVICIO</span>`;
         } else {
           statusBadge = `<span class="inline-flex items-center justify-center gap-1 text-[8px] text-slate-400 font-bold bg-slate-950 border border-slate-800 px-1.5 py-0.5 rounded whitespace-nowrap w-[95px] text-center"><i class="fa-solid fa-circle text-[5px] text-slate-600"></i> DESCONECTADO</span>`;
         }
