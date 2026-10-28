@@ -2284,6 +2284,7 @@
         startRealtimeSync();
         renderMapPins();
         checkEmergencyStatus();
+        checkShiftButtonAvailability();
       }
     }
 
@@ -2309,6 +2310,7 @@
       startRealtimeSync();
       renderMapPins();
       checkEmergencyStatus();
+      checkShiftButtonAvailability();
     }
 
     function startRealtimeSync() {
@@ -2318,6 +2320,7 @@
           updateScheduleIndicator();
           checkEmergencyStatus();
           checkActiveCustomFormation();
+          checkShiftButtonAvailability();
           const response = await fetch(WEB_APP_URL);
           const resData = await response.json();
           cachedData = resData;
@@ -2911,14 +2914,36 @@
       }, 1000);
     }
 
+    // [VALIDACIÓN Y DESACTIVACIÓN VISUAL DE BOTÓN FUERA DE HORARIO]
+    function checkShiftButtonAvailability() {
+      if (!currentUser) return;
+      const isMike = currentUser.username.toLowerCase() === 'mike_covid';
+      if (isMike) return;
+
+      const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric' };
+      const colombiaHourStr = new Intl.DateTimeFormat('en-US', options).format(new Date());
+      const colHour = parseInt(colombiaHourStr, 10);
+      const isAllowedHour = colHour >= 18 || colHour < 3;
+
+      const btn = document.getElementById('btnToggleShift');
+      const activeShiftKey = `shiftStart_${currentUser.username}`;
+      
+      if (!isAllowedHour && !localStorage.getItem(activeShiftKey) && btn) {
+        btn.style.opacity = "0.5";
+        btn.style.cursor = "not-allowed";
+        btn.title = "Fuera del horario autorizado";
+      }
+    }
+
     async function toggleShift() {
       const activeShiftKey = `shiftStart_${currentUser.username}`;
       const savedStart = localStorage.getItem(activeShiftKey);
 
       if (!savedStart) {
-        // [CORREGIDO] Validación estricta y absoluta en código (18:00 a 03:00 Hora Colombia)
-        const colDateStr = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
-        const colHour = new Date(colDateStr).getHours();
+        // [VALIDACIÓN ESTRICTA HORA COLOMBIA]
+        const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric' };
+        const colombiaHourStr = new Intl.DateTimeFormat('en-US', options).format(new Date());
+        const colHour = parseInt(colombiaHourStr, 10);
         
         const isAllowedHour = colHour >= 18 || colHour < 3;
         const isMike = currentUser.username.toLowerCase() === 'mike_covid';
@@ -2949,6 +2974,7 @@
         document.getElementById('shiftStatusBadge').innerText = 'FUERA DE SERVICIO';
         document.getElementById('shiftStatusBadge').className = 'text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold';
         document.getElementById('timerDisplay').classList.add('hidden');
+        checkShiftButtonAvailability();
 
         await processAndSaveSplitShift(startTime, endTime);
       }
