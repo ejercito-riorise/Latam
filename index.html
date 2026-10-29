@@ -1470,7 +1470,7 @@
       container.innerHTML = html;
     }
 
-    // --- FORMACIONES MULTIPREGUNTA AVANZADAS ---
+    // --- FORMACIONES CLOUD MULTIPREGUNTA AVANZADAS ---
     function addQuestionToBuilder() {
       const qText = document.getElementById('newFormQuestion').value.trim();
       const optsStr = document.getElementById('newFormOptions').value.trim();
@@ -1520,69 +1520,100 @@
       renderBuilderQuestionsList();
     }
 
-    function launchCustomFormation() {
+    async function launchCustomFormation() {
       if(questionsBuilderArray.length === 0) {
         alert("Debes añadir al menos una pregunta al cuestionario.");
         return;
       }
 
       const seconds = parseInt(document.getElementById('newFormSeconds').value);
+      const timestamp = Date.now();
 
       const formationData = {
-        questions: [...questionsBuilderArray],
-        durationPerQuestion: seconds,
+        timestamp: timestamp,
         organizer: `${currentUser.username} (${currentUser.rank})`,
-        timestamp: Date.now(),
-        date: getColombiaDateString(),
-        results: {}
+        duration: seconds,
+        questions: JSON.stringify(questionsBuilderArray)
       };
 
-      localStorage.setItem('rioRiseActiveCustomFormation', JSON.stringify(formationData));
-      
-      let auditList = JSON.parse(localStorage.getItem('rioRiseFormationsAudit') || '[]');
-      auditList.push({
-        organizer: formationData.organizer,
-        question: `${questionsBuilderArray.length} preguntas en cuestionario`,
-        date: formationData.date,
-        time: new Date().toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' }),
-        resultsSummary: "Emitida (Multipregunta)"
-      });
-      localStorage.setItem('rioRiseFormationsAudit', JSON.stringify(auditList));
+      showTacticalLoader("EMITIENDO FORMACIÓN", "Transmitiendo cuestionario a la tropa en la nube...");
+      try {
+        await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'launchFormation',
+            timestamp: formationData.timestamp,
+            organizer: formationData.organizer,
+            duration: formationData.duration,
+            questions: formationData.questions
+          })
+        });
+        hideTacticalLoader();
 
-      questionsBuilderArray = [];
-      renderBuilderQuestionsList();
-      playSound('success');
-      alert("✔ Formación multipregunta emitida con éxito a toda la tropa.");
-      renderFormationsAuditLog();
+        questionsBuilderArray = [];
+        renderBuilderQuestionsList();
+        playSound('success');
+        alert("✔ Formación multipregunta emitida con éxito a través de la nube.");
+        loadSession();
+      } catch (err) {
+        hideTacticalLoader();
+        playSound('error');
+        alert("Error de conexión al emitir la formación.");
+      }
     }
 
-    function deactivateCustomFormation() {
-      localStorage.removeItem('rioRiseActiveCustomFormation');
-      document.getElementById('customFormationModal').classList.add('hidden');
-      if(formationCountdownInterval) clearInterval(formationCountdownInterval);
-      playSound('error');
-      alert("✔ Formación activa cerrada y desactivada por la Comandancia.");
-      renderFormationsAuditLog();
+    async function deactivateCustomFormation() {
+      showTacticalLoader("CERRANDO FORMACIÓN", "Desactivando en la red...");
+      try {
+        await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'deactivateFormation' })
+        });
+        hideTacticalLoader();
+        document.getElementById('customFormationModal').classList.add('hidden');
+        if(formationCountdownInterval) clearInterval(formationCountdownInterval);
+        playSound('error');
+        alert("✔ Formación activa cerrada y desactivada por la Comandancia.");
+        loadSession();
+      } catch (err) {
+        hideTacticalLoader();
+        playSound('error');
+        alert("Error al cerrar formación.");
+      }
     }
 
-    function checkActiveCustomFormation() {
-      if(!currentUser) return;
-      const activeFormJson = localStorage.getItem('rioRiseActiveCustomFormation');
-      if(!activeFormJson) return;
+    function checkActiveCustomFormationCloud(formaciones) {
+      if(!currentUser || !formaciones) return;
+      let activeCloudForm = formaciones.find(f => f.estado === 'active');
 
-      const formation = JSON.parse(activeFormJson);
-      const userCompletedKey = `completedFormation_${currentUser.username}_${formation.timestamp}`;
-      if(localStorage.getItem(userCompletedKey)) return;
+      if (activeCloudForm) {
+        let parsedQuestions = [];
+        try { parsedQuestions = JSON.parse(activeCloudForm.questions); } catch(e){}
+        
+        let cloudSession = {
+          timestamp: activeCloudForm.timestamp,
+          organizer: activeCloudForm.organizer,
+          durationPerQuestion: parseInt(activeCloudForm.duration || 45),
+          questions: parsedQuestions
+        };
 
-      // [CORREGIDO: Evitar que se relance si ya está abierto el modal en pantalla]
-      if (activeFormationSession && activeFormationSession.timestamp === formation.timestamp) return;
-
-      activeFormationSession = formation;
-      currentFormationStep = 0;
-      userFormationAnswers = {};
-
-      loadFormationStep();
-      document.getElementById('customFormationModal').classList.remove('hidden');
+        const userCompletedKey = `completedFormation_${currentUser.username}_${cloudSession.timestamp}`;
+        if (!localStorage.getItem(userCompletedKey)) {
+          if (!activeFormationSession || activeFormationSession.timestamp !== cloudSession.timestamp) {
+            activeFormationSession = cloudSession;
+            currentFormationStep = 0;
+            userFormationAnswers = {};
+            loadFormationStep();
+            document.getElementById('customFormationModal').classList.remove('hidden');
+          }
+        }
+      } else {
+        if (activeFormationSession) {
+          document.getElementById('customFormationModal').classList.add('hidden');
+          if(formationCountdownInterval) clearInterval(formationCountdownInterval);
+          activeFormationSession = null;
+        }
+      }
     }
 
     function loadFormationStep() {
@@ -1655,7 +1686,7 @@
       }, 1200);
     }
 
-    function finishCustomFormationSubmission() {
+    async function finishCustomFormationSubmission() {
       if(formationCountdownInterval) clearInterval(formationCountdownInterval);
 
       let correctCount = 0;
@@ -1668,64 +1699,71 @@
         summaryDetails.push(`P${parseInt(step)+1}: ${ans.correct ? '✔' : '❌'} (${ans.selectedText || 'Ninguna'})`);
       }
 
-      let finalScore = Math.round((correctCount / totalQ) * 100);
+      let finalScore = `${Math.round((correctCount / totalQ) * 100)}% (${correctCount}/${totalQ} aciertos)`;
 
-      let formation = JSON.parse(localStorage.getItem('rioRiseActiveCustomFormation') || '{}');
-      if(formation.results) {
-        formation.results[currentUser.username] = {
-          score: `${finalScore}% (${correctCount}/${totalQ} aciertos)`,
-          details: summaryDetails
-        };
-        localStorage.setItem('rioRiseActiveCustomFormation', JSON.stringify(formation));
+      showTacticalLoader("REGISTRANDO RESULTADOS", "Enviando tu nota al servidor...");
+      try {
+        await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'submitFormationResult',
+            timestamp: activeFormationSession.timestamp,
+            username: currentUser.username,
+            score: finalScore,
+            details: summaryDetails
+          })
+        });
+        hideTacticalLoader();
+      } catch (e) {
+        hideTacticalLoader();
       }
 
       localStorage.setItem(`completedFormation_${currentUser.username}_${activeFormationSession.timestamp}`, 'true');
 
       document.getElementById('customFormationModal').classList.add('hidden');
-      alert(`🎯 ¡Formación Finalizada!\nPuntuación: ${finalScore}% (${correctCount} de ${totalQ} aciertos).`);
+      playSound('success');
+      alert(`🎯 ¡Formación Finalizada!\nPuntuación registrada: ${finalScore}`);
       activeFormationSession = null;
     }
 
     function renderFormationsAuditLog() {
       const container = document.getElementById('auditFormationsContainer');
-      if(!container) return;
-      let auditList = JSON.parse(localStorage.getItem('rioRiseFormationsAudit') || '[]');
-      let activeForm = JSON.parse(localStorage.getItem('rioRiseActiveCustomFormation') || 'null');
+      if(!container || !cachedData || !cachedData.formaciones) return;
+      let formaciones = cachedData.formaciones;
 
-      if(auditList.length === 0 && !activeForm) {
+      if(formaciones.length === 0) {
         container.innerHTML = '<p class="text-[10px] text-slate-500 italic">No hay registros de auditoría recientes.</p>';
         return;
       }
 
       let html = '';
-      if(activeForm) {
-        let resultsCount = Object.keys(activeForm.results || {}).length;
+      [...formaciones].reverse().forEach(f => {
+        let resultsObj = {};
+        try { resultsObj = JSON.parse(f.results || '{}'); } catch(e){}
+        let participantsCount = Object.keys(resultsObj).length;
+
+        let badgeStatus = f.estado === 'active' ? `<span class="text-emerald-400 font-bold">⚡ ACTIVA</span>` : `<span class="text-slate-400">Finalizada</span>`;
+
         html += `
-          <div class="bg-purple-950/60 p-2.5 rounded border border-purple-500/60 text-[10px] space-y-1 mb-2">
+          <div class="bg-slate-950 p-2.5 rounded border border-slate-800 text-[10px] space-y-1">
             <div class="flex justify-between items-center font-bold text-purple-300">
-              <span>⚡ Formación Activa (${activeForm.questions.length} preguntas)</span>
-              <span class="text-cyan-400">Respuestas: ${resultsCount}</span>
+              <span>Org: ${f.organizer}</span>
+              ${badgeStatus}
             </div>
-            <div class="text-slate-300">Org: ${activeForm.organizer}</div>
+            <div class="text-slate-300">Soldados evaluados: <span class="text-cyan-400 font-bold">${participantsCount}</span></div>
         `;
-        if(resultsCount > 0) {
-          html += `<div class="pt-1 border-t border-purple-900/40 text-[9px] space-y-1">`;
-          for(let user in activeForm.results) {
-            let res = activeForm.results[user];
-            html += `<div>• <span class="text-white font-bold">${user}</span>: <span class="text-emerald-400 font-bold">${res.score}</span><br><span class="text-slate-400">${res.details.join(' | ')}</span></div>`;
+
+        if(participantsCount > 0) {
+          html += `<div class="pt-1 border-t border-slate-900 space-y-0.5 text-[9px]">`;
+          for(let username in resultsObj) {
+            let res = resultsObj[username];
+            let detailsStr = Array.isArray(res.details) ? res.details.join(' | ') : '';
+            html += `<div>• <span class="text-white font-bold">${username}</span>: <span class="text-emerald-400 font-bold">${res.score}</span> <span class="text-slate-400">(${detailsStr})</span></div>`;
           }
           html += `</div>`;
         }
-        html += `</div>`;
-      }
 
-      auditList.slice(-5).reverse().forEach(a => {
-        html += `
-          <div class="bg-slate-950 p-2 rounded border border-slate-800 text-[10px]">
-            <div class="font-bold text-cyan-300">${a.question}</div>
-            <div class="text-slate-400">Org: ${a.organizer} • 📅 ${a.date} ${a.time}</div>
-          </div>
-        `;
+        html += `</div>`;
       });
 
       container.innerHTML = html;
@@ -2266,6 +2304,7 @@
           checkAuthorNotifications(cachedData.news, cachedData.doctrina, cachedData.polls);
           updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina, cachedData.polls);
           checkMandatoryPoll(cachedData.polls || []);
+          checkActiveCustomFormationCloud(cachedData.formaciones || []);
           
           const freshUser = cachedData.users.find(u => String(u.username).trim().toLowerCase() === currentUser.username.toLowerCase());
           if (freshUser) {
@@ -2283,7 +2322,6 @@
         checkActiveShiftOnLoad();
         updateScheduleIndicator();
         checkPrivateExamRequirement(currentUser);
-        checkActiveCustomFormation();
         startRealtimeSync();
         renderMapPins();
         checkEmergencyStatus();
@@ -2304,12 +2342,12 @@
       checkAuthorNotifications(resData.news, resData.doctrina, resData.polls);
       updateCommandAlertBadges(resData.users, resData.news, resData.doctrina, resData.polls);
       checkMandatoryPoll(resData.polls || []);
+      checkActiveCustomFormationCloud(resData.formaciones || []);
       updateTodayHoursLive();
       applyPermissions(currentUser);
       checkActiveShiftOnLoad();
       updateScheduleIndicator();
       checkPrivateExamRequirement(currentUser);
-      checkActiveCustomFormation();
       startRealtimeSync();
       renderMapPins();
       checkEmergencyStatus();
@@ -2322,7 +2360,6 @@
         try {
           updateScheduleIndicator();
           checkEmergencyStatus();
-          checkActiveCustomFormation();
           checkShiftButtonAvailability();
           const response = await fetch(WEB_APP_URL);
           const resData = await response.json();
@@ -2332,6 +2369,7 @@
           checkAuthorNotifications(resData.news, resData.doctrina, resData.polls);
           updateCommandAlertBadges(resData.users, resData.news, resData.doctrina, resData.polls);
           checkMandatoryPoll(resData.polls || []);
+          checkActiveCustomFormationCloud(resData.formaciones || []);
           updateTodayHoursLive();
           if (!document.getElementById('viewDaily').classList.contains('hidden')) {
             renderDailyRanking(resData.users.filter(u => u.status && u.status.toLowerCase() === 'approved'), resData.history);
@@ -3233,6 +3271,7 @@
           });
         }
 
+        renderFormationsAuditLog();
         renderDailyRanking(users.filter(u => u.status && u.status.toLowerCase() === 'approved'), history);
       } catch (e) {}
     }
@@ -3306,7 +3345,6 @@
       loadControlPanelData();
     }
 
-    // [CORREGIDO: Monitor de Hoy muestra estrictamente el turno activo en curso de cada soldado]
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
