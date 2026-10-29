@@ -535,7 +535,7 @@
                     <span>⭐⭐⭐ RANGO 3 / TENIENTES</span>
                     <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Amplitud Mental</span>
                   </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a quienes demostraron amplitud mental, compromiso, actividad, estudio y conocimiento.</p>
+                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado to quienes demostraron amplitud mental, compromiso, actividad, estudio y conocimiento.</p>
                   <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Conocen las normas y manejo de base. Verifican el aprendizaje de sargentos a privados.</p>
                 </div>
 
@@ -1574,6 +1574,9 @@
       const userCompletedKey = `completedFormation_${currentUser.username}_${formation.timestamp}`;
       if(localStorage.getItem(userCompletedKey)) return;
 
+      // [CORREGIDO: Evitar que se relance si ya está abierto el modal en pantalla]
+      if (activeFormationSession && activeFormationSession.timestamp === formation.timestamp) return;
+
       activeFormationSession = formation;
       currentFormationStep = 0;
       userFormationAnswers = {};
@@ -2337,7 +2340,6 @@
       }, 5000);
     }
 
-    // [CORREGIDO: Muestra estrictamente el tiempo de tu turno actual en vivo]
     function updateTodayHoursLive() {
       const el = document.getElementById('profileTodayHours');
       if (!el) return;
@@ -2900,7 +2902,6 @@
       }, 1000);
     }
 
-    // [VALIDACIÓN Y DESACTIVACIÓN VISUAL DE BOTÓN FUERA DE HORARIO]
     function checkShiftButtonAvailability() {
       if (!currentUser) return;
       const isMike = currentUser.username.toLowerCase() === 'mike_covid';
@@ -2926,7 +2927,6 @@
       const savedStart = localStorage.getItem(activeShiftKey);
 
       if (!savedStart) {
-        // [VALIDACIÓN ESTRICTA HORA COLOMBIA]
         const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric' };
         const colombiaHourStr = new Intl.DateTimeFormat('en-US', options).format(new Date());
         const colHour = parseInt(colombiaHourStr, 10);
@@ -3306,6 +3306,7 @@
       loadControlPanelData();
     }
 
+    // [CORREGIDO: Monitor de Hoy muestra estrictamente el turno activo en curso de cada soldado]
     function renderDailyRanking(activeUsers, history) {
       const dailyReportList = document.getElementById('dailyReportList');
       if (!dailyReportList) return;
@@ -3323,16 +3324,6 @@
         }; 
       });
 
-      if (history && history.length > 0) {
-        history.forEach(h => {
-          if (h.username && dailyTotals[h.username.toLowerCase()]) {
-            if (normalizeDate(h.fecha) === todayStr) {
-              dailyTotals[h.username.toLowerCase()].totalHours += parseFloat(h.horas || 0);
-            }
-          }
-        });
-      }
-
       Object.keys(dailyTotals).forEach(key => {
         let u = dailyTotals[key];
         if (u.activeShiftStart) {
@@ -3341,9 +3332,8 @@
           
           if (shiftStartDateStr === todayStr) {
             const elapsed = Math.min(MAX_SHIFT_MS, Date.now() - startTime);
-            if (elapsed < MAX_SHIFT_MS) {
-              const liveHours = elapsed / 3600000;
-              u.totalHours += liveHours;
+            if (elapsed > 0) {
+              u.totalHours = elapsed / 3600000;
               u.isConnected = true;
             }
           }
