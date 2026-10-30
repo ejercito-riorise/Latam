@@ -2909,8 +2909,6 @@
 
     function checkShiftButtonAvailability() {
       if (!currentUser) return;
-      const isMike = currentUser.username.toLowerCase() === 'mike_covid';
-      if (isMike) return;
 
       const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric', minute: 'numeric' };
       const formatter = new Intl.DateTimeFormat('en-US', options);
@@ -2930,7 +2928,6 @@
       const btn = document.getElementById('btnToggleShift');
       const activeShiftKey = `shiftStart_${currentUser.username}`;
       
-      // SIN MENSAJES DE HORAS EN ALERTAS (Como solicitaste, los usuarios ya conocen los horarios)
       if (!isAllowedHour && !localStorage.getItem(activeShiftKey) && btn) {
         btn.disabled = true;
         btn.style.opacity = "0.4";
@@ -2963,9 +2960,7 @@
         const endAllowedMinutes = 3 * 60;
         const isAllowedHour = (currentMinutesTotal >= startAllowedMinutes) || (currentMinutesTotal < endAllowedMinutes);
         
-        const isMike = currentUser.username.toLowerCase() === 'mike_covid';
-        
-        if (!isAllowedHour && !isMike) {
+        if (!isAllowedHour) {
           playSound('error');
           alert("⚠ Servicio no disponible en este momento.");
           return;
