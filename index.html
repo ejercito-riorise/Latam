@@ -778,10 +778,10 @@
           <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando...</p></div>
         </div>
         
-        <!-- PESTAÑA FILTROS -->
+        <!-- PESTAÑA FILTROS Y TURNOS -->
         <div id="viewFilters" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Rendimiento e Historial:</h4>
+            <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Rendimiento por Turnos:</h4>
             <button onclick="exportVisualRankingCSV(); playSound('click');" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
               <i class="fa-solid fa-file-excel"></i> Descargar Excel
             </button>
@@ -799,8 +799,9 @@
               </div>
             </div>
             <div>
-              <label class="block text-[10px] text-slate-400 mb-1">Modo de Visualización:</label>
+              <label class="block text-[10px] text-slate-400 mb-1">Filtrar por:</label>
               <select id="filterMode" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
+                <option value="turnos">🔄 Agrupar por Turnos (18:00 a 03:00)</option>
                 <option value="summary">📊 Resumen General (Suma total por soldado)</option>
                 <option value="detailed">📋 Historial Detallado (Registro por registro)</option>
               </select>
@@ -2088,7 +2089,7 @@
           <button onclick="switchAdminTab('pending'); playSound('click');" id="adminTabPending" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Solicitudes</button>
           <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa & Sanciones</button>
           <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
+          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
           <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
           <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
         `;
@@ -2098,7 +2099,7 @@
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
           <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
+          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
           <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
           <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
         `;
@@ -2108,7 +2109,7 @@
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa & Formaciones</button>
           <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Filtros</button>
+          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else {
@@ -2945,10 +2946,22 @@
       const isMike = currentUser.username.toLowerCase() === 'mike_covid';
       if (isMike) return;
 
-      const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric' };
-      const colombiaHourStr = new Intl.DateTimeFormat('en-US', options).format(new Date());
-      const colHour = parseInt(colombiaHourStr, 10);
-      const isAllowedHour = colHour >= 18 || colHour < 3;
+      const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric', minute: 'numeric' };
+      const formatter = new Intl.DateTimeFormat('en-US', options);
+      const parts = formatter.formatToParts(new Date());
+      let colHour = 0, colMin = 0;
+      parts.forEach(p => {
+        if (p.type === 'hour') colHour = parseInt(p.value, 10);
+        if (p.type === 'minute') colMin = parseInt(p.value, 10);
+      });
+
+      // Habilitado desde las 17:45 hasta las 03:00
+      // Rango válido: (Hora >= 17 y Min >= 45) o (Hora > 17 y Hora <= 23) o (Hora >= 0 y Hora < 3)
+      const currentMinutesTotal = colHour * 60 + colMin;
+      const startAllowedMinutes = 17 * 60 + 45; // 17:45
+      const endAllowedMinutes = 3 * 60;         // 03:00
+
+      const isAllowedHour = (currentMinutesTotal >= startAllowedMinutes) || (currentMinutesTotal < endAllowedMinutes);
 
       const btn = document.getElementById('btnToggleShift');
       const activeShiftKey = `shiftStart_${currentUser.username}`;
@@ -2965,16 +2978,25 @@
       const savedStart = localStorage.getItem(activeShiftKey);
 
       if (!savedStart) {
-        const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric' };
-        const colombiaHourStr = new Intl.DateTimeFormat('en-US', options).format(new Date());
-        const colHour = parseInt(colombiaHourStr, 10);
+        const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric', minute: 'numeric' };
+        const formatter = new Intl.DateTimeFormat('en-US', options);
+        const parts = formatter.formatToParts(new Date());
+        let colHour = 0, colMin = 0;
+        parts.forEach(p => {
+          if (p.type === 'hour') colHour = parseInt(p.value, 10);
+          if (p.type === 'minute') colMin = parseInt(p.value, 10);
+        });
+
+        const currentMinutesTotal = colHour * 60 + colMin;
+        const startAllowedMinutes = 17 * 60 + 45;
+        const endAllowedMinutes = 3 * 60;
+        const isAllowedHour = (currentMinutesTotal >= startAllowedMinutes) || (currentMinutesTotal < endAllowedMinutes);
         
-        const isAllowedHour = colHour >= 18 || colHour < 3;
         const isMike = currentUser.username.toLowerCase() === 'mike_covid';
         
         if (!isAllowedHour && !isMike) {
           playSound('error');
-          alert("⚠ No se puede iniciar servicio en este momento. Fuera del horario autorizado.");
+          alert("⚠ No se puede iniciar servicio en este momento. Fuera del horario autorizado (17:45 a 03:00).");
           return;
         }
 
@@ -3442,7 +3464,61 @@
         });
       }
 
-      if (mode === 'summary') {
+      if (mode === 'turnos') {
+        // Agrupar por turnos nocturnos: Ej. Turno desde las 18:00 del día D hasta las 03:00 del día D+1
+        let shiftMap = {};
+        filtered.forEach(h => {
+          let cleanDStr = normalizeDate(h.fecha);
+          let parts = cleanDStr.split('/');
+          if(parts.length === 3) {
+            let d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+            // Si el turno empezó antes de las 03:00 am, pertenece al turno que arrancó la noche anterior
+            let startH = parseInt((h.horaInicio || "00:00").split(':')[0], 10);
+            if(startH < 3) {
+              d.setDate(d.getDate() - 1);
+            }
+            let shiftKey = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            let shiftLabel = `Turno: 18:00 del ${d.toLocaleDateString("en-GB")} al 03:00 del día siguiente`;
+            
+            if(!shiftMap[shiftKey]) shiftMap[shiftKey] = { label: shiftLabel, users: {} };
+            let u = h.username;
+            if(!shiftMap[shiftKey].users[u]) shiftMap[shiftKey].users[u] = 0;
+            shiftMap[shiftKey].users[u] += parseFloat(h.horas || 0);
+          }
+        });
+
+        let shiftKeys = Object.keys(shiftMap).sort().reverse();
+        currentRankedExportArray = [];
+
+        container.innerHTML = shiftKeys.length === 0 ? '<p class="text-[11px] text-slate-500 italic">No hay registros de turnos en el rango.</p>' : '';
+
+        shiftKeys.forEach(sk => {
+          let shiftData = shiftMap[sk];
+          let divShift = document.createElement('div');
+          divShift.className = 'bg-slate-950 p-3 rounded-lg border border-blue-500/40 space-y-2 mb-2';
+          
+          let shiftHeader = `<div class="text-[10px] font-bold text-blue-400 border-b border-slate-900 pb-1">🔄 ${shiftData.label}</div>`;
+          let usersHtml = '<div class="space-y-1">';
+          
+          let sortedUsers = Object.keys(shiftData.users).map(uname => ({ username: uname, hours: shiftData.users[uname] }));
+          sortedUsers.sort((a,b) => b.hours - a.hours);
+
+          sortedUsers.forEach(su => {
+            currentRankedExportArray.push({ shift: shiftData.label, username: su.username, hours: su.hours });
+            usersHtml += `
+              <div class="flex justify-between items-center text-xs bg-slate-900 p-1.5 rounded">
+                <span class="font-bold text-amber-400">${su.username}</span>
+                <span class="text-cyan-400 font-mono">${decimalToHM(su.hours)}</span>
+              </div>
+            `;
+          });
+          usersHtml += '</div>';
+
+          divShift.innerHTML = shiftHeader + usersHtml;
+          container.appendChild(divShift);
+        });
+
+      } else if (mode === 'summary') {
         let summaryMap = {};
         filtered.forEach(h => {
           let u = h.username;
@@ -3501,7 +3577,12 @@
       const mode = document.getElementById('filterMode').value;
       let csvContent = "data:text/csv;charset=utf-8,";
       
-      if (mode === 'summary') {
+      if (mode === 'turnos') {
+        csvContent += "Turno,Usuario,Horas_Decimal,Tiempo\n";
+        currentRankedExportArray.forEach((item) => {
+          csvContent += `"${item.shift}",${item.username},${item.hours},${decimalToHM(item.hours)}\n`;
+        });
+      } else if (mode === 'summary') {
         csvContent += "Usuario,Total_Horas_Decimal,Total_Tiempo\n";
         currentRankedExportArray.forEach((item) => {
           csvContent += `${item.username},${item.totalHours},${decimalToHM(item.totalHours)}\n`;
@@ -3516,7 +3597,7 @@
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `Reporte_${mode}_RioRise_${getColombiaDateString()}.csv`);
+      link.setAttribute("download", `Reporte_Turnos_RioRise_${getColombiaDateString()}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
