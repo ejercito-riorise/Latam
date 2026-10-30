@@ -322,7 +322,7 @@
             <button id="regTab6Btn" onclick="switchRegTab(6); playSound('click');" class="py-1 font-bold rounded text-slate-400 hover:text-white">🗺️ Mapa</button>
           </div>
 
-          <!-- BLOQUE 1: CAPÍTULOS 1 Y 2 + HORARIOS / WHATSAPP INTERACTIVOS -->
+          <!-- BLOQUE 1: CAPÍTULOS 1 Y 2 + WHATSAPP INTERACTIVOS -->
           <div id="regView1" class="space-y-2.5">
             
             <div class="bg-gradient-to-r from-amber-950/60 to-slate-900 p-3 rounded-xl border border-amber-800/60 flex items-start gap-2.5 shadow">
@@ -332,29 +332,6 @@
               <div class="space-y-1">
                 <p class="font-bold text-white text-xs">Regla de Etiqueta Obligatoria (WhatsApp)</p>
                 <p class="text-[10px] text-amber-200/90 leading-relaxed">Todo integrante debe llevar estrictamente en su perfil el formato: <code class="bg-slate-900 px-1.5 py-0.5 rounded text-amber-300 font-mono font-bold">Rango + Nombre</code>. De lo contrario, será expulsado del grupo.</p>
-              </div>
-            </div>
-
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-              <div class="flex items-center justify-between border-b border-slate-900 pb-1.5">
-                <div class="flex items-center gap-1.5 font-bold text-xs text-blue-400">
-                  <i class="fa-solid fa-clock"></i> Conversor LATAM de Horarios
-                </div>
-                <span class="text-[9px] bg-blue-950 text-blue-300 px-2 py-0.5 rounded border border-blue-800">LATAM</span>
-              </div>
-              <p class="text-[10px] text-slate-300">Selecciona tu país para conocer la equivalencia de hora exacta en tu región:</p>
-              
-              <div class="grid grid-cols-2 gap-1.5">
-                <select id="latamCountrySelect" onchange="updateLatamCountryTime()" class="w-full bg-slate-900 border border-slate-700 text-white text-[11px] rounded p-1.5 focus:outline-none">
-                  <option value="colombia">🇨🇴 Colombia / Perú / Ecuador / Panamá</option>
-                  <option value="arg">🇦🇷 Argentina / Chile / Uruguay / Paraguay</option>
-                  <option value="venezuela">🇧🇴 Bolivia / Venezuela</option>
-                  <option value="mexico">🇲🇽 México / C. Rica / Gtala / El Salvador</option>
-                </select>
-                <div id="latamResultBox" class="bg-blue-600/20 border border-blue-500/40 rounded p-1.5 text-center flex flex-col justify-center">
-                  <span class="text-[9px] text-slate-300">Hora base:</span>
-                  <span id="latamTimeDisplay" class="text-xs font-bold text-blue-300">Referencia Oficial</span>
-                </div>
               </div>
             </div>
 
@@ -801,7 +778,7 @@
             <div>
               <label class="block text-[10px] text-slate-400 mb-1">Filtrar por:</label>
               <select id="filterMode" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
-                <option value="turnos">🔄 Agrupar por Turnos (18:00 a 03:00)</option>
+                <option value="turnos">🔄 Agrupar por Turnos Oficiales</option>
                 <option value="summary">📊 Resumen General (Suma total por soldado)</option>
                 <option value="detailed">📋 Historial Detallado (Registro por registro)</option>
               </select>
@@ -1142,7 +1119,6 @@
       document.getElementById('themeSelector').value = savedTheme;
       renderQCodes(qCodesData);
       renderRpRules(rpRulesData);
-      updateLatamCountryTime();
     });
 
     document.addEventListener('visibilitychange', () => {
@@ -1161,16 +1137,6 @@
       else if (themeName === 'desierto') document.body.classList.add('theme-desierto');
       else if (themeName === 'chicas') document.body.classList.add('theme-chicas');
       if (save) localStorage.setItem('rioRiseTheme', themeName);
-    }
-
-    function updateLatamCountryTime() {
-      const country = document.getElementById('latamCountrySelect').value;
-      const display = document.getElementById('latamTimeDisplay');
-      if (!display) return;
-      if (country === 'colombia') display.innerText = "Colombia (Base 18:00)";
-      else if (country === 'arg') display.innerText = "Argentina (+2h)";
-      else if (country === 'venezuela') display.innerText = "Venezuela (+1h)";
-      else if (country === 'mexico') display.innerText = "México (-1h)";
     }
 
     function switchRegTab(tabNum) {
@@ -2955,8 +2921,6 @@
         if (p.type === 'minute') colMin = parseInt(p.value, 10);
       });
 
-      // Habilitado desde las 17:45 hasta las 03:00
-      // Rango válido: (Hora >= 17 y Min >= 45) o (Hora > 17 y Hora <= 23) o (Hora >= 0 y Hora < 3)
       const currentMinutesTotal = colHour * 60 + colMin;
       const startAllowedMinutes = 17 * 60 + 45; // 17:45
       const endAllowedMinutes = 3 * 60;         // 03:00
@@ -2966,10 +2930,17 @@
       const btn = document.getElementById('btnToggleShift');
       const activeShiftKey = `shiftStart_${currentUser.username}`;
       
+      // SIN MENSAJES DE HORAS EN ALERTAS (Como solicitaste, los usuarios ya conocen los horarios)
       if (!isAllowedHour && !localStorage.getItem(activeShiftKey) && btn) {
-        btn.style.opacity = "0.5";
+        btn.disabled = true;
+        btn.style.opacity = "0.4";
         btn.style.cursor = "not-allowed";
-        btn.title = "Fuera del horario autorizado";
+        btn.title = "";
+      } else if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.style.cursor = "pointer";
+        btn.title = "";
       }
     }
 
@@ -2996,7 +2967,7 @@
         
         if (!isAllowedHour && !isMike) {
           playSound('error');
-          alert("⚠ No se puede iniciar servicio en este momento. Fuera del horario autorizado (17:45 a 03:00).");
+          alert("⚠ Servicio no disponible en este momento.");
           return;
         }
 
@@ -3465,20 +3436,18 @@
       }
 
       if (mode === 'turnos') {
-        // Agrupar por turnos nocturnos: Ej. Turno desde las 18:00 del día D hasta las 03:00 del día D+1
         let shiftMap = {};
         filtered.forEach(h => {
           let cleanDStr = normalizeDate(h.fecha);
           let parts = cleanDStr.split('/');
           if(parts.length === 3) {
             let d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-            // Si el turno empezó antes de las 03:00 am, pertenece al turno que arrancó la noche anterior
             let startH = parseInt((h.horaInicio || "00:00").split(':')[0], 10);
             if(startH < 3) {
               d.setDate(d.getDate() - 1);
             }
             let shiftKey = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-            let shiftLabel = `Turno: 18:00 del ${d.toLocaleDateString("en-GB")} al 03:00 del día siguiente`;
+            let shiftLabel = `Turno Nocturno (${d.toLocaleDateString("en-GB")})`;
             
             if(!shiftMap[shiftKey]) shiftMap[shiftKey] = { label: shiftLabel, users: {} };
             let u = h.username;
