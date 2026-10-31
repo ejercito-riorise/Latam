@@ -211,7 +211,7 @@
                   <span id="profileBadgeLevel" class="text-[9px] text-amber-300 font-bold">🔰 Soldado Raso</span>
                   <button onclick="openRankInfoModal(); playSound('click');" class="text-[10px] text-amber-400 hover:text-white transition" title="Ver tabla de rangos"><i class="fa-solid fa-circle-question"></i></button>
                 </div>
-                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Tiempo de turno actual">Turno Hoy: 00:00</span>
+                <span id="profileTodayHours" class="text-[10px] text-cyan-400 font-mono font-semibold" title="Tiempo total acumulado hoy">Turno Hoy: 00:00</span>
               </div>
             </div>
           </div>
@@ -241,7 +241,7 @@
               <h3 class="font-bold text-white text-xs">Control de Servicio Táctico</h3>
             </div>
             <div class="flex items-center gap-1.5">
-              <span id="scheduleStatusIndicator" class="text-[9px] px-2 py-0.5 rounded font-bold">Sistema Activo</span>
+              <span id="scheduleStatusIndicator" class="text-[9px] px-2 py-0.5 rounded font-bold">🟢 Sistema Operativo</span>
               <span id="shiftStatusBadge" class="text-[9px] bg-red-900/60 text-red-300 border border-red-700 px-2 py-0.5 rounded font-bold">FUERA DE SERVICIO</span>
             </div>
           </div>
@@ -1910,8 +1910,30 @@
     function updateScheduleIndicator() {
       const indicator = document.getElementById('scheduleStatusIndicator');
       if (!indicator) return;
-      indicator.innerText = "🟢 Sistema Operativo";
-      indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
+
+      const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric', minute: 'numeric' };
+      const formatter = new Intl.DateTimeFormat('en-US', options);
+      const parts = formatter.formatToParts(new Date());
+      let colHour = 0, colMin = 0;
+      parts.forEach(p => {
+        if (p.type === 'hour') colHour = parseInt(p.value, 10);
+        if (p.type === 'minute') colMin = parseInt(p.value, 10);
+      });
+
+      const currentMinutesTotal = colHour * 60 + colMin;
+      const startAllowedMinutes = 17 * 60 + 45; // 17:45
+      const endAllowedMinutes = 3 * 60;         // 03:00
+
+      const isAllowedHour = (currentMinutesTotal >= startAllowedMinutes) || (currentMinutesTotal < endAllowedMinutes);
+      const activeShift = currentUser ? (localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart) : null;
+
+      if (isAllowedHour || activeShift) {
+        indicator.innerText = "🟢 Sistema Operativo";
+        indicator.className = "text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold";
+      } else {
+        indicator.innerText = "🔴 Sistema Inactivo";
+        indicator.className = "text-[9px] bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold";
+      }
     }
 
     function showAuthTab(tab) {
@@ -2351,19 +2373,31 @@
 
       const activeShiftStart = localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart;
       let totalHoursToday = 0;
+      const todayStr = getColombiaDateString();
 
+      // Sumar horas previamente completadas y registradas en el día de hoy
+      if (globalHistoryCache) {
+        globalHistoryCache.forEach(h => {
+          if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase()) {
+            if (normalizeDate(h.fecha) === todayStr) {
+              totalHoursToday += parseFloat(h.horas || 0);
+            }
+          }
+        });
+      }
+
+      // Sumar el turno activo que transcurre en este instante
       if (activeShiftStart) {
         const startTime = parseInt(activeShiftStart);
         const elapsed = Math.min(MAX_SHIFT_MS, Date.now() - startTime);
         if (elapsed > 0) {
-          totalHoursToday = elapsed / 3600000;
+          totalHoursToday += elapsed / 3600000;
         }
       }
 
       el.innerText = `Turno Hoy: ${decimalToHM(totalHoursToday)}`;
 
       let weeklyTotalHours = 0;
-      const todayStr = getColombiaDateString();
       if (globalHistoryCache) {
         globalHistoryCache.forEach(h => {
           if (h.username && h.username.toLowerCase() === currentUser.username.toLowerCase()) {
@@ -2853,9 +2887,30 @@
         const startTime = parseInt(activeShiftStart);
         const elapsedTimeMs = Date.now() - startTime;
 
+        // Verificar límite de 9 horas
         if (elapsedTimeMs >= MAX_SHIFT_MS) {
           alert('⏰ Tu servicio superó el límite absoluto de 9 horas y fue finalizado.');
           const forcedEndTime = startTime + MAX_SHIFT_MS;
+          localStorage.removeItem(`shiftStart_${currentUser.username}`);
+          currentUser.activeShiftStart = null;
+          processAndSaveSplitShift(startTime, forcedEndTime);
+          return;
+        }
+
+        // Verificar cierre automático de las 03:00 AM (Hora Colombia)
+        const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric', minute: 'numeric' };
+        const formatter = new Intl.DateTimeFormat('en-US', options);
+        const parts = formatter.formatToParts(new Date());
+        let colHour = 0, colMin = 0;
+        parts.forEach(p => {
+          if (p.type === 'hour') colHour = parseInt(p.value, 10);
+          if (p.type === 'minute') colMin = parseInt(p.value, 10);
+        });
+
+        // Si son exactamente las 03:00 AM o más (hasta la hora de apertura 17:45 PM), forzar cierre del turno
+        if (colHour >= 3 && colHour < 17) {
+          alert('⏰ Se ha alcanzado el límite de las 03:00 AM (Hora Colombia). El servicio ha finalizado automáticamente.');
+          const forcedEndTime = Date.now();
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           currentUser.activeShiftStart = null;
           processAndSaveSplitShift(startTime, forcedEndTime);
@@ -2891,9 +2946,27 @@
       shiftInterval = setInterval(() => {
         const elapsedTimeMs = Date.now() - startTime;
 
+        // Comprobación constante de 9 horas
         if (elapsedTimeMs >= MAX_SHIFT_MS) {
           alert('⏰ Servicio finalizado por límite absoluto de 9 horas.');
           const forcedEndTime = startTime + MAX_SHIFT_MS;
+          localStorage.removeItem(`shiftStart_${currentUser.username}`);
+          clearInterval(shiftInterval);
+          shiftInterval = null;
+          processAndSaveSplitShift(startTime, forcedEndTime);
+          return;
+        }
+
+        // Comprobación constante de las 03:00 AM (Hora Colombia)
+        const options = { timeZone: "America/Bogota", hour12: false, hour: 'numeric' };
+        const formatter = new Intl.DateTimeFormat('en-US', options);
+        const parts = formatter.formatToParts(new Date());
+        let colHour = 0;
+        parts.forEach(p => { if (p.type === 'hour') colHour = parseInt(p.value, 10); });
+
+        if (colHour >= 3 && colHour < 17) {
+          alert('⏰ Límite de horario alcanzado (03:00 AM Hora Colombia). Servicio finalizado.');
+          const forcedEndTime = Date.now();
           localStorage.removeItem(`shiftStart_${currentUser.username}`);
           clearInterval(shiftInterval);
           shiftInterval = null;
@@ -3009,35 +3082,46 @@
       const horaInicioStr = startDate.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
       const horaFinStr = endDate.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
 
+      // Si el turno está completamente dentro del mismo día de la fecha de Colombia
       if (startDateStr === endDateStr) {
         const totalSeconds = Math.floor((endTimeMs - startTimeMs) / 1000);
         const hoursWorked = totalSeconds / 3600;
         const timeSpentMsg = `${Math.floor(totalSeconds / 3600)}h ${Math.floor((totalSeconds % 3600) / 60)}m`;
         await saveShiftLog(hoursWorked, timeSpentMsg, startDateStr, horaInicioStr, horaFinStr);
       } else {
-        const midnight = new Date(startDate);
-        midnight.setDate(midnight.getDate() + 1);
-        midnight.setHours(0, 0, 0, 0);
-        const midnightMs = midnight.getTime();
+        // En lugar de cortar a las 00:00, cortamos en el punto de inflexión de las 03:00 AM
+        const shiftCutoff = new Date(startDate);
+        shiftCutoff.setDate(shiftCutoff.getDate() + 1);
+        shiftCutoff.setHours(3, 0, 0, 0); // Corte a las 03:00 AM
+        const cutoffMs = shiftCutoff.getTime();
 
-        const secondsPart1 = Math.max(0, Math.floor((midnightMs - startTimeMs) / 1000));
-        if (secondsPart1 > 60) {
-          const hoursPart1 = secondsPart1 / 3600;
-          const msgPart1 = `${Math.floor(secondsPart1 / 3600)}h ${Math.floor((secondsPart1 % 3600) / 60)}m`;
-          const midnightTimeStr = new Date(midnightMs).toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
-          await saveShiftLog(hoursPart1, msgPart1, startDateStr, horaInicioStr, midnightTimeStr);
-        }
+        if (endTimeMs <= cutoffMs) {
+          // El turno pertenece operativamente al mismo bloque nocturno
+          const totalSeconds = Math.floor((endTimeMs - startTimeMs) / 1000);
+          const hoursWorked = totalSeconds / 3600;
+          const timeSpentMsg = `${Math.floor(totalSeconds / 3600)}h ${Math.floor((totalSeconds % 3600) / 60)}m`;
+          await saveShiftLog(hoursWorked, timeSpentMsg, startDateStr, horaInicioStr, horaFinStr);
+        } else {
+          // Si sobrepasa las 03:00 AM, dividimos la sesión a las 03:00 AM
+          const secondsPart1 = Math.max(0, Math.floor((cutoffMs - startTimeMs) / 1000));
+          if (secondsPart1 > 60) {
+            const hoursPart1 = secondsPart1 / 3600;
+            const msgPart1 = `${Math.floor(secondsPart1 / 3600)}h ${Math.floor((secondsPart1 % 3600) / 60)}m`;
+            const cutoffTimeStr = "03:00";
+            await saveShiftLog(hoursPart1, msgPart1, startDateStr, horaInicioStr, cutoffTimeStr);
+          }
 
-        const secondsPart2 = Math.max(0, Math.floor((endTimeMs - midnightMs) / 1000));
-        if (secondsPart2 > 60) {
-          const hoursPart2 = secondsPart2 / 3600;
-          const msgPart2 = `${Math.floor(secondsPart2 / 3600)}h ${Math.floor((secondsPart2 % 3600) / 60)}m`;
-          const midnightStartStr = new Date(midnightMs).toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' });
-          await saveShiftLog(hoursPart2, msgPart2, endDateStr, midnightStartStr, horaFinStr);
+          const secondsPart2 = Math.max(0, Math.floor((endTimeMs - cutoffMs) / 1000));
+          if (secondsPart2 > 60) {
+            const hoursPart2 = secondsPart2 / 3600;
+            const msgPart2 = `${Math.floor(secondsPart2 / 3600)}h ${Math.floor((secondsPart2 % 3600) / 60)}m`;
+            const cutoffStartStr = "03:00";
+            await saveShiftLog(hoursPart2, msgPart2, endDateStr, cutoffStartStr, horaFinStr);
+          }
         }
 
         playSound('success');
-        alert(`✔ Turno dividido registrado con éxito.`);
+        alert(`✔ Turno registrado con éxito.`);
         loadSession();
       }
     }
@@ -3350,18 +3434,27 @@
         }; 
       });
 
+      // Sumar horas registradas en el historial durante el día de hoy
+      if (history) {
+        history.forEach(h => {
+          if (h.username && normalizeDate(h.fecha) === todayStr) {
+            const key = h.username.toLowerCase();
+            if (dailyTotals[key]) {
+              dailyTotals[key].totalHours += parseFloat(h.horas || 0);
+            }
+          }
+        });
+      }
+
+      // Sumar horas transcurridas en vivo si el usuario está en servicio activo
       Object.keys(dailyTotals).forEach(key => {
         let u = dailyTotals[key];
         if (u.activeShiftStart) {
           const startTime = parseInt(u.activeShiftStart);
-          const shiftStartDateStr = new Date(startTime).toLocaleDateString("en-GB", { timeZone: "America/Bogota" });
-          
-          if (shiftStartDateStr === todayStr) {
-            const elapsed = Math.min(MAX_SHIFT_MS, Date.now() - startTime);
-            if (elapsed > 0) {
-              u.totalHours = elapsed / 3600000;
-              u.isConnected = true;
-            }
+          const elapsed = Math.min(MAX_SHIFT_MS, Date.now() - startTime);
+          if (elapsed > 0) {
+            u.totalHours += elapsed / 3600000;
+            u.isConnected = true;
           }
         }
       });
