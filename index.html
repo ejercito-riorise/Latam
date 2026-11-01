@@ -176,16 +176,22 @@
               <input type="text" id="regCountry" required placeholder="Ej: Colombia" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
           </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Rango Solicitado</label>
-            <select id="regRank" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
-              <option value="Privado">Privado</option>
-              <option value="Sargento">Sargento</option>
-              <option value="Teniente">Teniente</option>
-              <option value="Mayor">Mayor</option>
-              <option value="Coronel">Coronel</option>
-              <option value="General">General</option>
-            </select>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Rango Solicitado</label>
+              <select id="regRank" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
+                <option value="Privado">Privado</option>
+                <option value="Sargento">Sargento</option>
+                <option value="Teniente">Teniente</option>
+                <option value="Mayor">Mayor</option>
+                <option value="Coronel">Coronel</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Fecha de Ingreso EB</label>
+              <input type="date" id="regIngresoEB" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            </div>
           </div>
           <div>
             <label class="block text-[11px] font-semibold text-slate-300 mb-1">Contraseña</label>
@@ -747,6 +753,39 @@
           <div id="pendingList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
+        <!-- PESTAÑA ORGANIZAR PERSONAL (NUEVA PESTAÑA) -->
+        <div id="viewOrg" class="space-y-3 hidden">
+          <div class="bg-slate-900 p-3 rounded-xl border border-blue-500/40 space-y-2.5">
+            <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Herramienta de Organización de Personal</h4>
+            <p class="text-[10px] text-slate-300">Asigna la cadena de mando (ej. qué sargentos están a cargo de qué tenientes):</p>
+            
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-2 text-xs">
+              <div>
+                <label class="block text-[10px] text-slate-300 mb-1">Teniente / Superior a Cargo</label>
+                <select id="orgSuperiorSelect" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
+                  <!-- Se llena dinámicamente -->
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-300 mb-1">Subordinado / Sargento Asignado</label>
+                <select id="orgSubordinateSelect" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
+                  <!-- Se llena dinámicamente -->
+                </select>
+              </div>
+              <button onclick="savePersonalAssignment(); playSound('success');" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-1.5 rounded text-xs uppercase transition shadow">
+                ➕ Guardar Asignación Táctica
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
+            <h5 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-network-wired"></i> Estructura de Mando Actual</h5>
+            <div id="orgStructureList" class="space-y-1.5 max-h-52 overflow-y-auto">
+              <p class="text-[10px] text-slate-500 italic">No hay asignaciones registradas.</p>
+            </div>
+          </div>
+        </div>
+
         <!-- PESTAÑA TROPA Y SANCIONES -->
         <div id="viewActive" class="space-y-3 hidden">
           <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa, Sanciones & Formaciones:</h4>
@@ -792,7 +831,7 @@
           </div>
 
           <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
-            <h5 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-clipboard-list"></i> Auditoría de Formaciones en Vivo</h5>
+            <h5 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-clipboard-list"></i> Auditoría de Formaciones en Vivo (Fecha y Hora)</h5>
             <div id="auditFormationsContainer" class="space-y-1.5 max-h-40 overflow-y-auto">
               <p class="text-[10px] text-slate-500 italic">No hay registros de auditoría recientes.</p>
             </div>
@@ -1176,7 +1215,7 @@
       { q: "¿Cuánto dura exactamente un entrenamiento según el Capítulo 5?", options: ["A) 5 minutos exactos", "B) 10 minutos", "C) 3 minutos"], a: 0 },
       { q: "¿Qué se prohíbe estrictamente durante el entrenamiento (Cap 5)?", options: ["A) Hablar, usar radio, gestos y teléfono", "B) Tomar agua", "C) Parpadear"], a: 0 },
       { q: "¿Cuál es el horario semanal mínimo de juego requerido para el personal del EB?", options: ["A) 5 horas", "B) 7 horas", "C) 14 horas"], a: 1 },
-      { q: "¿Cuál es la ausencia máxima permitida del juego antes de sanción?", options: ["A) 1 día", "B) 3 días", "C) 7 días"], a: 1 },
+      { q: "¿Cuál es la ausencia máxima permitida del juego antes de sanción?", options: ["A) 1 día", "B) 3 días", "C) 7 days"], a: 1 },
       { q: "¿Qué facción corresponde al cargamento (CRM) del día Lunes?", options: ["A) Facción Verde", "B) Facción Morada", "C) Mafia Costera"], a: 0 },
       { q: "¿Qué facción o mafia corresponde al cargamento (CRM) del día Martes?", options: ["A) Facción Verde", "B) Mafia de la Colina", "C) Mafia Costera"], a: 1 },
       { q: "¿Cuál es la regla para el cargamento (CRM) de los Domingos (Acción libre)?", options: ["A) No hay cargamento", "B) La primera mafia o facción que llegue al punto de carga se queda con la acción", "C) Lo gana el EB automáticamente"], a: 1 },
@@ -1793,6 +1832,11 @@
         let participantsCount = Object.keys(resultsObj).length;
 
         let badgeStatus = f.estado === 'active' ? `<span class="text-emerald-400 font-bold">⚡ ACTIVA</span>` : `<span class="text-slate-400">Finalizada</span>`;
+        
+        // Fecha y hora exactas basadas en el timestamp de creación de la formación
+        let formationDateObj = new Date(parseInt(f.timestamp));
+        let fDateStr = !isNaN(formationDateObj.getTime()) ? formationDateObj.toLocaleDateString("en-GB", { timeZone: "America/Bogota" }) : "Fecha N/D";
+        let fTimeStr = !isNaN(formationDateObj.getTime()) ? formationDateObj.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' }) : "Hora N/D";
 
         html += `
           <div class="bg-slate-950 p-2.5 rounded border border-slate-800 text-[10px] space-y-1">
@@ -1800,7 +1844,10 @@
               <span>Org: ${f.organizer}</span>
               ${badgeStatus}
             </div>
-            <div class="text-slate-300">Soldados evaluados: <span class="text-cyan-400 font-bold">${participantsCount}</span></div>
+            <div class="text-slate-300 flex justify-between">
+              <span>Soldados evaluados: <span class="text-cyan-400 font-bold">${participantsCount}</span></span>
+              <span class="text-amber-400">📅 ${fDateStr} • ⏰ ${fTimeStr}</span>
+            </div>
         `;
 
         if(participantsCount > 0) {
@@ -1923,7 +1970,6 @@
       return currentLevel;
     }
 
-    // MEDALLAS CON BOTÓN DE CONSULTA ❓ Y TOOLTIPS
     function renderUserMedals(weeklyHours) {
       const container = document.getElementById('userMedalsContainer');
       if(!container) return;
@@ -2180,7 +2226,6 @@
       const isMayor = rankLower === 'mayor';
       const isSargentoOrAbove = isSuperAdmin || ['general', 'coronel', 'mayor', 'teniente', 'sargento'].includes(rankLower);
       
-      // Control de visibilidad del botón exclusivo de Excel para Coronel y General
       const btnExportExcelPanel = document.getElementById('btnExportExcelPanel');
       if (btnExportExcelPanel) {
         btnExportExcelPanel.classList.toggle('hidden', !(isSuperAdmin || isCoronel));
@@ -2189,32 +2234,35 @@
       const tabsContainer = document.getElementById('adminTabsContainer');
 
       if (isSuperAdmin) {
-        tabsContainer.className = "grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-7 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('pending'); playSound('click');" id="adminTabPending" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Solicitudes</button>
-          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa & Sanciones</button>
-          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
-          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
-          <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
+          <button onclick="switchAdminTab('pending'); playSound('click');" id="adminTabPending" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Solicitudes</button>
+          <button onclick="switchAdminTab('org'); playSound('click');" id="adminTabOrg" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Organizar</button>
+          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
+          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
+          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
+          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
+          <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isCoronel) {
-        tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
-          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
-          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
-          <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
+          <button onclick="switchAdminTab('org'); playSound('click');" id="adminTabOrg" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Organizar</button>
+          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
+          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
+          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
+          <button onclick="switchAdminTab('newsAdmin'); playSound('click');" id="adminTabNewsAdmin" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Publicar</button>
+          <button onclick="switchAdminTab('approveNews'); playSound('click');" id="adminTabApproveNews" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Aprobar</button>
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isMayor || rankLower === 'teniente' || rankLower === 'sargento') {
-        tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Tropa & Formaciones</button>
-          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
-          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[9px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
+          <button onclick="switchAdminTab('org'); playSound('click');" id="adminTabOrg" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Organizar</button>
+          <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
+          <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
+          <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else {
@@ -2230,16 +2278,21 @@
     }
 
     function switchAdminTab(tab) {
-      ['pending', 'active', 'daily', 'filters', 'newsAdmin', 'approveNews'].forEach(v => {
+      ['pending', 'org', 'active', 'daily', 'filters', 'newsAdmin', 'approveNews'].forEach(v => {
         const viewEl = document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`);
         const tabEl = document.getElementById(`adminTab${v.charAt(0).toUpperCase() + v.slice(1)}`);
         if (viewEl) viewEl.classList.add('hidden');
-        if (tabEl) tabEl.className = "py-1.5 text-[9px] font-bold rounded text-slate-400 hover:text-white transition bg-transparent";
+        if (tabEl) tabEl.className = "py-1.5 text-[8px] font-bold rounded text-slate-400 hover:text-white transition bg-transparent";
       });
       const targetView = document.getElementById(`view${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       const targetTab = document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       if (targetView) targetView.classList.remove('hidden');
-      if (targetTab) targetTab.className = "py-1.5 text-[9px] font-bold rounded bg-blue-600 text-white shadow transition";
+      if (targetTab) targetTab.className = "py-1.5 text-[8px] font-bold rounded bg-blue-600 text-white shadow transition";
+
+      if(tab === 'org') {
+        populateOrgDropdowns();
+        renderOrgStructure();
+      }
 
       if(tab === 'active') {
         renderFormationsAuditLog();
@@ -2277,6 +2330,93 @@
       }
     }
 
+    function populateOrgDropdowns() {
+      if(!cachedData || !cachedData.users) return;
+      const approvedUsers = cachedData.users.filter(u => u.status && u.status.toLowerCase() === 'approved');
+      
+      const superiorSelect = document.getElementById('orgSuperiorSelect');
+      const subordinateSelect = document.getElementById('orgSubordinateSelect');
+      if(!superiorSelect || !subordinateSelect) return;
+
+      superiorSelect.innerHTML = '';
+      subordinateSelect.innerHTML = '';
+
+      approvedUsers.forEach(u => {
+        let optSup = document.createElement('option');
+        optSup.value = u.username;
+        optSup.textContent = `${u.username} (${u.rank})`;
+        superiorSelect.appendChild(optSup);
+
+        let optSub = document.createElement('option');
+        optSub.value = u.username;
+        optSub.textContent = `${u.username} (${u.rank})`;
+        subordinateSelect.appendChild(optSub);
+      });
+    }
+
+    function savePersonalAssignment() {
+      const superior = document.getElementById('orgSuperiorSelect').value;
+      const subordinate = document.getElementById('orgSubordinateSelect').value;
+
+      if(!superior || !subordinate) {
+        alert("Selecciona ambos miembros.");
+        return;
+      }
+      if(superior === subordinate) {
+        alert("Un superior no puede estar a cargo de sí mismo.");
+        return;
+      }
+
+      let orgMap = JSON.parse(localStorage.getItem('rioRiseOrgMapping') || '{}');
+      if(!orgMap[superior]) orgMap[superior] = [];
+      if(!orgMap[superior].includes(subordinate)) {
+        orgMap[superior].push(subordinate);
+      }
+      localStorage.setItem('rioRiseOrgMapping', JSON.stringify(orgMap));
+      playSound('success');
+      alert(`✔ Asignación guardada: ${subordinate} ahora está a cargo de ${superior}.`);
+      renderOrgStructure();
+    }
+
+    function renderOrgStructure() {
+      const container = document.getElementById('orgStructureList');
+      if(!container) return;
+      let orgMap = JSON.parse(localStorage.getItem('rioRiseOrgMapping') || '{}');
+      let superiors = Object.keys(orgMap);
+
+      if(superiors.length === 0) {
+        container.innerHTML = '<p class="text-[10px] text-slate-500 italic">No hay asignaciones registradas.</p>';
+        return;
+      }
+
+      let html = '';
+      superiors.forEach(sup => {
+        let subs = orgMap[sup];
+        html += `<div class="bg-slate-950 p-2 rounded border border-slate-800 text-[10px] space-y-1">
+          <div class="font-bold text-amber-400">🛡️ Superior: ${sup}</div>
+          <div class="pl-3 space-y-0.5">`;
+        subs.forEach((sub, sIdx) => {
+          html += `<div class="flex justify-between items-center text-slate-200">
+            <span>• Subordinado: <strong class="text-white">${sub}</strong></span>
+            <button onclick="removeOrgAssignment('${sup}', ${sIdx})" class="text-red-400 hover:text-red-300 px-1"><i class="fa-solid fa-trash"></i></button>
+          </div>`;
+        });
+        html += `</div></div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function removeOrgAssignment(superior, subIndex) {
+      let orgMap = JSON.parse(localStorage.getItem('rioRiseOrgMapping') || '{}');
+      if(orgMap[superior]) {
+        orgMap[superior].splice(subIndex, 1);
+        if(orgMap[superior].length === 0) delete orgMap[superior];
+        localStorage.setItem('rioRiseOrgMapping', JSON.stringify(orgMap));
+        playSound('success');
+        renderOrgStructure();
+      }
+    }
+
     async function handleRegister(e) {
       e.preventDefault();
       const user = document.getElementById('regUsername').value.trim();
@@ -2284,6 +2424,7 @@
       const country = document.getElementById('regCountry').value.trim();
       const pass = document.getElementById('regPassword').value;
       const rank = document.getElementById('regRank').value;
+      const ingresoEB = document.getElementById('regIngresoEB').value;
 
       showTacticalLoader("REGISTRANDO RECLUTA", "Transmitiendo ficha a la Comandancia...");
       try {
@@ -2296,6 +2437,7 @@
             rank: rank, 
             age: age, 
             country: country, 
+            ingresoEB: ingresoEB,
             status: 'pending',
             fecha: getColombiaDateString(),
             hora: new Date().toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' })
@@ -2357,17 +2499,34 @@
           localStorage.setItem(approvedNotifKey, 'true');
         }
 
-        currentUser = { username: found.username, rank: found.rank, hours: parseFloat(found.hours || 0), activeShiftStart: found.activeShiftStart };
+        currentUser = { username: found.username, rank: found.rank, hours: parseFloat(found.hours || 0), activeShiftStart: found.activeShiftStart, ingresoEB: found.ingresoEB };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
         localStorage.setItem(`sessionLoginTime_${currentUser.username}`, Date.now());
 
         cachedData = resData;
         globalHistoryCache = resData.history || [];
         renderDashboardUI(resData);
+
+        // Validar si falta registrar la fecha de ingreso a la EB para personal antiguo
+        if (!found.ingresoEB) {
+          promptForIngresoEB(found.username);
+        }
       } catch (err) {
         hideTacticalLoader();
         playSound('error');
         alert('Error de autenticación.');
+      }
+    }
+
+    function promptForIngresoEB(username) {
+      const fechaIngreso = prompt(`[Actualización Obligatoria] Hola ${username}, por favor ingresa tu fecha de ingreso a la EB (Formato YYYY-MM-DD):`, "2026-01-01");
+      if (fechaIngreso) {
+        fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'updateIngresoEB', username: username, ingresoEB: fechaIngreso })
+        }).then(() => {
+          alert("✔ Fecha de ingreso a la EB guardada con éxito.");
+        }).catch(e => {});
       }
     }
 
@@ -2417,8 +2576,12 @@
             currentUser.hours = parseFloat(freshUser.hours || 0);
             currentUser.activeShiftStart = freshUser.activeShiftStart || localStorage.getItem(`shiftStart_${currentUser.username}`);
             currentUser.rank = freshUser.rank;
+            currentUser.ingresoEB = freshUser.ingresoEB;
             if (freshUser.activeShiftStart && !localStorage.getItem(`shiftStart_${currentUser.username}`)) {
               localStorage.setItem(`shiftStart_${currentUser.username}`, freshUser.activeShiftStart);
+            }
+            if (!freshUser.ingresoEB) {
+              promptForIngresoEB(freshUser.username);
             }
           }
           updateTodayHoursLive();
@@ -3431,11 +3594,14 @@
               sanctionsHtml += `</div>`;
             }
 
+            let ingresoInfo = u.ingresoEB ? `<div class="text-[9px] text-cyan-300 mt-0.5"><i class="fa-solid fa-calendar-check mr-1"></i> Ingreso EB: ${u.ingresoEB}</div>` : `<div class="text-[9px] text-amber-300 mt-0.5"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Ingreso EB: No registrado</div>`;
+
             div.innerHTML = `
               <div class="flex items-center justify-between">
                 <div>
                   <span class="font-bold text-white text-sm">${u.username}</span> 
                   <span class="text-[9px] badge-${u.rank.toLowerCase()} px-1.5 py-0.5 rounded uppercase">${u.rank}</span>
+                  ${ingresoInfo}
                 </div>
                 <div class="flex items-center gap-1.5">
                   ${sanctionBtn}
