@@ -113,7 +113,7 @@
 
     <main class="max-w-md mx-auto p-3 space-y-3">
 
-      <!-- OVERLAY TÁCTICO DE CARGA / CONEXIÓN -->
+      <!-- OVERLAY TÁCTICO DE CARGA -->
       <div id="loadingOverlay" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[150] flex flex-col items-center justify-center p-4">
         <div class="relative military-card w-full max-w-xs p-6 rounded-2xl border border-blue-500/60 shadow-2xl text-center space-y-4 overflow-hidden">
           <div class="radar-line"></div>
@@ -220,7 +220,7 @@
           </button>
         </div>
 
-        <!-- MEDALLAS Y CONDECORACIONES DEL SOLDADO -->
+        <!-- MEDALLAS Y CONDECORACIONES CON ICONOS DE AYUDA (TOOLTIPS) -->
         <div class="military-card p-3 rounded-xl space-y-2">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <h4 class="text-[11px] font-bold text-amber-400 flex items-center gap-1.5">
@@ -229,7 +229,7 @@
             <span class="text-[9px] text-slate-400">Hoja de Méritos</span>
           </div>
           <div id="userMedalsContainer" class="flex flex-wrap gap-1.5 pt-1">
-            <!-- Se cargan dinámicamente -->
+            <!-- Se cargan dinámicamente con sus botones de ayuda ❓ -->
           </div>
         </div>
 
@@ -817,11 +817,12 @@
           <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando...</p></div>
         </div>
         
-        <!-- PESTAÑA FILTROS Y TURNOS -->
+        <!-- PESTAÑA FILTROS Y TURNOS (CON BOTÓN EXCLUSIVO EXCEL PARA CORONELES/GENERALES) -->
         <div id="viewFilters" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
             <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Rendimiento por Turnos:</h4>
-            <button onclick="exportVisualRankingCSV(); playSound('click');" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
+            <!-- Botón exclusivo visible para Coronel y General -->
+            <button id="btnExportExcelPanel" onclick="exportVisualRankingCSV(); playSound('click');" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
               <i class="fa-solid fa-file-excel"></i> Descargar Excel
             </button>
           </div>
@@ -842,7 +843,7 @@
               <select id="filterMode" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
                 <option value="turnos">🔄 Agrupar por Turnos Oficiales</option>
                 <option value="summary">📊 Resumen General (Suma total por soldado)</option>
-                <option value="detailed">📋 Historial Detallado (Registro por registro)</option>
+                <option value="detailed">📋 Historial Detallado (Registro por registro con Fecha/Hora)</option>
               </select>
             </div>
           </div>
@@ -1007,6 +1008,15 @@
     </div>
   </div>
 
+  <!-- MODAL DE AYUDA / TOOLTIP DE MEDALLAS -->
+  <div id="medalInfoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
+    <div class="military-card w-full max-w-xs p-4 rounded-xl border border-amber-500/50 shadow-2xl space-y-3 text-center">
+      <h4 id="medalModalTitle" class="text-xs font-bold text-amber-400 flex items-center justify-center gap-1.5"></h4>
+      <p id="medalModalDesc" class="text-[11px] text-slate-300 leading-relaxed"></p>
+      <button onclick="closeMedalModal(); playSound('click');" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-1.5 rounded text-xs uppercase transition border border-slate-700">Entendido</button>
+    </div>
+  </div>
+
   <footer class="text-center py-3 text-[10px] text-slate-500 border-t border-slate-900 mt-2 bg-slate-950/40">
     <p>Desarrollado por <span class="font-bold text-blue-400">Mike_Covid</span> • Intranet EB</p>
   </footer>
@@ -1161,7 +1171,6 @@
       { code: "FLAMING RP", meaning: "Ofensa contra jugadores" }
     ];
 
-    // BANCO PRO AMPLIADO DE PREGUNTAS (ALEATORIAS)
     const masterQuizBank = [
       { q: "¿Cuál es la regla de etiqueta obligatoria para el perfil de WhatsApp en la EB?", options: ["A) Solo tu apodo", "B) Rango + Nombre", "C) Número de teléfono"], a: 1 },
       { q: "¿Cuánto dura exactamente un entrenamiento según el Capítulo 5?", options: ["A) 5 minutos exactos", "B) 10 minutos", "C) 3 minutos"], a: 0 },
@@ -1287,11 +1296,10 @@
       if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
     }
 
-    // --- QUIZ PRO CON BANCO ALEATORIO ---
     function openReglasQuizModal() {
       currentQuizIndex = 0;
       quizScore = 0;
-      activeQuizQuestions = [...masterQuizBank].sort(() => 0.5 - Math.random()).slice(0, 5); // 5 preguntas aleatorias pro
+      activeQuizQuestions = [...masterQuizBank].sort(() => 0.5 - Math.random()).slice(0, 5);
       document.getElementById('reglasQuizModal').classList.remove('hidden');
       loadQuizQuestion();
     }
@@ -1915,17 +1923,45 @@
       return currentLevel;
     }
 
+    // MEDALLAS CON BOTÓN DE CONSULTA ❓ Y TOOLTIPS
     function renderUserMedals(weeklyHours) {
       const container = document.getElementById('userMedalsContainer');
       if(!container) return;
       let html = '';
       
-      if(weeklyHours >= 20) html += `<span class="bg-amber-500/20 border border-amber-500 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded flex items-center gap-1"><i class="fa-solid fa-medal text-amber-400"></i> Veterano de Guerra</span>`;
-      if(localStorage.getItem(`examPassed_${currentUser.username}`)) html += `<span class="bg-blue-500/20 border border-blue-500 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded flex items-center gap-1"><i class="fa-solid fa-brain text-blue-400"></i> Estratega Táctico</span>`;
-      if(weeklyHours >= 5) html += `<span class="bg-emerald-500/20 border border-emerald-500 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded flex items-center gap-1"><i class="fa-solid fa-shield text-emerald-400"></i> Operativo Activo</span>`;
-      html += `<span class="bg-purple-500/20 border border-purple-500 text-purple-300 text-[9px] font-bold px-2 py-0.5 rounded flex items-center gap-1"><i class="fa-solid fa-star text-purple-400"></i> Leal al Mando</span>`;
+      if(weeklyHours >= 20) {
+        html += `<span class="bg-amber-500/20 border border-amber-500 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+          <i class="fa-solid fa-medal text-amber-400"></i> Veterano de Guerra 
+          <button onclick="openMedalInfo('Veterano de Guerra', 'Se otorga automáticamente al acumular 20 horas o más de servicio durante la semana actual.')" class="text-amber-400 hover:text-white ml-0.5"><i class="fa-solid fa-circle-question"></i></button>
+        </span>`;
+      }
+      if(localStorage.getItem(`examPassed_${currentUser.username}`)) {
+        html += `<span class="bg-blue-500/20 border border-blue-500 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+          <i class="fa-solid fa-brain text-blue-400"></i> Estratega Táctico 
+          <button onclick="openMedalInfo('Estratega Táctico', 'Otorgado al aprobar con éxito el examen obligatorio de Privados y dominar el reglamento.')" class="text-blue-400 hover:text-white ml-0.5"><i class="fa-solid fa-circle-question"></i></button>
+        </span>`;
+      }
+      if(weeklyHours >= 5) {
+        html += `<span class="bg-emerald-500/20 border border-emerald-500 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+          <i class="fa-solid fa-shield text-emerald-400"></i> Operativo Activo 
+          <button onclick="openMedalInfo('Operativo Activo', 'Otorgado al alcanzar el mínimo de 5 horas de servicio en la semana.')" class="text-emerald-400 hover:text-white ml-0.5"><i class="fa-solid fa-circle-question"></i></button>
+        </span>`;
+      }
+      html += `<span class="bg-purple-500/20 border border-purple-500 text-purple-300 text-[9px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+        <i class="fa-solid fa-star text-purple-400"></i> Leal al Mando 
+        <button onclick="openMedalInfo('Leal al Mando', 'Condecoración otorgada por el Alto Mando a los miembros que mantienen un comportamiento disciplinado y constante.')" class="text-purple-400 hover:text-white ml-0.5"><i class="fa-solid fa-circle-question"></i></button>
+      </span>`;
 
       container.innerHTML = html;
+    }
+
+    function openMedalInfo(title, desc) {
+      document.getElementById('medalModalTitle').innerHTML = `<i class="fa-solid fa-medal text-amber-400 mr-1"></i> ${title}`;
+      document.getElementById('medalModalDesc').innerText = desc;
+      document.getElementById('medalInfoModal').classList.remove('hidden');
+    }
+    function closeMedalModal() {
+      document.getElementById('medalInfoModal').classList.add('hidden');
     }
 
     function isDateInCurrentWeek(dateStr) {
@@ -2144,6 +2180,12 @@
       const isMayor = rankLower === 'mayor';
       const isSargentoOrAbove = isSuperAdmin || ['general', 'coronel', 'mayor', 'teniente', 'sargento'].includes(rankLower);
       
+      // Control de visibilidad del botón exclusivo de Excel para Coronel y General
+      const btnExportExcelPanel = document.getElementById('btnExportExcelPanel');
+      if (btnExportExcelPanel) {
+        btnExportExcelPanel.classList.toggle('hidden', !(isSuperAdmin || isCoronel));
+      }
+
       const tabsContainer = document.getElementById('adminTabsContainer');
 
       if (isSuperAdmin) {
@@ -3158,7 +3200,7 @@
       } else {
         const shiftCutoff = new Date(startDate);
         shiftCutoff.setDate(shiftCutoff.getDate() + 1);
-        shiftCutoff.setHours(3, 0, 0, 0); // Corte a las 03:00 AM
+        shiftCutoff.setHours(3, 0, 0, 0);
         const cutoffMs = shiftCutoff.getTime();
 
         if (endTimeMs <= cutoffMs) {
