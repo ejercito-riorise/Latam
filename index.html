@@ -176,16 +176,22 @@
               <input type="text" id="regCountry" required placeholder="Ej: Colombia" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
           </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Rango Solicitado</label>
-            <select id="regRank" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
-              <option value="Privado">Privado</option>
-              <option value="Sargento">Sargento</option>
-              <option value="Teniente">Teniente</option>
-              <option value="Mayor">Mayor</option>
-              <option value="Coronel">Coronel</option>
-              <option value="General">General</option>
-            </select>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Rango Solicitado</label>
+              <select id="regRank" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
+                <option value="Privado">Privado</option>
+                <option value="Sargento">Sargento</option>
+                <option value="Teniente">Teniente</option>
+                <option value="Mayor">Mayor</option>
+                <option value="Coronel">Coronel</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Fecha de Ingreso</label>
+              <input type="date" id="regFechaIngreso" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500">
+            </div>
           </div>
           <div>
             <label class="block text-[11px] font-semibold text-slate-300 mb-1">Contraseña</label>
@@ -749,7 +755,7 @@
 
         <!-- PESTAÑA TROPA Y SANCIONES -->
         <div id="viewActive" class="space-y-3 hidden">
-          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa, Sanciones & Formaciones:</h4>
+          <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-users-gear"></i> Gestión de Tropa, Sanciones, Jerarquía & Formaciones:</h4>
           
           <div id="creatorFormationSection" class="bg-purple-950/40 border border-purple-500/50 p-3 rounded-xl space-y-2.5">
             <h5 class="text-xs font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-plus"></i> Abrir Formación Multipregunta</h5>
@@ -2180,7 +2186,6 @@
       const isMayor = rankLower === 'mayor';
       const isSargentoOrAbove = isSuperAdmin || ['general', 'coronel', 'mayor', 'teniente', 'sargento'].includes(rankLower);
       
-      // Control de visibilidad del botón exclusivo de Excel para Coronel y General
       const btnExportExcelPanel = document.getElementById('btnExportExcelPanel');
       if (btnExportExcelPanel) {
         btnExportExcelPanel.classList.toggle('hidden', !(isSuperAdmin || isCoronel));
@@ -2284,6 +2289,7 @@
       const country = document.getElementById('regCountry').value.trim();
       const pass = document.getElementById('regPassword').value;
       const rank = document.getElementById('regRank').value;
+      const fechaIngreso = document.getElementById('regFechaIngreso').value;
 
       showTacticalLoader("REGISTRANDO RECLUTA", "Transmitiendo ficha a la Comandancia...");
       try {
@@ -2296,6 +2302,7 @@
             rank: rank, 
             age: age, 
             country: country, 
+            fechaIngreso: fechaIngreso,
             status: 'pending',
             fecha: getColombiaDateString(),
             hora: new Date().toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' })
@@ -2360,6 +2367,16 @@
         currentUser = { username: found.username, rank: found.rank, hours: parseFloat(found.hours || 0), activeShiftStart: found.activeShiftStart };
         localStorage.setItem('rioRiseCurrentSession', JSON.stringify(currentUser));
         localStorage.setItem(`sessionLoginTime_${currentUser.username}`, Date.now());
+
+        // Verificación y solicitud automática de Fecha de Ingreso si no existe
+        const localKey = `fechaIngreso_${found.username}`;
+        let storedDate = localStorage.getItem(localKey) || found.fechaIngreso;
+        if (!storedDate) {
+          let promptDate = prompt(`Atención Soldado ${found.username}:\nEl Alto Mando requiere registrar tu fecha oficial de ingreso al Ejército (Formato AAAA-MM-DD):`, "2026-01-01");
+          if (promptDate) {
+            localStorage.setItem(localKey, promptDate);
+          }
+        }
 
         cachedData = resData;
         globalHistoryCache = resData.history || [];
@@ -3395,58 +3412,69 @@
           });
         }
 
+        // Renderizado Jerárquico de Tropa (Tenientes -> Sargentos -> Privados)
         const activeList = document.getElementById('activeList');
         if (activeList) {
-          activeList.innerHTML = '';
-          users.filter(u => u.status && u.status.toLowerCase() === 'approved').forEach(u => {
-            const div = document.createElement('div');
-            div.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-2 text-xs';
-            
-            let adminActionsHtml = isSuperAdmin ? `<button onclick="playSound('click'); deleteUser('${u.username}')" class="text-red-400 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario"><i class="fa-solid fa-trash-can"></i></button>` : '';
-            let sanctionBtn = isSuperAdmin || isCoronel ? `<button onclick="openSanctionModal('${u.username}')" class="bg-amber-600 hover:bg-amber-500 text-white text-[9px] px-2 py-1 rounded font-bold"><i class="fa-solid fa-gavel"></i> Sancionar</button>` : '';
-            
-            let rankSelectorHtml = isSuperAdmin ? `
-              <div class="flex items-center gap-2 pt-1 border-t border-slate-800/60 mt-1">
-                <span class="text-[10px] text-slate-400">Rango:</span>
-                <select onchange="changeUserRank('${u.username}', this.value)" class="bg-slate-950 border border-slate-700 text-white text-[10px] rounded p-1 focus:outline-none w-full">
-                  <option value="" disabled selected>Cambiar rango...</option>
-                  <option value="Privado">Privado</option>
-                  <option value="Sargento">Sargento</option>
-                  <option value="Teniente">Teniente</option>
-                  <option value="Mayor">Mayor</option>
-                  <option value="Coronel">Coronel</option>
-                  <option value="General">General</option>
-                </select>
-              </div>
-            ` : '';
+          const approved = users.filter(u => u.status && u.status.toLowerCase() === 'approved');
+          
+          let tenientes = approved.filter(u => (u.rank || '').toLowerCase() === 'teniente' || (u.rank || '').toLowerCase() === 'mayor' || (u.rank || '').toLowerCase() === 'coronel' || (u.rank || '').toLowerCase() === 'general');
+          let sargentos = approved.filter(u => (u.rank || '').toLowerCase() === 'sargento');
+          let privados  = approved.filter(u => (u.rank || '').toLowerCase() === 'privado');
+          let otros     = approved.filter(u => !['teniente', 'sargento', 'privado', 'mayor', 'coronel', 'general'].includes((u.rank || '').toLowerCase()));
 
-            let sanctionsListKey = `sanctions_${u.username}`;
-            let userSanctions = JSON.parse(localStorage.getItem(sanctionsListKey) || '[]');
-            let sanctionsHtml = '';
-            if(userSanctions.length > 0) {
-              sanctionsHtml = `<div class="text-[9px] text-red-400 bg-red-950/40 p-1.5 rounded border border-red-900/50 space-y-0.5 mt-1"><span class="font-bold">⚠ Amonestaciones (${userSanctions.length}):</span>`;
-              userSanctions.forEach(s => {
-                sanctionsHtml += `<div>• [${s.type}] ${s.reason} (${s.date})</div>`;
+          let hierarchyHtml = `<div class="space-y-3">
+            <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-sitemap mr-1"></i> Cadena de Mando y Despliegue Jerárquico</h4>`;
+
+          // Si hay altos mandos / tenientes
+          if(tenientes.length > 0) {
+            tenientes.forEach(t => {
+              hierarchyHtml += `
+                <div class="bg-slate-950 p-2.5 rounded-lg border border-amber-600/50 space-y-2">
+                  <div class="flex items-center justify-between text-xs font-bold text-amber-300">
+                    <span>⭐ ${t.rank}: ${t.username}</span>
+                    <span class="text-[9px] bg-amber-950 px-1.5 py-0.5 rounded">Comandante / Oficial</span>
+                  </div>
+                  <div class="pl-3 border-l-2 border-amber-500/30 space-y-1.5 pt-1">
+              `;
+
+              sargentos.forEach(s => {
+                hierarchyHtml += `
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800 space-y-1">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-blue-400">
+                      <span>↳ Sargento (Profesor): ${s.username}</span>
+                    </div>
+                    <div class="pl-3 border-l-2 border-blue-500/30 flex flex-wrap gap-1 pt-1">
+                `;
+
+                privados.forEach(p => {
+                  hierarchyHtml += `<span class="bg-slate-950 text-slate-300 text-[9px] px-2 py-0.5 rounded border border-slate-800">🛡️ Privado: ${p.username}</span>`;
+                });
+
+                hierarchyHtml += `</div></div>`;
               });
-              sanctionsHtml += `</div>`;
-            }
 
-            div.innerHTML = `
-              <div class="flex items-center justify-between">
-                <div>
-                  <span class="font-bold text-white text-sm">${u.username}</span> 
-                  <span class="text-[9px] badge-${u.rank.toLowerCase()} px-1.5 py-0.5 rounded uppercase">${u.rank}</span>
+              hierarchyHtml += `</div></div>`;
+            });
+          } else {
+            // Listado adaptable si no hay estructura jerárquica rígida creada
+            approved.forEach(u => {
+              let sanctionBtn = isSuperAdmin || isCoronel ? `<button onclick="openSanctionModal('${u.username}')" class="bg-amber-600 hover:bg-amber-500 text-white text-[9px] px-2 py-1 rounded font-bold"><i class="fa-solid fa-gavel"></i> Sancionar</button>` : '';
+              let adminActionsHtml = isSuperAdmin ? `<button onclick="playSound('click'); deleteUser('${u.username}')" class="text-red-400 text-xs px-1.5 py-0.5 rounded bg-red-950 border border-red-800/50" title="Eliminar usuario"><i class="fa-solid fa-trash-can"></i></button>` : '';
+
+              hierarchyHtml += `
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
+                  <div>
+                    <span class="font-bold text-white">${u.username}</span>
+                    <span class="text-[9px] badge-${u.rank.toLowerCase()} px-1.5 py-0.5 rounded uppercase">${u.rank}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">${sanctionBtn} ${adminActionsHtml}</div>
                 </div>
-                <div class="flex items-center gap-1.5">
-                  ${sanctionBtn}
-                  ${adminActionsHtml}
-                </div>
-              </div>
-              ${rankSelectorHtml}
-              ${sanctionsHtml}
-            `;
-            activeList.appendChild(div);
-          });
+              `;
+            });
+          }
+
+          hierarchyHtml += `</div>`;
+          activeList.innerHTML = hierarchyHtml;
         }
 
         renderFormationsAuditLog();
