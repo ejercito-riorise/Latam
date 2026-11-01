@@ -753,35 +753,40 @@
           <div id="pendingList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
         </div>
 
-        <!-- PESTAÑA ORGANIZAR PERSONAL (NUEVA PESTAÑA) -->
+        <!-- PESTAÑA ORGANIZAR PERSONAL (NUEVA: SINCRONIZADA EN NUBE + DESCARGAR) -->
         <div id="viewOrg" class="space-y-3 hidden">
           <div class="bg-slate-900 p-3 rounded-xl border border-blue-500/40 space-y-2.5">
-            <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Herramienta de Organización de Personal</h4>
-            <p class="text-[10px] text-slate-300">Asigna la cadena de mando (ej. qué sargentos están a cargo de qué tenientes):</p>
+            <div class="flex justify-between items-center">
+              <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Cadena de Mando Oficial</h4>
+              <button onclick="exportOrgCSV(); playSound('click');" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
+                <i class="fa-solid fa-file-excel"></i> Descargar Excel
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-300">Asigna la cadena de mando sincronizada para toda la base:</p>
             
             <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-2 text-xs">
               <div>
-                <label class="block text-[10px] text-slate-300 mb-1">Teniente / Superior a Cargo</label>
+                <label class="block text-[10px] text-slate-300 mb-1">Superior a Cargo</label>
                 <select id="orgSuperiorSelect" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
                   <!-- Se llena dinámicamente -->
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] text-slate-300 mb-1">Subordinado / Sargento Asignado</label>
+                <label class="block text-[10px] text-slate-300 mb-1">Subordinado Asignado</label>
                 <select id="orgSubordinateSelect" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
                   <!-- Se llena dinámicamente -->
                 </select>
               </div>
               <button onclick="savePersonalAssignment(); playSound('success');" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-1.5 rounded text-xs uppercase transition shadow">
-                ➕ Guardar Asignación Táctica
+                ➕ Guardar Asignación en Nube
               </button>
             </div>
           </div>
 
           <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
-            <h5 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-network-wired"></i> Estructura de Mando Actual</h5>
+            <h5 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-network-wired"></i> Estructura Global Sincronizada</h5>
             <div id="orgStructureList" class="space-y-1.5 max-h-52 overflow-y-auto">
-              <p class="text-[10px] text-slate-500 italic">No hay asignaciones registradas.</p>
+              <p class="text-[10px] text-slate-500 italic">Cargando...</p>
             </div>
           </div>
         </div>
@@ -1069,6 +1074,7 @@
     let deferredPrompt = null;
     let globalHistoryCache = [];
     let currentRankedExportArray = [];
+    let cloudOrganizationList = []; // <--- Lista sincronizada en la nube
     let editingOldTitle = null;
     let editingDoctrinaOldTitle = null;
     let newsStorageMap = {};
@@ -1833,7 +1839,6 @@
 
         let badgeStatus = f.estado === 'active' ? `<span class="text-emerald-400 font-bold">⚡ ACTIVA</span>` : `<span class="text-slate-400">Finalizada</span>`;
         
-        // Fecha y hora exactas basadas en el timestamp de creación de la formación
         let formationDateObj = new Date(parseInt(f.timestamp));
         let fDateStr = !isNaN(formationDateObj.getTime()) ? formationDateObj.toLocaleDateString("en-GB", { timeZone: "America/Bogota" }) : "Fecha N/D";
         let fTimeStr = !isNaN(formationDateObj.getTime()) ? formationDateObj.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' }) : "Hora N/D";
@@ -2330,6 +2335,7 @@
       }
     }
 
+    // --- FUNCIONES PARA LA ORGANIZACIÓN EN LA NUBE Y DESCARGA EXCEL ---
     function populateOrgDropdowns() {
       if(!cachedData || !cachedData.users) return;
       const approvedUsers = cachedData.users.filter(u => u.status && u.status.toLowerCase() === 'approved');
@@ -2354,7 +2360,7 @@
       });
     }
 
-    function savePersonalAssignment() {
+    async function savePersonalAssignment() {
       const superior = document.getElementById('orgSuperiorSelect').value;
       const subordinate = document.getElementById('orgSubordinateSelect').value;
 
@@ -2367,55 +2373,75 @@
         return;
       }
 
-      let orgMap = JSON.parse(localStorage.getItem('rioRiseOrgMapping') || '{}');
-      if(!orgMap[superior]) orgMap[superior] = [];
-      if(!orgMap[superior].includes(subordinate)) {
-        orgMap[superior].push(subordinate);
+      cloudOrganizationList.push({ superior: superior, subordinado: subordinate });
+
+      showTacticalLoader("GUARDANDO EN LA NUBE", "Actualizando cadena de mando en Google Sheets...");
+      try {
+        await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'saveOrganization', organizacion: cloudOrganizationList })
+        });
+        hideTacticalLoader();
+        playSound('success');
+        alert("✔ Asignación guardada en Google Sheets para toda la tropa.");
+        renderOrgStructure();
+      } catch (e) {
+        hideTacticalLoader();
+        alert("Error al guardar en la nube.");
       }
-      localStorage.setItem('rioRiseOrgMapping', JSON.stringify(orgMap));
-      playSound('success');
-      alert(`✔ Asignación guardada: ${subordinate} ahora está a cargo de ${superior}.`);
-      renderOrgStructure();
     }
 
     function renderOrgStructure() {
       const container = document.getElementById('orgStructureList');
       if(!container) return;
-      let orgMap = JSON.parse(localStorage.getItem('rioRiseOrgMapping') || '{}');
-      let superiors = Object.keys(orgMap);
 
-      if(superiors.length === 0) {
-        container.innerHTML = '<p class="text-[10px] text-slate-500 italic">No hay asignaciones registradas.</p>';
+      if(cloudOrganizationList.length === 0) {
+        container.innerHTML = '<p class="text-[10px] text-slate-500 italic">No hay asignaciones en la nube.</p>';
         return;
       }
 
       let html = '';
-      superiors.forEach(sup => {
-        let subs = orgMap[sup];
-        html += `<div class="bg-slate-950 p-2 rounded border border-slate-800 text-[10px] space-y-1">
-          <div class="font-bold text-amber-400">🛡️ Superior: ${sup}</div>
-          <div class="pl-3 space-y-0.5">`;
-        subs.forEach((sub, sIdx) => {
-          html += `<div class="flex justify-between items-center text-slate-200">
-            <span>• Subordinado: <strong class="text-white">${sub}</strong></span>
-            <button onclick="removeOrgAssignment('${sup}', ${sIdx})" class="text-red-400 hover:text-red-300 px-1"><i class="fa-solid fa-trash"></i></button>
-          </div>`;
-        });
-        html += `</div></div>`;
+      cloudOrganizationList.forEach((item, idx) => {
+        html += `<div class="bg-slate-950 p-2 rounded border border-slate-800 text-[10px] flex justify-between items-center">
+          <div><strong class="text-amber-400">${item.superior}</strong> ➔ <span class="text-white">${item.subordinado}</span></div>
+          <button onclick="removeOrgAssignment(${idx})" class="text-red-400 hover:text-red-300 px-1"><i class="fa-solid fa-trash"></i></button>
+        </div>`;
       });
       container.innerHTML = html;
     }
 
-    function removeOrgAssignment(superior, subIndex) {
-      let orgMap = JSON.parse(localStorage.getItem('rioRiseOrgMapping') || '{}');
-      if(orgMap[superior]) {
-        orgMap[superior].splice(subIndex, 1);
-        if(orgMap[superior].length === 0) delete orgMap[superior];
-        localStorage.setItem('rioRiseOrgMapping', JSON.stringify(orgMap));
-        playSound('success');
+    async function removeOrgAssignment(idx) {
+      cloudOrganizationList.splice(idx, 1);
+      showTacticalLoader("ACTUALIZANDO NUBE", "Guardando cambios...");
+      try {
+        await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'saveOrganization', organizacion: cloudOrganizationList })
+        });
+        hideTacticalLoader();
         renderOrgStructure();
+      } catch(e) {
+        hideTacticalLoader();
       }
     }
+
+    function exportOrgCSV() {
+      if(cloudOrganizationList.length === 0) {
+        alert("No hay datos de organización para descargar.");
+        return;
+      }
+      let csv = "data:text/csv;charset=utf-8,Superior,Subordinado\n";
+      cloudOrganizationList.forEach(item => {
+        csv += `"${item.superior}","${item.subordinado}"\n`;
+      });
+      const link = document.createElement("a");
+      link.setAttribute("href", encodeURI(csv));
+      link.setAttribute("download", `Cadena_de_Mando_RioRise_${getColombiaDateString()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    // --------------------------------------------------------
 
     async function handleRegister(e) {
       e.preventDefault();
@@ -2505,9 +2531,9 @@
 
         cachedData = resData;
         globalHistoryCache = resData.history || [];
+        cloudOrganizationList = resData.organizacion || []; // <--- Cargar organización de la nube
         renderDashboardUI(resData);
 
-        // Validar si falta registrar la fecha de ingreso a la EB para personal antiguo
         if (!found.ingresoEB) {
           promptForIngresoEB(found.username);
         }
@@ -2565,6 +2591,7 @@
           const response = await fetch(WEB_APP_URL);
           cachedData = await response.json();
           globalHistoryCache = cachedData.history || [];
+          cloudOrganizationList = cachedData.organizacion || []; // <--- Cargar organización de la nube
           renderNewsFeed(cachedData.news, cachedData.polls);
           checkAuthorNotifications(cachedData.news, cachedData.doctrina, cachedData.polls);
           updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina, cachedData.polls);
@@ -2607,6 +2634,7 @@
       rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
 
       globalHistoryCache = resData.history || [];
+      cloudOrganizationList = resData.organizacion || []; // <--- Cargar organización de la nube
       renderNewsFeed(resData.news, resData.polls);
       checkAuthorNotifications(resData.news, resData.doctrina, resData.polls);
       updateCommandAlertBadges(resData.users, resData.news, resData.doctrina, resData.polls);
@@ -2634,6 +2662,7 @@
           const resData = await response.json();
           cachedData = resData;
           globalHistoryCache = resData.history || [];
+          cloudOrganizationList = resData.organizacion || []; // <--- Sincronizar organización en tiempo real
           renderNewsFeed(resData.news, resData.polls);
           checkAuthorNotifications(resData.news, resData.doctrina, resData.polls);
           updateCommandAlertBadges(resData.users, resData.news, resData.doctrina, resData.polls);
@@ -3439,6 +3468,7 @@
         }
 
         const users = resData.users, history = resData.history, news = resData.news, doctrina = resData.doctrina, polls = resData.polls;
+        cloudOrganizationList = resData.organizacion || []; // <--- Actualizar datos de organización desde la nube
         updateCommandAlertBadges(users, news, doctrina, polls);
 
         const rankLower = (currentUser.rank || '').toLowerCase();
