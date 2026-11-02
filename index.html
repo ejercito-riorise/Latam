@@ -235,7 +235,7 @@
             <span class="text-[9px] text-slate-400">Hoja de Méritos</span>
           </div>
           <div id="userMedalsContainer" class="flex flex-wrap gap-1.5 pt-1">
-            <!-- Se cargan dinámicamente con sus botones de ayuda ❓ -->
+            <!-- Se cargan dinámicamente -->
           </div>
         </div>
 
@@ -287,14 +287,14 @@
           </div>
         </div>
 
-        <!-- SECCIÓN ACADEMIA, REGLAMENTO, ACCIONES, RANGOS, CÓDIGOS Q Y BIBLIA RP -->
+        <!-- SECCIÓN ACADEMIA, REGLAMENTO, ACCIONES, RANGOS, CÓDIGOS Q, BIBLIA RP Y CADENA DE MANDO -->
         <div id="sectionDoctrina" class="military-card p-3 rounded-xl space-y-3 hidden">
           <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-graduation-cap text-blue-400 text-sm"></i>
               <div>
                 <h3 class="font-bold text-white text-xs">Academia Táctica y Manuales</h3>
-                <p class="text-[9px] text-slate-400">Normativa Completa (Cap 1 al 7), Carga CRM, Invasiones, Rangos y Códigos Q</p>
+                <p class="text-[9px] text-slate-400">Normativa Completa, Escuadrones, Rangos y Códigos Q</p>
               </div>
             </div>
             <button id="btnOpenAddDoctrina" onclick="openDoctrinaModal(); playSound('click');" class="hidden bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1">
@@ -318,19 +318,19 @@
             </button>
           </div>
 
-          <!-- SUB-PESTAÑAS DE ACADEMIA REORGANIZADAS -->
-          <div class="grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[9px]">
-            <button id="regTab1Btn" onclick="switchRegTab(1); playSound('click');" class="py-1 font-bold rounded text-white bg-blue-600 shadow">📖 Cap 1-2</button>
-            <button id="regTab2Btn" onclick="switchRegTab(2); playSound('click');" class="py-1 font-bold rounded text-slate-400 hover:text-white">📜 Cap 3-4</button>
-            <button id="regTab3Btn" onclick="switchRegTab(3); playSound('click');" class="py-1 font-bold rounded text-slate-400 hover:text-white">⚖️ Cap 5-7</button>
-            <button id="regTab4Btn" onclick="switchRegTab(4); playSound('click');" class="py-1 font-bold rounded text-slate-400 hover:text-white">⭐ Rangos</button>
-            <button id="regTab5Btn" onclick="switchRegTab(5); playSound('click');" class="py-1 font-bold rounded text-slate-400 hover:text-white">📻 Q & RP</button>
-            <button id="regTab6Btn" onclick="switchRegTab(6); playSound('click');" class="py-1 font-bold rounded text-slate-400 hover:text-white">🗺️ Mapa</button>
+          <!-- SUB-PESTAÑAS DE ACADEMIA CON PESTAÑA MANDO ADICIONADA -->
+          <div class="grid grid-cols-7 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[8px] font-bold text-center">
+            <button id="regTab1Btn" onclick="switchRegTab(1); playSound('click');" class="py-1 rounded text-white bg-blue-600 shadow">📖 Cap 1-2</button>
+            <button id="regTab2Btn" onclick="switchRegTab(2); playSound('click');" class="py-1 rounded text-slate-400 hover:text-white">📜 Cap 3-4</button>
+            <button id="regTab3Btn" onclick="switchRegTab(3); playSound('click');" class="py-1 rounded text-slate-400 hover:text-white">⚖️ Cap 5-7</button>
+            <button id="regTab4Btn" onclick="switchRegTab(4); playSound('click');" class="py-1 rounded text-slate-400 hover:text-white">⭐ Rangos</button>
+            <button id="regTab5Btn" onclick="switchRegTab(5); playSound('click');" class="py-1 rounded text-slate-400 hover:text-white">📻 Q & RP</button>
+            <button id="regTab6Btn" onclick="switchRegTab(6); playSound('click');" class="py-1 rounded text-slate-400 hover:text-white">🗺️ Mapa</button>
+            <button id="regTab7Btn" onclick="switchRegTab(7); playSound('click');" class="py-1 rounded text-slate-400 hover:text-white">🪖 Mando</button>
           </div>
 
-          <!-- BLOQUE 1: CAPÍTULOS 1 Y 2 + WHATSAPP INTERACTIVOS -->
+          <!-- BLOQUE 1: CAPÍTULOS 1 Y 2 -->
           <div id="regView1" class="space-y-2.5">
-            
             <div class="bg-gradient-to-r from-amber-950/60 to-slate-900 p-3 rounded-xl border border-amber-800/60 flex items-start gap-2.5 shadow">
               <div class="w-8 h-8 rounded-lg bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 text-sm mt-0.5">
                 <i class="fa-brands fa-whatsapp"></i>
@@ -352,7 +352,6 @@
                   <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>1.2.</strong> Por infracciones a los artículos del reglamento, los empleados pueden sufrir las siguientes medidas disciplinarias: advertencia, amonestación, despido o despido con inclusión en la lista negra de la organización.</div>
                   <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>1.3.</strong> Todo empleado tiene derecho a apelar una medida disciplinaria.</div>
                   <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>1.4.</strong> Durante el horario laboral, todos los empleados deben estar uniformados. Es posible solicitar permiso al General o a los Coroneles de la organización.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>Nota importante:</strong> El General y los Coroneles de la organización tienen derecho a informar a la administración o aplicar medidas disciplinarias de forma independiente si detectan una infracción.</div>
                 </div>
               </div>
 
@@ -364,17 +363,8 @@
                 <div id="cap2" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
                   <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.1.</strong> Conocer y obedecer las leyes del estado, los estatutos de la organización y asegurar su cumplimiento.</div>
                   <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.2.</strong> Proteger la vida de los ciudadanos por cualquier medio necesario.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.3.</strong> Obedecer las órdenes y peticiones de los oficiales superiores sin cuestionarlas, siempre que estén dentro del marco legal.</div>
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.3.</strong> Obedecer las órdenes y peticiones de los oficiales superiores sin cuestionarlas.</div>
                   <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.4.</strong> Respetar la cadena de mando.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.5.</strong> Seguir el orden interno de la organización.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.6.</strong> Ser cortés y diplomático al comunicarse con los ciudadanos.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.7.</strong> En caso de daños intencionales o accidentales, el oficial debe reparar el vehículo de trabajo.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.8.</strong> Los soldados deben conocer a sus oficiales superiores por su rostro y nombre.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.9.</strong> Proteger los bienes y objetos de valor del ejército.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.10.</strong> Presentar los documentos al oficial de guardia en los puestos de control.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.11.</strong> En los puestos de control, verificar los documentos de todos los civiles que lleguen.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.12.</strong> Los soldados deben presentarse antes de verificar los documentos.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>2.13.</strong> Vigilar el territorio del ejército diariamente. La distribución de las áreas de servicio la realiza el ayudante o el líder.</div>
                 </div>
               </div>
             </div>
@@ -390,16 +380,6 @@
               <div id="cap3" class="hidden pt-2 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
                 <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.1.</strong> Disparar a los civiles que ingresen ilegalmente al territorio del ejército.</div>
                 <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.2.</strong> Prestar asistencia a otras facciones gubernamentales durante eventos.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.3.</strong> Verificar los documentos de identidad de civiles y personal.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.4.</strong> Hacer preguntas a los oficiales superiores.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.5.</strong> Practicar tiro fuera del horario laboral.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.6.</strong> Solicitar asistencia por radio.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.7.</strong> Disparar a los civiles que apunten con un arma a otro civil o a un agente de policía.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.8.</strong> Tomar licencia o vacaciones con la aprobación del General o los Coroneles (hasta por dos semanas).</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.9.</strong> Bloquear caminos para prevenir delitos (por ejemplo, la entrega de guaraná por la mafia).</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.10.</strong> Chocar o disparar contra vehículos para prevenir delitos (por ejemplo, la entrega de guaraná por la mafia).</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.11.</strong> Transportar y almacenar armas en cualquier lugar.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>3.12.</strong> Estacionar vehículos personales en el territorio de la organización.</div>
               </div>
             </div>
 
@@ -412,33 +392,11 @@
                 <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.1.</strong> Vender o perder uniformes militares.</div>
                 <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.2.</strong> Vender cualquier propiedad del gobierno.</div>
                 <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.3.</strong> Solicitar ascensos de rango o puesto.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.4.</strong> Abandonar la base sin permiso. <span class="text-amber-300 block text-[10px] mt-0.5">Nota: Abandonar la base sin reportarse se considera ausencia no autorizada.</span></div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.5.</strong> Permanecer solo en barrios marginales innecesariamente.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.6.</strong> Causar daño físico a compañeros, civiles, empleados o propiedad sin motivo.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.7.</strong> Engañar a soldados o civiles.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.8.</strong> Discutir, ignorar o cuestionar órdenes de oficiales superiores.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.9.</strong> Usar lenguaje obsceno, insultar o humillar a alguien.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.10.</strong> Colaborar con grupos criminales o mafias.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.11.</strong> Abusar de autoridad.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.12.</strong> Usar máscara innecesariamente. <span class="text-amber-300 block text-[10px] mt-0.5">Nota: El uso debe reportarse por radio, indicando el motivo.</span></div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.13.</strong> Acompañar a civiles o miembros de pandillas en la base.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.14.</strong> Manejar asuntos personales durante el trabajo.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.15.</strong> Poseer o consumir drogas o alcohol estando de servicio.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.16.</strong> Usar vehículos oficiales para fines personales.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.17.</strong> Se prohíbe cualquier comportamiento inapropiado.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.18.</strong> Realizar actividades ilícitas durante el trabajo.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.19.</strong> Hacer mal uso del megáfono.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.20.</strong> Trabajar en empleos secundarios durante el servicio o estando de uniforme.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.21.</strong> Aceptar sobornos.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.22.</strong> Uso de armas para fines personales.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.23.</strong> Ocupar o abandonar puestos sin reportarlo por radio.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.24.</strong> Cambiar o elegir puestos sin autorización.</div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>4.25.</strong> Usar la radio y el chat del departamento para fines ajenos al trabajo.</div>
               </div>
             </div>
           </div>
 
-          <!-- BLOQUE 3: CAPÍTULOS 5, 6 Y 7 + ACCIONES Y CRM -->
+          <!-- BLOQUE 3: CAPÍTULOS 5, 6 Y 7 -->
           <div id="regView3" class="space-y-3 hidden">
             <div class="space-y-2">
               <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
@@ -448,99 +406,18 @@
                 </button>
                 <div id="cap5" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
                   <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>5.1.</strong> El tiempo de entrenamiento es de 5 minutos exactos.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>5.2.</strong> Se prohíbe el uso de gestos durante el entrenamiento. Excepción: levantar la mano.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>5.3.</strong> Se prohíbe quebrantar la disciplina durante el entrenamiento.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>5.4.</strong> Se prohíbe el uso de la radio durante el entrenamiento.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>5.5.</strong> Se prohíbe hablar durante el entrenamiento (en voz baja o susurrando).</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>5.6.</strong> Se prohíbe el uso del teléfono durante el entrenamiento.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>5.7.</strong> Se prohíbe portar o usar armas durante el entrenamiento.</div>
                 </div>
               </div>
 
               <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
                 <button onclick="toggleChapter('cap6')" class="w-full flex justify-between items-center text-xs font-bold text-orange-400">
-                  <span><i class="fa-solid fa-gavel mr-1.5"></i> CAPÍTULO 6: Reglas de Comunicación y Subordinación</span>
+                  <span><i class="fa-solid fa-gavel mr-1.5"></i> CAPÍTULO 6: Comunicación y Subordinación</span>
                   <i id="chevron_cap6" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
                 </button>
                 <div id="cap6" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>6.1.</strong> El personal del ejército debe comunicarse cortésmente con todos los ciudadanos, independientemente de su estatus.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>6.2.</strong> Se prohíben los asuntos personales, los insultos y las discusiones por radio o en el chat del departamento.</div>
+                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>6.1.</strong> Comunicarse cortésmente con todos los ciudadanos.</div>
                 </div>
               </div>
-
-              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                <button onclick="toggleChapter('cap7')" class="w-full flex justify-between items-center text-xs font-bold text-blue-400">
-                  <span><i class="fa-solid fa-clipboard-check mr-1.5"></i> CAPÍTULO 7: Horario de Trabajo</span>
-                  <i id="chevron_cap7" class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform"></i>
-                </button>
-                <div id="cap7" class="hidden mt-2.5 pt-2.5 border-t border-slate-900 text-[11px] text-slate-300 space-y-1.5">
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>7.1.</strong> Horas mínimas semanales de juego para el personal del ejército: 7 horas.</div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800"><strong>7.2.</strong> Ausencia máxima del juego: 3 días.</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- CONFIGURACIÓN DE CARGA (CRM) SEMANAL Y ACCIONES -->
-            <div class="bg-slate-950 p-3 rounded-xl border border-blue-500/50 space-y-3">
-              <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Carga Corregido (CRM) - Configuración Semanal</h4>
-                <span class="text-[9px] text-emerald-400 font-bold">Operativa Oficial</span>
-              </div>
-              <p class="text-[10px] text-slate-300">Cronograma de cargamentos y distribución de facciones:</p>
-
-              <div class="space-y-2 pt-1 text-[11px]">
-                <div class="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
-                  <div><strong>🟢 Lunes:</strong> Facción Verde</div>
-                  <span class="text-[9px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">Cargamento Oficial</span>
-                </div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
-                  <div><strong>🎩 Martes:</strong> Mafia de la Colina</div>
-                  <span class="text-[9px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">Cargamento Oficial</span>
-                </div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
-                  <div><strong>🟣 Miércoles:</strong> Facción Morada</div>
-                  <span class="text-[9px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">Cargamento Oficial</span>
-                </div>
-                <div class="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center">
-                  <div><strong>🔵 Jueves:</strong> Mafia Costera</div>
-                  <span class="text-[9px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">Cargamento Oficial</span>
-                </div>
-                <div class="bg-slate-900 p-2.5 rounded border border-slate-800 space-y-1">
-                  <div class="font-bold text-blue-400">🔷 Viernes:</div>
-                  <div class="text-[10px] text-slate-300">• 17:00 ➔ Mafia Costera<br>• 19:00 ➔ Mafia de la Colina</div>
-                </div>
-                <div class="bg-slate-900 p-2.5 rounded border border-slate-800 space-y-1">
-                  <div class="font-bold text-emerald-400">🟢 Sábado:</div>
-                  <div class="text-[10px] text-slate-300">• 17:00 ➔ Verdes<br>• 19:00 ➔ Moradas</div>
-                </div>
-                <div class="bg-slate-900 p-2.5 rounded border border-slate-800 space-y-1">
-                  <div class="font-bold text-amber-400">🟡 Domingo (Acción libre):</div>
-                  <p class="text-[10px] text-slate-300"><strong>Regla:</strong> El domingo, la primera mafia o facción que llegue al punto de carga se queda con la acción.</p>
-                </div>
-              </div>
-
-              <!-- PACIFICACIONES E INVASIONES -->
-              <div class="space-y-2 pt-2 border-t border-slate-900">
-                <h5 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-shield-dog mr-1"></i> Pacificaciones e Invasiones EB</h5>
-                <div class="space-y-2 text-[10px]">
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800">
-                    <strong>🗓️ Sábado (21:00 a 22:00):</strong> Operación de pacificación del Ejército contra las mafias.
-                  </div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800">
-                    <strong>🗓️ Domingo y Lunes (21:00 a 00:00):</strong> Operación de pacificación conjunta del Ejército y la Policía Federal contra las facciones.
-                  </div>
-                  <div class="bg-slate-900 p-2 rounded border border-slate-800 space-y-1">
-                    <strong>🗓️ Martes y Jueves (Invasiones del EB):</strong>
-                    <p>• <strong>Martes:</strong> Facciones Morada y Verde (de 17:00 a 24:00).</p>
-                    <p>• <strong>Jueves:</strong> Ambas mafias (Blanca y Azul) pueden programar una acción contra el EB entre las 19:00 y las 23:00. Es obligatorio un intervalo mínimo de 2 horas entre acciones (no se permiten intervalos inferiores).</p>
-                  </div>
-                  <div class="bg-red-950/40 border border-red-800/60 p-2 rounded text-red-300 space-y-1">
-                    <p class="font-bold">🚨 Reglas Adicionales de Maletines:</p>
-                    <p>Si una familia roba un maletín durante una acción de la mafia en el EB, la familia que conquiste la mafia en ausencia de la otra verá su mafia <strong>reiniciada y recibirá una advertencia</strong>. La mafia anterior recuperará su mafia.</p>
-                  </div>
-                </div>
-              </div>
-
             </div>
           </div>
 
@@ -548,61 +425,15 @@
           <div id="regView4" class="space-y-3 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/50 space-y-3">
               <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-ranking-star mr-1"></i> Rangos de las Fuerzas Armadas de Brasil (EB)</h4>
+                <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-ranking-star mr-1"></i> Rangos de las Fuerzas Armadas (EB)</h4>
                 <span class="text-[9px] text-emerald-400 font-bold">Jerarquía Oficial</span>
               </div>
-              <p class="text-[10px] text-slate-300">Conoce los rangos, funciones específicas y autorizaciones de cada nivel dentro de la organización:</p>
-              
-              <div class="space-y-3 pt-1 text-[11px]">
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
-                  <div class="flex justify-between items-center font-bold text-amber-400 text-xs">
-                    <span>⭐ RANGO 1 / PRIVADO</span>
-                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Nuevos Reclutas</span>
-                  </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a nuevos reclutas con poco conocimiento de la organización.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Obedecer órdenes de todos los superiores. Cuida ubicaciones específicas de la base como guardia vigilando que nadie entre.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Equipamiento:</strong> Se le otorga armamento para defender la base, chalecos antibalas y armas DEASER (pistolas de bajo calibre).</p>
-                </div>
-
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
-                  <div class="flex justify-between items-center font-bold text-blue-400 text-xs">
-                    <span>⭐⭐ RANGO 2 / SARGENTO</span>
-                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Intermedio</span>
-                  </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a quien ya tiene leve experiencia en la organización, mostrando compromiso y estudio.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Se encargan de la enseñanza, educación, manejo y control de los privados (sus profesores).</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Participación:</strong> Participan de las acciones siempre y cuando estén autorizados. Son soldados de rendimiento intermedio.</p>
-                </div>
-
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
-                  <div class="flex justify-between items-center font-bold text-cyan-400 text-xs">
-                    <span>⭐⭐⭐ RANGO 3 / TENIENTES</span>
-                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Amplitud Mental</span>
-                  </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado a quienes demostraron amplitud mental, compromiso, actividad, estudio y conocimiento.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Conocen las normas y manejo de base. Verifican la enseñanza de sargentos a privados, y el control general de la base.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Acciones y Movilización:</strong> Participan en las acciones y tienen permitido el uso de vehículos militares para movilización en base y control.</p>
-                </div>
-
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
-                  <div class="flex justify-between items-center font-bold text-orange-400 text-xs">
-                    <span>⭐⭐⭐⭐ RANGO 4 / MAYOR</span>
-                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Soldados Élite</span>
-                  </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Solo para los más destacados de la base (soldados élite con tiempo, experiencia, estudio y actividad).</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Garantizar el bien de la base militar; lideran los rangos anteriores, organizan, enseñan y verifican.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Armamento y Acciones:</strong> Participan en todas las acciones. Se les permite utilizar <strong>toda arma de fuego</strong>.</p>
-                </div>
-
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
-                  <div class="flex justify-between items-center font-bold text-red-400 text-xs">
-                    <span>⭐⭐⭐⭐⭐ RANGO 5 / CORONEL</span>
-                    <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Jefes / Vice-líderes</span>
-                  </div>
-                  <p class="text-slate-300 text-[10px]"><strong>Descripción:</strong> Otorgado por el General a sus soldados de confianza. Son jefes y vice-líderes de las fuerzas armadas.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Función:</strong> Total responsables de todo lo que pasa en base; atentos a todas las acciones y situaciones de la organización.</p>
-                  <p class="text-slate-300 text-[10px]"><strong>Mando:</strong> Dan las órdenes, mandan cuando el General no está o deben hacerlo. Sus órdenes <strong>no se cuestionan, se cumplen</strong>.</p>
-                </div>
+              <div class="space-y-2 pt-1 text-[11px]">
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">⭐ RANGO 1 / PRIVADO</div>
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">⭐⭐ RANGO 2 / SARGENTO</div>
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">⭐⭐⭐ RANGO 3 / TENIENTES</div>
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">⭐⭐⭐⭐ RANGO 4 / MAYOR</div>
+                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">⭐⭐⭐⭐⭐ RANGO 5 / CORONEL</div>
               </div>
             </div>
           </div>
@@ -610,48 +441,221 @@
           <!-- BLOQUE 5: CÓDIGOS Q Y BIBLIA RP -->
           <div id="regView5" class="space-y-3 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-              <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-tower-broadcast mr-1"></i> Códigos Q de Facciones</h4>
-                <span class="text-[9px] text-slate-400">Uso Obligatorio</span>
-              </div>
-              <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-                <input type="text" id="qCodeSearch" oninput="filterQCodes()" placeholder="Busca código (Ej: QRR)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
-              </div>
+              <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-tower-broadcast mr-1"></i> Códigos Q</h4>
               <div id="qCodesContainer" class="grid grid-cols-1 gap-1.5 max-h-40 overflow-y-auto pr-1 text-[11px]"></div>
-            </div>
-
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-              <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                <h4 class="text-xs font-bold text-blue-400"><i class="fa-solid fa-book-bible mr-1"></i> Biblia RP Oficial - Rio Rise</h4>
-                <span class="text-[9px] text-slate-400">Normativa del Servidor</span>
-              </div>
-              <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-                <input type="text" id="rpSearch" oninput="filterRpRules()" placeholder="Busca concepto (Ej: RDM, MG)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
-              </div>
-              <div id="rpContainer" class="grid grid-cols-1 gap-1.5 max-h-40 overflow-y-auto pr-1 text-[11px]"></div>
             </div>
           </div>
 
-          <!-- BLOQUE 6: MAPA TÁCTICO CON MARCADORES EN VIVO -->
+          <!-- BLOQUE 6: MAPA TÁCTICO -->
           <div id="regView6" class="space-y-3 hidden">
             <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/50 space-y-2">
-              <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-map-location-dot mr-1"></i> Mapa Táctico & Puntos Clave EB</h4>
-                <span class="text-[9px] text-emerald-400 font-bold">Base Oficial RioRise</span>
-              </div>
-              <p class="text-[10px] text-slate-300">Toca el mapa para ampliarlo y revisa los puntos clave (Torres Tango 1 al 8, Cuartel General, Helipuerto, Planta Eléctrica, etc.):</p>
-              
+              <h4 class="text-xs font-bold text-amber-400"><i class="fa-solid fa-map-location-dot mr-1"></i> Mapa Táctico</h4>
               <div class="rounded-lg overflow-hidden border border-slate-700 bg-slate-900 cursor-pointer group relative text-center" onclick="openImageModal('https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9')">
-                <img src="https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9" alt="Mapa Base Rio Rise" class="w-full h-auto object-cover max-h-56 group-hover:scale-105 transition duration-300" loading="lazy">
-                
-                <div id="liveMapPinsContainer" class="absolute inset-0 pointer-events-none p-3 flex flex-wrap content-end gap-1"></div>
+                <img src="https://lh3.googleusercontent.com/d/1F5ttqI3gCHspV3tGZUP6FtizZN6UvHR9" alt="Mapa Base Rio Rise" class="w-full h-auto object-cover max-h-56">
+              </div>
+            </div>
+          </div>
 
-                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-bold gap-1.5">
-                  <i class="fa-solid fa-magnifying-glass-plus text-amber-400"></i> Toca para ampliar mapa en alta resolución
+          <!-- BLOQUE 7: NUEVA PESTAÑA CADENA DE MANDO (ESTRUCTURA DE ESCUADRONES PRO) -->
+          <div id="regView7" class="space-y-3 hidden">
+            <div class="bg-slate-950 p-3 rounded-xl border border-blue-500/50 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-sitemap text-blue-400 text-sm"></i>
+                  <h4 class="text-xs font-bold text-blue-400">Cadena de Mando • Estructura Táctica</h4>
+                </div>
+                <span class="text-[9px] bg-blue-900/60 text-blue-300 border border-blue-700 px-2 py-0.5 rounded font-bold">30 Operativos</span>
+              </div>
+
+              <!-- ESCUADRÓN ALFA (9) -->
+              <div class="bg-slate-900/90 rounded-xl border border-cyan-500/40 overflow-hidden shadow-lg">
+                <div class="bg-gradient-to-r from-cyan-950 to-slate-900 p-2.5 flex items-center justify-between border-b border-cyan-500/30">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <h5 class="text-xs font-bold text-cyan-300 tracking-wide">ESCUADRÓN ALFA</h5>
+                  </div>
+                  <span class="text-[10px] bg-cyan-950 text-cyan-300 font-mono font-bold px-2 py-0.5 rounded border border-cyan-800">9 Miembros</span>
+                </div>
+                <div class="p-2.5 space-y-2 text-[11px]">
+                  
+                  <!-- Tenientes -->
+                  <div class="space-y-1">
+                    <div class="text-[9px] font-bold text-amber-400 uppercase flex items-center justify-between bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
+                      <span><i class="fa-solid fa-chevron-right text-[7px] mr-1"></i>Tenientes [3]</span>
+                      <span class="text-slate-400 font-mono">2</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pl-2">
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 flex items-center justify-between">
+                        <span class="text-slate-200 font-medium">Alex_Romero</span>
+                        <span class="text-[8px] badge-teniente px-1 rounded font-bold">T-3</span>
+                      </div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 flex items-center justify-between">
+                        <span class="text-slate-200 font-medium truncate">Davimiguel_Costa</span>
+                        <span class="text-[8px] badge-teniente px-1 rounded font-bold">T-3</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Sargentos -->
+                  <div class="space-y-1">
+                    <div class="text-[9px] font-bold text-blue-400 uppercase flex items-center justify-between bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
+                      <span><i class="fa-solid fa-chevron-right text-[7px] mr-1"></i>Sargentos [2]</span>
+                      <span class="text-slate-400 font-mono">3</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-1 pl-2">
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-center truncate">
+                        <span class="text-slate-200 block truncate">Arilu_Domi</span>
+                        <span class="text-[7px] badge-sargento px-1 rounded font-bold">S-2</span>
+                      </div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-center truncate">
+                        <span class="text-slate-200 block truncate">Brayandaniel</span>
+                        <span class="text-[7px] badge-sargento px-1 rounded font-bold">S-2</span>
+                      </div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-center truncate">
+                        <span class="text-slate-200 block truncate">Lang_Kung</span>
+                        <span class="text-[7px] badge-sargento px-1 rounded font-bold">S-2</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Privados -->
+                  <div class="space-y-1">
+                    <div class="text-[9px] font-bold text-slate-400 uppercase flex items-center justify-between bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
+                      <span><i class="fa-solid fa-chevron-right text-[7px] mr-1"></i>Privados [1]</span>
+                      <span class="text-slate-400 font-mono">4</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pl-2">
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Alanraul_Barbosaferrei</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Dolupe_Locu</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Enzodaniel_Silvaconti</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Enzoiago_Machadoevange</div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
+
+              <!-- ESCUADRÓN BRAVO (11) -->
+              <div class="bg-slate-900/90 rounded-xl border border-emerald-500/40 overflow-hidden shadow-lg">
+                <div class="bg-gradient-to-r from-emerald-950 to-slate-900 p-2.5 flex items-center justify-between border-b border-emerald-500/30">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <h5 class="text-xs font-bold text-emerald-300 tracking-wide">ESCUADRÓN BRAVO</h5>
+                  </div>
+                  <span class="text-[10px] bg-emerald-950 text-emerald-300 font-mono font-bold px-2 py-0.5 rounded border border-emerald-800">11 Miembros</span>
+                </div>
+                <div class="p-2.5 space-y-2 text-[11px]">
+                  
+                  <!-- Tenientes -->
+                  <div class="space-y-1">
+                    <div class="text-[9px] font-bold text-amber-400 uppercase flex items-center justify-between bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
+                      <span><i class="fa-solid fa-chevron-right text-[7px] mr-1"></i>Tenientes [3]</span>
+                      <span class="text-slate-400 font-mono">2</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pl-2">
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 flex items-center justify-between">
+                        <span class="text-slate-200 font-medium">Lili_Evange</span>
+                        <span class="text-[8px] badge-teniente px-1 rounded font-bold">T-3</span>
+                      </div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 flex items-center justify-between">
+                        <span class="text-slate-200 font-medium truncate">Sandrofelipe</span>
+                        <span class="text-[8px] badge-teniente px-1 rounded font-bold">T-3</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Sargentos -->
+                  <div class="space-y-1">
+                    <div class="text-[9px] font-bold text-blue-400 uppercase flex items-center justify-between bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
+                      <span><i class="fa-solid fa-chevron-right text-[7px] mr-1"></i>Sargentos [2]</span>
+                      <span class="text-slate-400 font-mono">4</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pl-2">
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-200 truncate">Andres_Galvan</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-200 truncate">Davithiago_Queiroz</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-200 truncate">Ivana_Verlovich</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-200 truncate">Reina_Nicaragua</div>
+                    </div>
+                  </div>
+
+                  <!-- Privados -->
+                  <div class="space-y-1">
+                    <div class="text-[9px] font-bold text-slate-400 uppercase flex items-center justify-between bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
+                      <span><i class="fa-solid fa-chevron-right text-[7px] mr-1"></i>Privados [1]</span>
+                      <span class="text-slate-400 font-mono">5</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pl-2">
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Alacran_Gna</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Cabo_Primero</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Don_Cortez</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Juan_Torrz</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Lara_Almonte</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- ESCUADRÓN CHARLIE (10) -->
+              <div class="bg-slate-900/90 rounded-xl border border-purple-500/40 overflow-hidden shadow-lg">
+                <div class="bg-gradient-to-r from-purple-950 to-slate-900 p-2.5 flex items-center justify-between border-b border-purple-500/30">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-purple-400 animate-pulse"></span>
+                    <h5 class="text-xs font-bold text-purple-300 tracking-wide">ESCUADRÓN CHARLIE</h5>
+                  </div>
+                  <span class="text-[10px] bg-purple-950 text-purple-300 font-mono font-bold px-2 py-0.5 rounded border border-purple-800">10 Miembros</span>
+                </div>
+                <div class="p-2.5 space-y-2 text-[11px]">
+                  
+                  <!-- Tenientes -->
+                  <div class="space-y-1">
+                    <div class="text-[9px] font-bold text-amber-400 uppercase flex items-center justify-between bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
+                      <span><i class="fa-solid fa-chevron-right text-[7px] mr-1"></i>Tenientes [3]</span>
+                      <span class="text-slate-400 font-mono">2</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pl-2">
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 flex items-center justify-between">
+                        <span class="text-slate-200 font-medium">Chute_Pacheco</span>
+                        <span class="text-[8px] badge-teniente px-1 rounded font-bold">T-3</span>
+                      </div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 flex items-center justify-between">
+                        <span class="text-slate-200 font-medium">Davii_Paez</span>
+                        <span class="text-[8px] badge-teniente px-1 rounded font-bold">T-3</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Sargentos -->
+                  <div class="space-y-1">
+                    <div class="text-[9px] font-bold text-blue-400 uppercase flex items-center justify-between bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
+                      <span><i class="fa-solid fa-chevron-right text-[7px] mr-1"></i>Sargentos [2]</span>
+                      <span class="text-slate-400 font-mono">4</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pl-2">
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-200 truncate">Angee_Ackerman</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-200 truncate">Davicristiano</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-200 truncate">Machobi_Hoseok</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-200 truncate">Matias_Maldonado</div>
+                    </div>
+                  </div>
+
+                  <!-- Privados -->
+                  <div class="space-y-1">
+                    <div class="text-[9px] font-bold text-slate-400 uppercase flex items-center justify-between bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
+                      <span><i class="fa-solid fa-chevron-right text-[7px] mr-1"></i>Privados [1]</span>
+                      <span class="text-slate-400 font-mono">4</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pl-2">
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Daviguilherme</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Diegoerick</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Geraldoadriano</div>
+                      <div class="bg-slate-950 p-1.5 rounded border border-slate-800 text-slate-300 truncate">Yisus_Jaga</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -661,7 +665,7 @@
     </main>
   </div>
 
-  <!-- MODAL DE EXAMEN OBLIGATORIO PARA NUEVOS PRIVADOS (BANCO PRO) -->
+  <!-- MODAL DE EXAMEN OBLIGATORIO PARA NUEVOS PRIVADOS -->
   <div id="privateExamModal" class="fixed inset-0 bg-slate-950/98 backdrop-blur-lg z-[100] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-red-500/80 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
@@ -678,12 +682,12 @@
     </div>
   </div>
 
-  <!-- MODAL QUIZ INTERACTIVO (BANCO PRO ALEATORIO) -->
+  <!-- MODAL QUIZ INTERACTIVO -->
   <div id="reglasQuizModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[120] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-blue-500/60 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
         <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Tropa Pro (Banco Aleatorio)
+          <i class="fa-solid fa-brain animate-pulse"></i> Desafío de Tropa Pro
         </h4>
         <button onclick="closeReglasQuizModal(); playSound('click');" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-900 rounded border border-slate-700"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -712,7 +716,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE FORMACIÓN MULTIPREGUNTA EN VIVO (PARA TROPA) -->
+  <!-- MODAL DE FORMACIÓN MULTIPREGUNTA EN VIVO -->
   <div id="customFormationModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[130] hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-purple-500/80 shadow-2xl space-y-3">
       <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
@@ -751,44 +755,6 @@
         <div id="viewPending" class="space-y-2">
           <h4 class="text-xs font-bold text-amber-400 flex items-center gap-1 mb-2"><i class="fa-solid fa-clock-rotate-left"></i> Solicitudes Pendientes:</h4>
           <div id="pendingList" class="space-y-2"><p class="text-xs text-slate-400 italic">Cargando...</p></div>
-        </div>
-
-        <!-- PESTAÑA ORGANIZAR PERSONAL (NUEVA: SINCRONIZADA EN NUBE + DESCARGAR) -->
-        <div id="viewOrg" class="space-y-3 hidden">
-          <div class="bg-slate-900 p-3 rounded-xl border border-blue-500/40 space-y-2.5">
-            <div class="flex justify-between items-center">
-              <h4 class="text-xs font-bold text-blue-400 flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Cadena de Mando Oficial</h4>
-              <button onclick="exportOrgCSV(); playSound('click');" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
-                <i class="fa-solid fa-file-excel"></i> Descargar Excel
-              </button>
-            </div>
-            <p class="text-[10px] text-slate-300">Asigna la cadena de mando sincronizada para toda la base:</p>
-            
-            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-2 text-xs">
-              <div>
-                <label class="block text-[10px] text-slate-300 mb-1">Superior a Cargo</label>
-                <select id="orgSuperiorSelect" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
-                  <!-- Se llena dinámicamente -->
-                </select>
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-300 mb-1">Subordinado Asignado</label>
-                <select id="orgSubordinateSelect" class="w-full bg-slate-900 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
-                  <!-- Se llena dinámicamente -->
-                </select>
-              </div>
-              <button onclick="savePersonalAssignment(); playSound('success');" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-1.5 rounded text-xs uppercase transition shadow">
-                ➕ Guardar Asignación en Nube
-              </button>
-            </div>
-          </div>
-
-          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
-            <h5 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-network-wired"></i> Estructura Global Sincronizada</h5>
-            <div id="orgStructureList" class="space-y-1.5 max-h-52 overflow-y-auto">
-              <p class="text-[10px] text-slate-500 italic">Cargando...</p>
-            </div>
-          </div>
         </div>
 
         <!-- PESTAÑA TROPA Y SANCIONES -->
@@ -836,7 +802,7 @@
           </div>
 
           <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
-            <h5 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-clipboard-list"></i> Auditoría de Formaciones en Vivo (Fecha y Hora)</h5>
+            <h5 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5"><i class="fa-solid fa-clipboard-list"></i> Auditoría de Formaciones en Vivo</h5>
             <div id="auditFormationsContainer" class="space-y-1.5 max-h-40 overflow-y-auto">
               <p class="text-[10px] text-slate-500 italic">No hay registros de auditoría recientes.</p>
             </div>
@@ -861,11 +827,10 @@
           <div id="dailyReportList" class="space-y-2"><p class="text-xs text-slate-400 italic">Calculando...</p></div>
         </div>
         
-        <!-- PESTAÑA FILTROS Y TURNOS (CON BOTÓN EXCLUSIVO EXCEL PARA CORONELES/GENERALES) -->
+        <!-- PESTAÑA FILTROS Y TURNOS -->
         <div id="viewFilters" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
             <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-ranking-star"></i> Rendimiento por Turnos:</h4>
-            <!-- Botón exclusivo visible para Coronel y General -->
             <button id="btnExportExcelPanel" onclick="exportVisualRankingCSV(); playSound('click');" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-1 rounded font-bold flex items-center gap-1 shadow">
               <i class="fa-solid fa-file-excel"></i> Descargar Excel
             </button>
@@ -887,7 +852,7 @@
               <select id="filterMode" onchange="applyHistoryFilter()" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
                 <option value="turnos">🔄 Agrupar por Turnos Oficiales</option>
                 <option value="summary">📊 Resumen General (Suma total por soldado)</option>
-                <option value="detailed">📋 Historial Detallado (Registro por registro con Fecha/Hora)</option>
+                <option value="detailed">📋 Historial Detallado (Registro con Fecha/Hora)</option>
               </select>
             </div>
           </div>
@@ -929,7 +894,7 @@
             <h4 class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-square-poll-vertical"></i> Proponer / Crear Encuesta</h4>
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">Pregunta de la Encuesta</label>
-              <input type="text" id="pollTitle" required placeholder="Ej: ¿Apoyan la nueva patrulla nocturna?" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+              <input type="text" id="pollTitle" required placeholder="Ej: ¿Apoyan la nueva patrulla?" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
             </div>
             <div>
               <label class="block text-[10px] text-slate-300 mb-1">Opciones (Separadas por coma)</label>
@@ -972,7 +937,7 @@
     </div>
   </div>
 
-  <!-- MODAL SANCIONES / AMONESTACIONES -->
+  <!-- MODAL SANCIONES -->
   <div id="sanctionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
     <div class="military-card w-full max-w-sm p-4 rounded-xl border border-red-500/55 shadow-2xl space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
@@ -982,7 +947,7 @@
       <input type="hidden" id="sanctionTargetUser">
       <div class="space-y-2 text-xs">
         <div>
-          <label class="block text-[10px] text-slate-300 mb-1">Tipo de Falta (Reglamento Cap 5-6)</label>
+          <label class="block text-[10px] text-slate-300 mb-1">Tipo de Falta</label>
           <select id="sanctionType" class="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded p-1.5 focus:outline-none">
             <option value="Leve">Falta Leve (Llamado de atención verbal/escrito)</option>
             <option value="Grave">Falta Grave (Suspensión / Sanción Mayor)</option>
@@ -1074,7 +1039,6 @@
     let deferredPrompt = null;
     let globalHistoryCache = [];
     let currentRankedExportArray = [];
-    let cloudOrganizationList = []; // <--- Lista sincronizada en la nube
     let editingOldTitle = null;
     let editingDoctrinaOldTitle = null;
     let newsStorageMap = {};
@@ -1201,8 +1165,8 @@
       { code: "BUNNY-HOP / BH", meaning: "Correr y saltar de forma no realista" },
       { code: "IFP", meaning: "Información fuera del personaje" },
       { code: "ZZ", meaning: "Correr en zig zag para evitar disparos" },
-      { code: "KOS", meaning: "Matar al visualizar (ej. matar a alguien de otra organización, facción or familia)" },
-      { code: "PK", meaning: "Muerte del jugador (ej. pierde toda la memoria de la persona que te mató)" },
+      { code: "KOS", meaning: "Matar al visualizar" },
+      { code: "PK", meaning: "Muerte del jugador" },
       { code: "RPFW", meaning: "Crear un rol donde solo tú ganas" },
       { code: "MIX", meaning: "Mezclar temas fuera del RP" },
       { code: "APP", meaning: "Interrumpir acción a propósito" },
@@ -1221,7 +1185,7 @@
       { q: "¿Cuánto dura exactamente un entrenamiento según el Capítulo 5?", options: ["A) 5 minutos exactos", "B) 10 minutos", "C) 3 minutos"], a: 0 },
       { q: "¿Qué se prohíbe estrictamente durante el entrenamiento (Cap 5)?", options: ["A) Hablar, usar radio, gestos y teléfono", "B) Tomar agua", "C) Parpadear"], a: 0 },
       { q: "¿Cuál es el horario semanal mínimo de juego requerido para el personal del EB?", options: ["A) 5 horas", "B) 7 horas", "C) 14 horas"], a: 1 },
-      { q: "¿Cuál es la ausencia máxima permitida del juego antes de sanción?", options: ["A) 1 día", "B) 3 días", "C) 7 days"], a: 1 },
+      { q: "¿Cuál es la ausencia máxima permitida del juego antes de sanción?", options: ["A) 1 día", "B) 3 días", "C) 7 días"], a: 1 },
       { q: "¿Qué facción corresponde al cargamento (CRM) del día Lunes?", options: ["A) Facción Verde", "B) Facción Morada", "C) Mafia Costera"], a: 0 },
       { q: "¿Qué facción o mafia corresponde al cargamento (CRM) del día Martes?", options: ["A) Facción Verde", "B) Mafia de la Colina", "C) Mafia Costera"], a: 1 },
       { q: "¿Cuál es la regla para el cargamento (CRM) de los Domingos (Acción libre)?", options: ["A) No hay cargamento", "B) La primera mafia o facción que llegue al punto de carga se queda con la acción", "C) Lo gana el EB automáticamente"], a: 1 },
@@ -1274,13 +1238,12 @@
       document.getElementById('regView4').classList.toggle('hidden', tabNum !== 4);
       document.getElementById('regView5').classList.toggle('hidden', tabNum !== 5);
       document.getElementById('regView6').classList.toggle('hidden', tabNum !== 6);
+      document.getElementById('regView7').classList.toggle('hidden', tabNum !== 7);
 
-      document.getElementById('regTab1Btn').className = tabNum === 1 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
-      document.getElementById('regTab2Btn').className = tabNum === 2 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
-      document.getElementById('regTab3Btn').className = tabNum === 3 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
-      document.getElementById('regTab4Btn').className = tabNum === 4 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
-      document.getElementById('regTab5Btn').className = tabNum === 5 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
-      document.getElementById('regTab6Btn').className = tabNum === 6 ? 'py-1 font-bold rounded text-white bg-blue-600 shadow' : 'py-1 font-bold rounded text-slate-400 hover:text-white';
+      for (let i = 1; i <= 7; i++) {
+        const btn = document.getElementById(`regTab${i}Btn`);
+        if (btn) btn.className = tabNum === i ? 'py-1 rounded text-white bg-blue-600 shadow' : 'py-1 rounded text-slate-400 hover:text-white';
+      }
     }
 
     function renderQCodes(list) {
@@ -1302,12 +1265,6 @@
       container.innerHTML = html;
     }
 
-    function filterQCodes() {
-      const query = document.getElementById('qCodeSearch').value.toLowerCase().trim();
-      const filtered = qCodesData.filter(item => item.code.toLowerCase().includes(query) || item.meaning.toLowerCase().includes(query));
-      renderQCodes(filtered);
-    }
-
     function renderRpRules(list) {
       const container = document.getElementById('rpContainer');
       if (!container) return;
@@ -1325,12 +1282,6 @@
         `;
       });
       container.innerHTML = html;
-    }
-
-    function filterRpRules() {
-      const query = document.getElementById('rpSearch').value.toLowerCase().trim();
-      const filtered = rpRulesData.filter(item => item.code.toLowerCase().includes(query) || item.meaning.toLowerCase().includes(query));
-      renderRpRules(filtered);
     }
 
     function toggleChapter(id) {
@@ -1560,7 +1511,7 @@
         return;
       }
       let html = '';
-      pins.slice(-3).forEach((p, idx) => {
+      pins.slice(-3).forEach((p) => {
         html += `<span class="bg-red-950/90 border border-red-600 text-white text-[9px] font-bold px-2 py-1 rounded-md shadow animate-pulse flex items-center gap-1">📍 ${p.text} <span class="text-[7px] text-slate-300">(${p.author})</span></span>`;
       });
       container.innerHTML = html;
@@ -1814,7 +1765,6 @@
       }
 
       localStorage.setItem(`completedFormation_${currentUser.username}_${activeFormationSession.timestamp}`, 'true');
-
       document.getElementById('customFormationModal').classList.add('hidden');
       playSound('success');
       alert(`🎯 ¡Formación Finalizada!\nPuntuación registrada: ${finalScore}`);
@@ -1836,9 +1786,7 @@
         let resultsObj = {};
         try { resultsObj = JSON.parse(f.results || '{}'); } catch(e){}
         let participantsCount = Object.keys(resultsObj).length;
-
         let badgeStatus = f.estado === 'active' ? `<span class="text-emerald-400 font-bold">⚡ ACTIVA</span>` : `<span class="text-slate-400">Finalizada</span>`;
-        
         let formationDateObj = new Date(parseInt(f.timestamp));
         let fDateStr = !isNaN(formationDateObj.getTime()) ? formationDateObj.toLocaleDateString("en-GB", { timeZone: "America/Bogota" }) : "Fecha N/D";
         let fTimeStr = !isNaN(formationDateObj.getTime()) ? formationDateObj.toLocaleTimeString("en-GB", { timeZone: "America/Bogota", hour: '2-digit', minute: '2-digit' }) : "Hora N/D";
@@ -1864,7 +1812,6 @@
           }
           html += `</div>`;
         }
-
         html += `</div>`;
       });
 
@@ -2083,8 +2030,8 @@
       });
 
       const currentMinutesTotal = colHour * 60 + colMin;
-      const startAllowedMinutes = 17 * 60 + 45; // 17:45
-      const endAllowedMinutes = 3 * 60;         // 03:00
+      const startAllowedMinutes = 17 * 60 + 45;
+      const endAllowedMinutes = 3 * 60;
 
       const isAllowedHour = (currentMinutesTotal >= startAllowedMinutes) || (currentMinutesTotal < endAllowedMinutes);
       const activeShift = currentUser ? (localStorage.getItem(`shiftStart_${currentUser.username}`) || currentUser.activeShiftStart) : null;
@@ -2239,10 +2186,9 @@
       const tabsContainer = document.getElementById('adminTabsContainer');
 
       if (isSuperAdmin) {
-        tabsContainer.className = "grid grid-cols-7 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
           <button onclick="switchAdminTab('pending'); playSound('click');" id="adminTabPending" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Solicitudes</button>
-          <button onclick="switchAdminTab('org'); playSound('click');" id="adminTabOrg" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Organizar</button>
           <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
           <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
           <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
@@ -2251,9 +2197,8 @@
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isCoronel) {
-        tabsContainer.className = "grid grid-cols-6 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-5 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('org'); playSound('click');" id="adminTabOrg" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Organizar</button>
           <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
           <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
           <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
@@ -2262,9 +2207,8 @@
         `;
         if (!editingOldTitle) switchAdminTab('active');
       } else if (isMayor || rankLower === 'teniente' || rankLower === 'sargento') {
-        tabsContainer.className = "grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
+        tabsContainer.className = "grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 mb-3 text-center";
         tabsContainer.innerHTML = `
-          <button onclick="switchAdminTab('org'); playSound('click');" id="adminTabOrg" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Organizar</button>
           <button onclick="switchAdminTab('active'); playSound('click');" id="adminTabActive" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Tropa</button>
           <button onclick="switchAdminTab('daily'); playSound('click');" id="adminTabDaily" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Hoy</button>
           <button onclick="switchAdminTab('filters'); playSound('click');" id="adminTabFilters" class="py-1.5 text-[8px] font-bold rounded text-slate-300 transition bg-transparent">Turnos</button>
@@ -2283,7 +2227,7 @@
     }
 
     function switchAdminTab(tab) {
-      ['pending', 'org', 'active', 'daily', 'filters', 'newsAdmin', 'approveNews'].forEach(v => {
+      ['pending', 'active', 'daily', 'filters', 'newsAdmin', 'approveNews'].forEach(v => {
         const viewEl = document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`);
         const tabEl = document.getElementById(`adminTab${v.charAt(0).toUpperCase() + v.slice(1)}`);
         if (viewEl) viewEl.classList.add('hidden');
@@ -2293,11 +2237,6 @@
       const targetTab = document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       if (targetView) targetView.classList.remove('hidden');
       if (targetTab) targetTab.className = "py-1.5 text-[8px] font-bold rounded bg-blue-600 text-white shadow transition";
-
-      if(tab === 'org') {
-        populateOrgDropdowns();
-        renderOrgStructure();
-      }
 
       if(tab === 'active') {
         renderFormationsAuditLog();
@@ -2334,114 +2273,6 @@
         applyHistoryFilter();
       }
     }
-
-    // --- FUNCIONES PARA LA ORGANIZACIÓN EN LA NUBE Y DESCARGA EXCEL ---
-    function populateOrgDropdowns() {
-      if(!cachedData || !cachedData.users) return;
-      const approvedUsers = cachedData.users.filter(u => u.status && u.status.toLowerCase() === 'approved');
-      
-      const superiorSelect = document.getElementById('orgSuperiorSelect');
-      const subordinateSelect = document.getElementById('orgSubordinateSelect');
-      if(!superiorSelect || !subordinateSelect) return;
-
-      superiorSelect.innerHTML = '';
-      subordinateSelect.innerHTML = '';
-
-      approvedUsers.forEach(u => {
-        let optSup = document.createElement('option');
-        optSup.value = u.username;
-        optSup.textContent = `${u.username} (${u.rank})`;
-        superiorSelect.appendChild(optSup);
-
-        let optSub = document.createElement('option');
-        optSub.value = u.username;
-        optSub.textContent = `${u.username} (${u.rank})`;
-        subordinateSelect.appendChild(optSub);
-      });
-    }
-
-    async function savePersonalAssignment() {
-      const superior = document.getElementById('orgSuperiorSelect').value;
-      const subordinate = document.getElementById('orgSubordinateSelect').value;
-
-      if(!superior || !subordinate) {
-        alert("Selecciona ambos miembros.");
-        return;
-      }
-      if(superior === subordinate) {
-        alert("Un superior no puede estar a cargo de sí mismo.");
-        return;
-      }
-
-      cloudOrganizationList.push({ superior: superior, subordinado: subordinate });
-
-      showTacticalLoader("GUARDANDO EN LA NUBE", "Actualizando cadena de mando en Google Sheets...");
-      try {
-        await fetch(WEB_APP_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'saveOrganization', organizacion: cloudOrganizationList })
-        });
-        hideTacticalLoader();
-        playSound('success');
-        alert("✔ Asignación guardada en Google Sheets para toda la tropa.");
-        renderOrgStructure();
-      } catch (e) {
-        hideTacticalLoader();
-        alert("Error al guardar en la nube.");
-      }
-    }
-
-    function renderOrgStructure() {
-      const container = document.getElementById('orgStructureList');
-      if(!container) return;
-
-      if(cloudOrganizationList.length === 0) {
-        container.innerHTML = '<p class="text-[10px] text-slate-500 italic">No hay asignaciones en la nube.</p>';
-        return;
-      }
-
-      let html = '';
-      cloudOrganizationList.forEach((item, idx) => {
-        html += `<div class="bg-slate-950 p-2 rounded border border-slate-800 text-[10px] flex justify-between items-center">
-          <div><strong class="text-amber-400">${item.superior}</strong> ➔ <span class="text-white">${item.subordinado}</span></div>
-          <button onclick="removeOrgAssignment(${idx})" class="text-red-400 hover:text-red-300 px-1"><i class="fa-solid fa-trash"></i></button>
-        </div>`;
-      });
-      container.innerHTML = html;
-    }
-
-    async function removeOrgAssignment(idx) {
-      cloudOrganizationList.splice(idx, 1);
-      showTacticalLoader("ACTUALIZANDO NUBE", "Guardando cambios...");
-      try {
-        await fetch(WEB_APP_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'saveOrganization', organizacion: cloudOrganizationList })
-        });
-        hideTacticalLoader();
-        renderOrgStructure();
-      } catch(e) {
-        hideTacticalLoader();
-      }
-    }
-
-    function exportOrgCSV() {
-      if(cloudOrganizationList.length === 0) {
-        alert("No hay datos de organización para descargar.");
-        return;
-      }
-      let csv = "data:text/csv;charset=utf-8,Superior,Subordinado\n";
-      cloudOrganizationList.forEach(item => {
-        csv += `"${item.superior}","${item.subordinado}"\n`;
-      });
-      const link = document.createElement("a");
-      link.setAttribute("href", encodeURI(csv));
-      link.setAttribute("download", `Cadena_de_Mando_RioRise_${getColombiaDateString()}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-    // --------------------------------------------------------
 
     async function handleRegister(e) {
       e.preventDefault();
@@ -2531,7 +2362,6 @@
 
         cachedData = resData;
         globalHistoryCache = resData.history || [];
-        cloudOrganizationList = resData.organizacion || []; // <--- Cargar organización de la nube
         renderDashboardUI(resData);
 
         if (!found.ingresoEB) {
@@ -2591,7 +2421,6 @@
           const response = await fetch(WEB_APP_URL);
           cachedData = await response.json();
           globalHistoryCache = cachedData.history || [];
-          cloudOrganizationList = cachedData.organizacion || []; // <--- Cargar organización de la nube
           renderNewsFeed(cachedData.news, cachedData.polls);
           checkAuthorNotifications(cachedData.news, cachedData.doctrina, cachedData.polls);
           updateCommandAlertBadges(cachedData.users, cachedData.news, cachedData.doctrina, cachedData.polls);
@@ -2634,7 +2463,6 @@
       rankEl.className = `text-[9px] px-2 py-0.5 rounded font-bold uppercase badge-${currentUser.rank.toLowerCase()}`;
 
       globalHistoryCache = resData.history || [];
-      cloudOrganizationList = resData.organizacion || []; // <--- Cargar organización de la nube
       renderNewsFeed(resData.news, resData.polls);
       checkAuthorNotifications(resData.news, resData.doctrina, resData.polls);
       updateCommandAlertBadges(resData.users, resData.news, resData.doctrina, resData.polls);
@@ -2662,7 +2490,6 @@
           const resData = await response.json();
           cachedData = resData;
           globalHistoryCache = resData.history || [];
-          cloudOrganizationList = resData.organizacion || []; // <--- Sincronizar organización en tiempo real
           renderNewsFeed(resData.news, resData.polls);
           checkAuthorNotifications(resData.news, resData.doctrina, resData.polls);
           updateCommandAlertBadges(resData.users, resData.news, resData.doctrina, resData.polls);
@@ -3295,11 +3122,10 @@
       });
 
       const currentMinutesTotal = colHour * 60 + colMin;
-      const startAllowedMinutes = 17 * 60 + 45; // 17:45
-      const endAllowedMinutes = 3 * 60;         // 03:00
+      const startAllowedMinutes = 17 * 60 + 45;
+      const endAllowedMinutes = 3 * 60;
 
       const isAllowedHour = (currentMinutesTotal >= startAllowedMinutes) || (currentMinutesTotal < endAllowedMinutes);
-
       const btn = document.getElementById('btnToggleShift');
       const activeShiftKey = `shiftStart_${currentUser.username}`;
       
@@ -3307,12 +3133,10 @@
         btn.disabled = true;
         btn.style.opacity = "0.4";
         btn.style.cursor = "not-allowed";
-        btn.title = "";
       } else if (btn) {
         btn.disabled = false;
         btn.style.opacity = "1";
         btn.style.cursor = "pointer";
-        btn.title = "";
       }
     }
 
@@ -3468,7 +3292,6 @@
         }
 
         const users = resData.users, history = resData.history, news = resData.news, doctrina = resData.doctrina, polls = resData.polls;
-        cloudOrganizationList = resData.organizacion || []; // <--- Actualizar datos de organización desde la nube
         updateCommandAlertBadges(users, news, doctrina, polls);
 
         const rankLower = (currentUser.rank || '').toLowerCase();
